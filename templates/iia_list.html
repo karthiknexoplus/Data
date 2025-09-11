@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">G</div>
+            </div>
+            <h1 class="app-title">Data Explorer</h1>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ session.username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="{{ url_for('in_data') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fas fa-database"></i>
+                    <span>IN Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>BAI Data</span>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('colleges') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Colleges</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('edu_list_tn') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fas fa-university"></i>
+                    <span>EDU list TN</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a href="{{ url_for('iia_list') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fas fa-drafting-compass"></i>
+                    <span>IIA List</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('creda_list') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fas fa-building"></i>
+                    <span>CREDAI</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('ccmc_con') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fas fa-city"></i>
+                    <span>CCMC Con</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-truck"></i>
+                <span>Eway Data</span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <h2><i class="fas fa-drafting-compass"></i> IIA List - Indian Institute of Architecture</h2>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="header-actions">
+            <div class="download-buttons">
+                <a href="#" class="download-btn csv-btn">
+                    <i class="fas fa-file-csv"></i>
+                    Download CSV
+                </a>
+                <a href="#" class="download-btn excel-btn">
+                    <i class="fas fa-file-excel"></i>
+                    Download Excel
+                </a>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <i class="fas fa-drafting-compass"></i>
+                    <span>{{ iia_data|length }} Institutes</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- IIA List -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3><i class="fas fa-list"></i> Indian Institute of Architecture List</h3>
+                <div class="table-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search institutes...">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="nrlm-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> S.No</th>
+                            <th><i class="fas fa-id-card"></i> Institute Code</th>
+                            <th><i class="fas fa-drafting-compass"></i> Institute Name</th>
+                            <th><i class="fas fa-map-marker-alt"></i> Location</th>
+                            <th><i class="fas fa-graduation-cap"></i> Type</th>
+                            <th><i class="fas fa-calendar"></i> Established</th>
+                            <th><i class="fas fa-phone"></i> Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for iia in iia_data %}
+                        <tr>
+                            <td>{{ iia[0] }}</td>
+                            <td>
+                                <span class="member-code">{{ iia[1] }}</span>
+                            </td>
+                            <td>
+                                <strong>{{ iia[2] }}</strong>
+                            </td>
+                            <td>
+                                <span class="shg-name">{{ iia[3] }}</span>
+                            </td>
+                            <td>
+                                <span class="member-code">{{ iia[4] }}</span>
+                            </td>
+                            <td>
+                                <span class="shg-name">{{ iia[5] }}</span>
+                            </td>
+                            <td>
+                                <span style="color: #1976d2;">
+                                    <i class="fas fa-phone"></i>
+                                    {{ iia[6] }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>Powered by Nexoplus Innovations Pvt Ltd</p>
+    </footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const tableRows = document.querySelectorAll('.nrlm-table tbody tr');
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        tableRows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            let found = false;
+            
+            cells.forEach(cell => {
+                if (cell.textContent.toLowerCase().includes(searchTerm)) {
+                    found = true;
+                }
+            });
+            
+            row.style.display = found ? '' : 'none';
+        });
+    });
+});
+</script>
+{% endblock %}
