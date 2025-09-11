@@ -83,7 +83,7 @@ print_status "Virtual environment created"
 # Install Python dependencies
 echo -e "${BLUE}📦 Installing Python dependencies...${NC}"
 pip install --upgrade pip
-pip install flask gunicorn requests beautifulsoup4 sqlite3
+pip install flask gunicorn requests beautifulsoup4
 print_status "Python dependencies installed"
 
 # Create gunicorn configuration
