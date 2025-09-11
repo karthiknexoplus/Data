@@ -497,945 +497,119 @@ def in_data():
 # API endpoints for dropdowns
 @app.route('/api/states')
 @login_required
-
-@app.route('/api/states')
 def api_states():
-    """API endpoint to get states - NO LOGIN REQUIRED"""
     try:
-        states = [
-            {'code': '01', 'name': 'Andhra Pradesh'},
-            {'code': '02', 'name': 'Arunachal Pradesh'},
-            {'code': '03', 'name': 'Assam'},
-            {'code': '04', 'name': 'Bihar'},
-            {'code': '05', 'name': 'Chhattisgarh'},
-            {'code': '06', 'name': 'Goa'},
-            {'code': '07', 'name': 'Gujarat'},
-            {'code': '08', 'name': 'Haryana'},
-            {'code': '09', 'name': 'Himachal Pradesh'},
-            {'code': '10', 'name': 'Jharkhand'},
-            {'code': '11', 'name': 'Karnataka'},
-            {'code': '12', 'name': 'Kerala'},
-            {'code': '13', 'name': 'Madhya Pradesh'},
-            {'code': '14', 'name': 'Maharashtra'},
-            {'code': '15', 'name': 'Manipur'},
-            {'code': '16', 'name': 'Meghalaya'},
-            {'code': '17', 'name': 'Mizoram'},
-            {'code': '18', 'name': 'Nagaland'},
-            {'code': '19', 'name': 'Odisha'},
-            {'code': '20', 'name': 'Punjab'},
-            {'code': '21', 'name': 'Rajasthan'},
-            {'code': '22', 'name': 'Sikkim'},
-            {'code': '23', 'name': 'Tamil Nadu'},
-            {'code': '24', 'name': 'Telangana'},
-            {'code': '25', 'name': 'Tripura'},
-            {'code': '26', 'name': 'Uttar Pradesh'},
-            {'code': '27', 'name': 'Uttarakhand'},
-            {'code': '28', 'name': 'West Bengal'},
-            {'code': '29', 'name': 'Andaman and Nicobar Islands'},
-            {'code': '30', 'name': 'Chandigarh'},
-            {'code': '31', 'name': 'Dadra and Nagar Haveli'},
-            {'code': '32', 'name': 'Daman and Diu'},
-            {'code': '33', 'name': 'Delhi'},
-            {'code': '34', 'name': 'Jammu and Kashmir'},
-            {'code': '35', 'name': 'Ladakh'},
-            {'code': '36', 'name': 'Lakshadweep'},
-            {'code': '37', 'name': 'Puducherry'}
-        ]
-        return jsonify({
-            'success': True,
-            'states': states,
-            'message': f'Found {len(states)} states'
-        })
+        scraper = WorkingNRLMScraper()
+        html = scraper.get_initial_page()
+        if html:
+            states = scraper.extract_states(html)
+            return jsonify({'success': True, 'states': states})
+        else:
+            return jsonify({'success': False, 'message': 'Failed to get states'})
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/districts/<state_code>')
-def api_districts(state_code):
-    """API endpoint to get districts - NO LOGIN REQUIRED"""
-    try:
-        districts = [
-            {'code': f'{state_code}01', 'name': f'District 1 of State {state_code}'},
-            {'code': f'{state_code}02', 'name': f'District 2 of State {state_code}'},
-            {'code': f'{state_code}03', 'name': f'District 3 of State {state_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'districts': districts,
-            'message': f'Found {len(districts)} districts'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/blocks/<state_code>/<district_code>')
-def api_blocks(state_code, district_code):
-    """API endpoint to get blocks - NO LOGIN REQUIRED"""
-    try:
-        blocks = [
-            {'code': f'{district_code}01', 'name': f'Block 1 of District {district_code}'},
-            {'code': f'{district_code}02', 'name': f'Block 2 of District {district_code}'},
-            {'code': f'{district_code}03', 'name': f'Block 3 of District {district_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'blocks': blocks,
-            'message': f'Found {len(blocks)} blocks'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/grampanchayats/<state_code>/<district_code>/<block_code>')
-def api_grampanchayats(state_code, district_code, block_code):
-    """API endpoint to get grampanchayats - NO LOGIN REQUIRED"""
-    try:
-        grampanchayats = [
-            {'code': f'{block_code}01', 'name': f'Grampanchayat 1 of Block {block_code}'},
-            {'code': f'{block_code}02', 'name': f'Grampanchayat 2 of Block {block_code}'},
-            {'code': f'{block_code}03', 'name': f'Grampanchayat 3 of Block {block_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'grampanchayats': grampanchayats,
-            'message': f'Found {len(grampanchayats)} grampanchayats'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/villages/<state_code>/<district_code>/<block_code>/<grampanchayat_code>')
-def api_villages(state_code, district_code, block_code, grampanchayat_code):
-    """API endpoint to get villages - NO LOGIN REQUIRED"""
-    try:
-        villages = [
-            {'code': f'{grampanchayat_code}01', 'name': f'Village 1 of Grampanchayat {grampanchayat_code}'},
-            {'code': f'{grampanchayat_code}02', 'name': f'Village 2 of Grampanchayat {grampanchayat_code}'},
-            {'code': f'{grampanchayat_code}03', 'name': f'Village 3 of Grampanchayat {grampanchayat_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'villages': villages,
-            'message': f'Found {len(villages)} villages'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/shg-members')
-def api_shg_members():
-    """API endpoint to get SHG members - NO LOGIN REQUIRED"""
-    try:
-        members = [
-            {'name': 'Sample Member 1', 'shg': 'Sample SHG 1', 'village': 'Sample Village'},
-            {'name': 'Sample Member 2', 'shg': 'Sample SHG 1', 'village': 'Sample Village'},
-            {'name': 'Sample Member 3', 'shg': 'Sample SHG 2', 'village': 'Sample Village'}
-        ]
-        return jsonify({
-            'success': True,
-            'members': members,
-            'message': f'Found {len(members)} SHG members'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
+        return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/districts/<state_code>')
 @login_required
-
-@app.route('/api/states')
-def api_states():
-    """API endpoint to get states - NO LOGIN REQUIRED"""
-    try:
-        states = [
-            {'code': '01', 'name': 'Andhra Pradesh'},
-            {'code': '02', 'name': 'Arunachal Pradesh'},
-            {'code': '03', 'name': 'Assam'},
-            {'code': '04', 'name': 'Bihar'},
-            {'code': '05', 'name': 'Chhattisgarh'},
-            {'code': '06', 'name': 'Goa'},
-            {'code': '07', 'name': 'Gujarat'},
-            {'code': '08', 'name': 'Haryana'},
-            {'code': '09', 'name': 'Himachal Pradesh'},
-            {'code': '10', 'name': 'Jharkhand'},
-            {'code': '11', 'name': 'Karnataka'},
-            {'code': '12', 'name': 'Kerala'},
-            {'code': '13', 'name': 'Madhya Pradesh'},
-            {'code': '14', 'name': 'Maharashtra'},
-            {'code': '15', 'name': 'Manipur'},
-            {'code': '16', 'name': 'Meghalaya'},
-            {'code': '17', 'name': 'Mizoram'},
-            {'code': '18', 'name': 'Nagaland'},
-            {'code': '19', 'name': 'Odisha'},
-            {'code': '20', 'name': 'Punjab'},
-            {'code': '21', 'name': 'Rajasthan'},
-            {'code': '22', 'name': 'Sikkim'},
-            {'code': '23', 'name': 'Tamil Nadu'},
-            {'code': '24', 'name': 'Telangana'},
-            {'code': '25', 'name': 'Tripura'},
-            {'code': '26', 'name': 'Uttar Pradesh'},
-            {'code': '27', 'name': 'Uttarakhand'},
-            {'code': '28', 'name': 'West Bengal'},
-            {'code': '29', 'name': 'Andaman and Nicobar Islands'},
-            {'code': '30', 'name': 'Chandigarh'},
-            {'code': '31', 'name': 'Dadra and Nagar Haveli'},
-            {'code': '32', 'name': 'Daman and Diu'},
-            {'code': '33', 'name': 'Delhi'},
-            {'code': '34', 'name': 'Jammu and Kashmir'},
-            {'code': '35', 'name': 'Ladakh'},
-            {'code': '36', 'name': 'Lakshadweep'},
-            {'code': '37', 'name': 'Puducherry'}
-        ]
-        return jsonify({
-            'success': True,
-            'states': states,
-            'message': f'Found {len(states)} states'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/districts/<state_code>')
 def api_districts(state_code):
-    """API endpoint to get districts - NO LOGIN REQUIRED"""
     try:
-        districts = [
-            {'code': f'{state_code}01', 'name': f'District 1 of State {state_code}'},
-            {'code': f'{state_code}02', 'name': f'District 2 of State {state_code}'},
-            {'code': f'{state_code}03', 'name': f'District 3 of State {state_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'districts': districts,
-            'message': f'Found {len(districts)} districts'
-        })
+        scraper = WorkingNRLMScraper()
+        html = scraper.get_initial_page()
+        if html:
+            districts = scraper.get_districts(state_code)
+        else:
+            districts = []
+        return jsonify({'success': True, 'districts': districts})
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/blocks/<state_code>/<district_code>')
-def api_blocks(state_code, district_code):
-    """API endpoint to get blocks - NO LOGIN REQUIRED"""
-    try:
-        blocks = [
-            {'code': f'{district_code}01', 'name': f'Block 1 of District {district_code}'},
-            {'code': f'{district_code}02', 'name': f'Block 2 of District {district_code}'},
-            {'code': f'{district_code}03', 'name': f'Block 3 of District {district_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'blocks': blocks,
-            'message': f'Found {len(blocks)} blocks'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/grampanchayats/<state_code>/<district_code>/<block_code>')
-def api_grampanchayats(state_code, district_code, block_code):
-    """API endpoint to get grampanchayats - NO LOGIN REQUIRED"""
-    try:
-        grampanchayats = [
-            {'code': f'{block_code}01', 'name': f'Grampanchayat 1 of Block {block_code}'},
-            {'code': f'{block_code}02', 'name': f'Grampanchayat 2 of Block {block_code}'},
-            {'code': f'{block_code}03', 'name': f'Grampanchayat 3 of Block {block_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'grampanchayats': grampanchayats,
-            'message': f'Found {len(grampanchayats)} grampanchayats'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/villages/<state_code>/<district_code>/<block_code>/<grampanchayat_code>')
-def api_villages(state_code, district_code, block_code, grampanchayat_code):
-    """API endpoint to get villages - NO LOGIN REQUIRED"""
-    try:
-        villages = [
-            {'code': f'{grampanchayat_code}01', 'name': f'Village 1 of Grampanchayat {grampanchayat_code}'},
-            {'code': f'{grampanchayat_code}02', 'name': f'Village 2 of Grampanchayat {grampanchayat_code}'},
-            {'code': f'{grampanchayat_code}03', 'name': f'Village 3 of Grampanchayat {grampanchayat_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'villages': villages,
-            'message': f'Found {len(villages)} villages'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/shg-members')
-def api_shg_members():
-    """API endpoint to get SHG members - NO LOGIN REQUIRED"""
-    try:
-        members = [
-            {'name': 'Sample Member 1', 'shg': 'Sample SHG 1', 'village': 'Sample Village'},
-            {'name': 'Sample Member 2', 'shg': 'Sample SHG 1', 'village': 'Sample Village'},
-            {'name': 'Sample Member 3', 'shg': 'Sample SHG 2', 'village': 'Sample Village'}
-        ]
-        return jsonify({
-            'success': True,
-            'members': members,
-            'message': f'Found {len(members)} SHG members'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
+        return jsonify({'success': False, 'message': str(e)})
 @app.route('/api/blocks/<state_code>/<district_code>')
 @login_required
-
-@app.route('/api/states')
-def api_states():
-    """API endpoint to get states - NO LOGIN REQUIRED"""
-    try:
-        states = [
-            {'code': '01', 'name': 'Andhra Pradesh'},
-            {'code': '02', 'name': 'Arunachal Pradesh'},
-            {'code': '03', 'name': 'Assam'},
-            {'code': '04', 'name': 'Bihar'},
-            {'code': '05', 'name': 'Chhattisgarh'},
-            {'code': '06', 'name': 'Goa'},
-            {'code': '07', 'name': 'Gujarat'},
-            {'code': '08', 'name': 'Haryana'},
-            {'code': '09', 'name': 'Himachal Pradesh'},
-            {'code': '10', 'name': 'Jharkhand'},
-            {'code': '11', 'name': 'Karnataka'},
-            {'code': '12', 'name': 'Kerala'},
-            {'code': '13', 'name': 'Madhya Pradesh'},
-            {'code': '14', 'name': 'Maharashtra'},
-            {'code': '15', 'name': 'Manipur'},
-            {'code': '16', 'name': 'Meghalaya'},
-            {'code': '17', 'name': 'Mizoram'},
-            {'code': '18', 'name': 'Nagaland'},
-            {'code': '19', 'name': 'Odisha'},
-            {'code': '20', 'name': 'Punjab'},
-            {'code': '21', 'name': 'Rajasthan'},
-            {'code': '22', 'name': 'Sikkim'},
-            {'code': '23', 'name': 'Tamil Nadu'},
-            {'code': '24', 'name': 'Telangana'},
-            {'code': '25', 'name': 'Tripura'},
-            {'code': '26', 'name': 'Uttar Pradesh'},
-            {'code': '27', 'name': 'Uttarakhand'},
-            {'code': '28', 'name': 'West Bengal'},
-            {'code': '29', 'name': 'Andaman and Nicobar Islands'},
-            {'code': '30', 'name': 'Chandigarh'},
-            {'code': '31', 'name': 'Dadra and Nagar Haveli'},
-            {'code': '32', 'name': 'Daman and Diu'},
-            {'code': '33', 'name': 'Delhi'},
-            {'code': '34', 'name': 'Jammu and Kashmir'},
-            {'code': '35', 'name': 'Ladakh'},
-            {'code': '36', 'name': 'Lakshadweep'},
-            {'code': '37', 'name': 'Puducherry'}
-        ]
-        return jsonify({
-            'success': True,
-            'states': states,
-            'message': f'Found {len(states)} states'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/districts/<state_code>')
-def api_districts(state_code):
-    """API endpoint to get districts - NO LOGIN REQUIRED"""
-    try:
-        districts = [
-            {'code': f'{state_code}01', 'name': f'District 1 of State {state_code}'},
-            {'code': f'{state_code}02', 'name': f'District 2 of State {state_code}'},
-            {'code': f'{state_code}03', 'name': f'District 3 of State {state_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'districts': districts,
-            'message': f'Found {len(districts)} districts'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/blocks/<state_code>/<district_code>')
 def api_blocks(state_code, district_code):
-    """API endpoint to get blocks - NO LOGIN REQUIRED"""
     try:
-        blocks = [
-            {'code': f'{district_code}01', 'name': f'Block 1 of District {district_code}'},
-            {'code': f'{district_code}02', 'name': f'Block 2 of District {district_code}'},
-            {'code': f'{district_code}03', 'name': f'Block 3 of District {district_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'blocks': blocks,
-            'message': f'Found {len(blocks)} blocks'
-        })
+        scraper = WorkingNRLMScraper()
+        html = scraper.get_initial_page()
+        if html:
+            blocks = scraper.get_blocks(state_code, district_code)
+        else:
+            blocks = []
+        return jsonify({'success': True, 'blocks': blocks})
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/grampanchayats/<state_code>/<district_code>/<block_code>')
-def api_grampanchayats(state_code, district_code, block_code):
-    """API endpoint to get grampanchayats - NO LOGIN REQUIRED"""
-    try:
-        grampanchayats = [
-            {'code': f'{block_code}01', 'name': f'Grampanchayat 1 of Block {block_code}'},
-            {'code': f'{block_code}02', 'name': f'Grampanchayat 2 of Block {block_code}'},
-            {'code': f'{block_code}03', 'name': f'Grampanchayat 3 of Block {block_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'grampanchayats': grampanchayats,
-            'message': f'Found {len(grampanchayats)} grampanchayats'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/villages/<state_code>/<district_code>/<block_code>/<grampanchayat_code>')
-def api_villages(state_code, district_code, block_code, grampanchayat_code):
-    """API endpoint to get villages - NO LOGIN REQUIRED"""
-    try:
-        villages = [
-            {'code': f'{grampanchayat_code}01', 'name': f'Village 1 of Grampanchayat {grampanchayat_code}'},
-            {'code': f'{grampanchayat_code}02', 'name': f'Village 2 of Grampanchayat {grampanchayat_code}'},
-            {'code': f'{grampanchayat_code}03', 'name': f'Village 3 of Grampanchayat {grampanchayat_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'villages': villages,
-            'message': f'Found {len(villages)} villages'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/shg-members')
-def api_shg_members():
-    """API endpoint to get SHG members - NO LOGIN REQUIRED"""
-    try:
-        members = [
-            {'name': 'Sample Member 1', 'shg': 'Sample SHG 1', 'village': 'Sample Village'},
-            {'name': 'Sample Member 2', 'shg': 'Sample SHG 1', 'village': 'Sample Village'},
-            {'name': 'Sample Member 3', 'shg': 'Sample SHG 2', 'village': 'Sample Village'}
-        ]
-        return jsonify({
-            'success': True,
-            'members': members,
-            'message': f'Found {len(members)} SHG members'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
+        return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/grampanchayats/<state_code>/<district_code>/<block_code>')
 @login_required
-
-@app.route('/api/states')
-def api_states():
-    """API endpoint to get states - NO LOGIN REQUIRED"""
-    try:
-        states = [
-            {'code': '01', 'name': 'Andhra Pradesh'},
-            {'code': '02', 'name': 'Arunachal Pradesh'},
-            {'code': '03', 'name': 'Assam'},
-            {'code': '04', 'name': 'Bihar'},
-            {'code': '05', 'name': 'Chhattisgarh'},
-            {'code': '06', 'name': 'Goa'},
-            {'code': '07', 'name': 'Gujarat'},
-            {'code': '08', 'name': 'Haryana'},
-            {'code': '09', 'name': 'Himachal Pradesh'},
-            {'code': '10', 'name': 'Jharkhand'},
-            {'code': '11', 'name': 'Karnataka'},
-            {'code': '12', 'name': 'Kerala'},
-            {'code': '13', 'name': 'Madhya Pradesh'},
-            {'code': '14', 'name': 'Maharashtra'},
-            {'code': '15', 'name': 'Manipur'},
-            {'code': '16', 'name': 'Meghalaya'},
-            {'code': '17', 'name': 'Mizoram'},
-            {'code': '18', 'name': 'Nagaland'},
-            {'code': '19', 'name': 'Odisha'},
-            {'code': '20', 'name': 'Punjab'},
-            {'code': '21', 'name': 'Rajasthan'},
-            {'code': '22', 'name': 'Sikkim'},
-            {'code': '23', 'name': 'Tamil Nadu'},
-            {'code': '24', 'name': 'Telangana'},
-            {'code': '25', 'name': 'Tripura'},
-            {'code': '26', 'name': 'Uttar Pradesh'},
-            {'code': '27', 'name': 'Uttarakhand'},
-            {'code': '28', 'name': 'West Bengal'},
-            {'code': '29', 'name': 'Andaman and Nicobar Islands'},
-            {'code': '30', 'name': 'Chandigarh'},
-            {'code': '31', 'name': 'Dadra and Nagar Haveli'},
-            {'code': '32', 'name': 'Daman and Diu'},
-            {'code': '33', 'name': 'Delhi'},
-            {'code': '34', 'name': 'Jammu and Kashmir'},
-            {'code': '35', 'name': 'Ladakh'},
-            {'code': '36', 'name': 'Lakshadweep'},
-            {'code': '37', 'name': 'Puducherry'}
-        ]
-        return jsonify({
-            'success': True,
-            'states': states,
-            'message': f'Found {len(states)} states'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/districts/<state_code>')
-def api_districts(state_code):
-    """API endpoint to get districts - NO LOGIN REQUIRED"""
-    try:
-        districts = [
-            {'code': f'{state_code}01', 'name': f'District 1 of State {state_code}'},
-            {'code': f'{state_code}02', 'name': f'District 2 of State {state_code}'},
-            {'code': f'{state_code}03', 'name': f'District 3 of State {state_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'districts': districts,
-            'message': f'Found {len(districts)} districts'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/blocks/<state_code>/<district_code>')
-def api_blocks(state_code, district_code):
-    """API endpoint to get blocks - NO LOGIN REQUIRED"""
-    try:
-        blocks = [
-            {'code': f'{district_code}01', 'name': f'Block 1 of District {district_code}'},
-            {'code': f'{district_code}02', 'name': f'Block 2 of District {district_code}'},
-            {'code': f'{district_code}03', 'name': f'Block 3 of District {district_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'blocks': blocks,
-            'message': f'Found {len(blocks)} blocks'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/grampanchayats/<state_code>/<district_code>/<block_code>')
 def api_grampanchayats(state_code, district_code, block_code):
-    """API endpoint to get grampanchayats - NO LOGIN REQUIRED"""
     try:
-        grampanchayats = [
-            {'code': f'{block_code}01', 'name': f'Grampanchayat 1 of Block {block_code}'},
-            {'code': f'{block_code}02', 'name': f'Grampanchayat 2 of Block {block_code}'},
-            {'code': f'{block_code}03', 'name': f'Grampanchayat 3 of Block {block_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'grampanchayats': grampanchayats,
-            'message': f'Found {len(grampanchayats)} grampanchayats'
-        })
+        scraper = WorkingNRLMScraper()
+        html = scraper.get_initial_page()
+        if html:
+            grampanchayats = scraper.get_grampanchayats(state_code, district_code, block_code)
+        else:
+            grampanchayats = []
+        return jsonify({'success': True, 'grampanchayats': grampanchayats})
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/villages/<state_code>/<district_code>/<block_code>/<grampanchayat_code>')
-def api_villages(state_code, district_code, block_code, grampanchayat_code):
-    """API endpoint to get villages - NO LOGIN REQUIRED"""
-    try:
-        villages = [
-            {'code': f'{grampanchayat_code}01', 'name': f'Village 1 of Grampanchayat {grampanchayat_code}'},
-            {'code': f'{grampanchayat_code}02', 'name': f'Village 2 of Grampanchayat {grampanchayat_code}'},
-            {'code': f'{grampanchayat_code}03', 'name': f'Village 3 of Grampanchayat {grampanchayat_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'villages': villages,
-            'message': f'Found {len(villages)} villages'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/shg-members')
-def api_shg_members():
-    """API endpoint to get SHG members - NO LOGIN REQUIRED"""
-    try:
-        members = [
-            {'name': 'Sample Member 1', 'shg': 'Sample SHG 1', 'village': 'Sample Village'},
-            {'name': 'Sample Member 2', 'shg': 'Sample SHG 1', 'village': 'Sample Village'},
-            {'name': 'Sample Member 3', 'shg': 'Sample SHG 2', 'village': 'Sample Village'}
-        ]
-        return jsonify({
-            'success': True,
-            'members': members,
-            'message': f'Found {len(members)} SHG members'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
+        return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/villages/<state_code>/<district_code>/<block_code>/<grampanchayat_code>')
 @login_required
-
-@app.route('/api/states')
-def api_states():
-    """API endpoint to get states - NO LOGIN REQUIRED"""
-    try:
-        states = [
-            {'code': '01', 'name': 'Andhra Pradesh'},
-            {'code': '02', 'name': 'Arunachal Pradesh'},
-            {'code': '03', 'name': 'Assam'},
-            {'code': '04', 'name': 'Bihar'},
-            {'code': '05', 'name': 'Chhattisgarh'},
-            {'code': '06', 'name': 'Goa'},
-            {'code': '07', 'name': 'Gujarat'},
-            {'code': '08', 'name': 'Haryana'},
-            {'code': '09', 'name': 'Himachal Pradesh'},
-            {'code': '10', 'name': 'Jharkhand'},
-            {'code': '11', 'name': 'Karnataka'},
-            {'code': '12', 'name': 'Kerala'},
-            {'code': '13', 'name': 'Madhya Pradesh'},
-            {'code': '14', 'name': 'Maharashtra'},
-            {'code': '15', 'name': 'Manipur'},
-            {'code': '16', 'name': 'Meghalaya'},
-            {'code': '17', 'name': 'Mizoram'},
-            {'code': '18', 'name': 'Nagaland'},
-            {'code': '19', 'name': 'Odisha'},
-            {'code': '20', 'name': 'Punjab'},
-            {'code': '21', 'name': 'Rajasthan'},
-            {'code': '22', 'name': 'Sikkim'},
-            {'code': '23', 'name': 'Tamil Nadu'},
-            {'code': '24', 'name': 'Telangana'},
-            {'code': '25', 'name': 'Tripura'},
-            {'code': '26', 'name': 'Uttar Pradesh'},
-            {'code': '27', 'name': 'Uttarakhand'},
-            {'code': '28', 'name': 'West Bengal'},
-            {'code': '29', 'name': 'Andaman and Nicobar Islands'},
-            {'code': '30', 'name': 'Chandigarh'},
-            {'code': '31', 'name': 'Dadra and Nagar Haveli'},
-            {'code': '32', 'name': 'Daman and Diu'},
-            {'code': '33', 'name': 'Delhi'},
-            {'code': '34', 'name': 'Jammu and Kashmir'},
-            {'code': '35', 'name': 'Ladakh'},
-            {'code': '36', 'name': 'Lakshadweep'},
-            {'code': '37', 'name': 'Puducherry'}
-        ]
-        return jsonify({
-            'success': True,
-            'states': states,
-            'message': f'Found {len(states)} states'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/districts/<state_code>')
-def api_districts(state_code):
-    """API endpoint to get districts - NO LOGIN REQUIRED"""
-    try:
-        districts = [
-            {'code': f'{state_code}01', 'name': f'District 1 of State {state_code}'},
-            {'code': f'{state_code}02', 'name': f'District 2 of State {state_code}'},
-            {'code': f'{state_code}03', 'name': f'District 3 of State {state_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'districts': districts,
-            'message': f'Found {len(districts)} districts'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/blocks/<state_code>/<district_code>')
-def api_blocks(state_code, district_code):
-    """API endpoint to get blocks - NO LOGIN REQUIRED"""
-    try:
-        blocks = [
-            {'code': f'{district_code}01', 'name': f'Block 1 of District {district_code}'},
-            {'code': f'{district_code}02', 'name': f'Block 2 of District {district_code}'},
-            {'code': f'{district_code}03', 'name': f'Block 3 of District {district_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'blocks': blocks,
-            'message': f'Found {len(blocks)} blocks'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/grampanchayats/<state_code>/<district_code>/<block_code>')
-def api_grampanchayats(state_code, district_code, block_code):
-    """API endpoint to get grampanchayats - NO LOGIN REQUIRED"""
-    try:
-        grampanchayats = [
-            {'code': f'{block_code}01', 'name': f'Grampanchayat 1 of Block {block_code}'},
-            {'code': f'{block_code}02', 'name': f'Grampanchayat 2 of Block {block_code}'},
-            {'code': f'{block_code}03', 'name': f'Grampanchayat 3 of Block {block_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'grampanchayats': grampanchayats,
-            'message': f'Found {len(grampanchayats)} grampanchayats'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/villages/<state_code>/<district_code>/<block_code>/<grampanchayat_code>')
 def api_villages(state_code, district_code, block_code, grampanchayat_code):
-    """API endpoint to get villages - NO LOGIN REQUIRED"""
     try:
-        villages = [
-            {'code': f'{grampanchayat_code}01', 'name': f'Village 1 of Grampanchayat {grampanchayat_code}'},
-            {'code': f'{grampanchayat_code}02', 'name': f'Village 2 of Grampanchayat {grampanchayat_code}'},
-            {'code': f'{grampanchayat_code}03', 'name': f'Village 3 of Grampanchayat {grampanchayat_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'villages': villages,
-            'message': f'Found {len(villages)} villages'
-        })
+        scraper = WorkingNRLMScraper()
+        html = scraper.get_initial_page()
+        if html:
+            villages = scraper.get_villages(state_code, district_code, block_code, grampanchayat_code)
+        else:
+            villages = []
+        return jsonify({'success': True, 'villages': villages})
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/shg-members')
-def api_shg_members():
-    """API endpoint to get SHG members - NO LOGIN REQUIRED"""
-    try:
-        members = [
-            {'name': 'Sample Member 1', 'shg': 'Sample SHG 1', 'village': 'Sample Village'},
-            {'name': 'Sample Member 2', 'shg': 'Sample SHG 1', 'village': 'Sample Village'},
-            {'name': 'Sample Member 3', 'shg': 'Sample SHG 2', 'village': 'Sample Village'}
-        ]
-        return jsonify({
-            'success': True,
-            'members': members,
-            'message': f'Found {len(members)} SHG members'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
+        return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/shg-members', methods=['POST'])
 @login_required
-
-@app.route('/api/states')
-def api_states():
-    """API endpoint to get states - NO LOGIN REQUIRED"""
-    try:
-        states = [
-            {'code': '01', 'name': 'Andhra Pradesh'},
-            {'code': '02', 'name': 'Arunachal Pradesh'},
-            {'code': '03', 'name': 'Assam'},
-            {'code': '04', 'name': 'Bihar'},
-            {'code': '05', 'name': 'Chhattisgarh'},
-            {'code': '06', 'name': 'Goa'},
-            {'code': '07', 'name': 'Gujarat'},
-            {'code': '08', 'name': 'Haryana'},
-            {'code': '09', 'name': 'Himachal Pradesh'},
-            {'code': '10', 'name': 'Jharkhand'},
-            {'code': '11', 'name': 'Karnataka'},
-            {'code': '12', 'name': 'Kerala'},
-            {'code': '13', 'name': 'Madhya Pradesh'},
-            {'code': '14', 'name': 'Maharashtra'},
-            {'code': '15', 'name': 'Manipur'},
-            {'code': '16', 'name': 'Meghalaya'},
-            {'code': '17', 'name': 'Mizoram'},
-            {'code': '18', 'name': 'Nagaland'},
-            {'code': '19', 'name': 'Odisha'},
-            {'code': '20', 'name': 'Punjab'},
-            {'code': '21', 'name': 'Rajasthan'},
-            {'code': '22', 'name': 'Sikkim'},
-            {'code': '23', 'name': 'Tamil Nadu'},
-            {'code': '24', 'name': 'Telangana'},
-            {'code': '25', 'name': 'Tripura'},
-            {'code': '26', 'name': 'Uttar Pradesh'},
-            {'code': '27', 'name': 'Uttarakhand'},
-            {'code': '28', 'name': 'West Bengal'},
-            {'code': '29', 'name': 'Andaman and Nicobar Islands'},
-            {'code': '30', 'name': 'Chandigarh'},
-            {'code': '31', 'name': 'Dadra and Nagar Haveli'},
-            {'code': '32', 'name': 'Daman and Diu'},
-            {'code': '33', 'name': 'Delhi'},
-            {'code': '34', 'name': 'Jammu and Kashmir'},
-            {'code': '35', 'name': 'Ladakh'},
-            {'code': '36', 'name': 'Lakshadweep'},
-            {'code': '37', 'name': 'Puducherry'}
-        ]
-        return jsonify({
-            'success': True,
-            'states': states,
-            'message': f'Found {len(states)} states'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/districts/<state_code>')
-def api_districts(state_code):
-    """API endpoint to get districts - NO LOGIN REQUIRED"""
-    try:
-        districts = [
-            {'code': f'{state_code}01', 'name': f'District 1 of State {state_code}'},
-            {'code': f'{state_code}02', 'name': f'District 2 of State {state_code}'},
-            {'code': f'{state_code}03', 'name': f'District 3 of State {state_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'districts': districts,
-            'message': f'Found {len(districts)} districts'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/blocks/<state_code>/<district_code>')
-def api_blocks(state_code, district_code):
-    """API endpoint to get blocks - NO LOGIN REQUIRED"""
-    try:
-        blocks = [
-            {'code': f'{district_code}01', 'name': f'Block 1 of District {district_code}'},
-            {'code': f'{district_code}02', 'name': f'Block 2 of District {district_code}'},
-            {'code': f'{district_code}03', 'name': f'Block 3 of District {district_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'blocks': blocks,
-            'message': f'Found {len(blocks)} blocks'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/grampanchayats/<state_code>/<district_code>/<block_code>')
-def api_grampanchayats(state_code, district_code, block_code):
-    """API endpoint to get grampanchayats - NO LOGIN REQUIRED"""
-    try:
-        grampanchayats = [
-            {'code': f'{block_code}01', 'name': f'Grampanchayat 1 of Block {block_code}'},
-            {'code': f'{block_code}02', 'name': f'Grampanchayat 2 of Block {block_code}'},
-            {'code': f'{block_code}03', 'name': f'Grampanchayat 3 of Block {block_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'grampanchayats': grampanchayats,
-            'message': f'Found {len(grampanchayats)} grampanchayats'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/villages/<state_code>/<district_code>/<block_code>/<grampanchayat_code>')
-def api_villages(state_code, district_code, block_code, grampanchayat_code):
-    """API endpoint to get villages - NO LOGIN REQUIRED"""
-    try:
-        villages = [
-            {'code': f'{grampanchayat_code}01', 'name': f'Village 1 of Grampanchayat {grampanchayat_code}'},
-            {'code': f'{grampanchayat_code}02', 'name': f'Village 2 of Grampanchayat {grampanchayat_code}'},
-            {'code': f'{grampanchayat_code}03', 'name': f'Village 3 of Grampanchayat {grampanchayat_code}'}
-        ]
-        return jsonify({
-            'success': True,
-            'villages': villages,
-            'message': f'Found {len(villages)} villages'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
-
-@app.route('/api/shg-members')
 def api_shg_members():
-    """API endpoint to get SHG members - NO LOGIN REQUIRED"""
     try:
-        members = [
-            {'name': 'Sample Member 1', 'shg': 'Sample SHG 1', 'village': 'Sample Village'},
-            {'name': 'Sample Member 2', 'shg': 'Sample SHG 1', 'village': 'Sample Village'},
-            {'name': 'Sample Member 3', 'shg': 'Sample SHG 2', 'village': 'Sample Village'}
-        ]
-        return jsonify({
-            'success': True,
-            'members': members,
-            'message': f'Found {len(members)} SHG members'
-        })
+        data = request.get_json()
+        state_code = data.get('state_code')
+        district_code = data.get('district_code')
+        block_code = data.get('block_code')
+        grampanchayat_code = data.get('grampanchayat_code')
+        village_code = data.get('village_code')
+        
+        scraper = WorkingNRLMScraper()
+        members = scraper.get_shg_members(state_code, district_code, block_code, grampanchayat_code, village_code)
+        
+        # Save to database
+        if members:
+            nrlm_data = []
+            for member in members:
+                nrlm_data.append({
+                    'state_code': state_code,
+                    'state_name': data.get('state_name', ''),
+                    'district_code': district_code,
+                    'district_name': data.get('district_name', ''),
+                    'block_code': block_code,
+                    'block_name': data.get('block_name', ''),
+                    'grampanchayat_code': grampanchayat_code,
+                    'grampanchayat_name': data.get('grampanchayat_name', ''),
+                    'village_code': village_code,
+                    'village_name': data.get('village_name', ''),
+                    'shg_name': member['shg_name'],
+                    'member_name': member['member_name'],
+                    'member_code': member['member_code']
+                })
+            
+            new_count = save_nrlm_data_to_db(nrlm_data)
+            
+            return jsonify({
+                'success': True, 
+                'members': members,
+                'new_records_saved': new_count
+            })
+        else:
+            return jsonify({'success': True, 'members': [], 'message': 'No SHG members found'})
+            
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }), 500
+        return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/import-colleges', methods=['POST'])
 @login_required
