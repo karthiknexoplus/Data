@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">G</div>
+            </div>
+            <h1 class="app-title">Data Explorer</h1>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ session.username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="{{ url_for('in_data') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fas fa-database"></i>
+                    <span>IN Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>BAI Data</span>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('colleges') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Colleges</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a href="{{ url_for('edu_list_tn') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fas fa-university"></i>
+                    <span>EDU list TN</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-truck"></i>
+                <span>Eway Data</span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <h2><i class="fas fa-university"></i> Education List - Tamil Nadu (DCE Data)</h2>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="form-section">
+            <h3><i class="fas fa-filter"></i> Filter Options</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> District</label>
+                    <select id="districtFilter" class="form-select">
+                        <option value="">All Districts</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-building"></i> College Type</label>
+                    <select id="typeFilter" class="form-select">
+                        <option value="">All Types</option>
+                        <option value="Government">Government</option>
+                        <option value="Aided">Aided</option>
+                        <option value="Self-Financing">Self-Financing</option>
+                        <option value="Private">Private</option>
+                        <option value="Autonomous">Autonomous</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-map"></i> Region</label>
+                    <select id="regionFilter" class="form-select">
+                        <option value="">All Regions</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button id="clearFilters" class="fetch-btn" style="width: auto; margin-top: 0;">
+                        <i class="fas fa-times"></i>
+                        Clear Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="header-actions">
+            <div class="download-buttons">
+                <a href="{{ url_for('refresh_dce_data') }}" class="download-btn" style="background: #ff9800; color: white;">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh Data
+                </a>
+                <a href="{{ url_for('download_dce_csv') }}" class="download-btn csv-btn">
+                    <i class="fas fa-file-csv"></i>
+                    Download CSV
+                </a>
+                <a href="{{ url_for('download_dce_excel') }}" class="download-btn excel-btn">
+                    <i class="fas fa-file-excel"></i>
+                    Download Excel
+                </a>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <i class="fas fa-university"></i>
+                    <span id="totalCount">{{ edu_data|length }} Colleges</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-eye"></i>
+                    <span id="filteredCount">{{ edu_data|length }} Showing</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Education List -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3><i class="fas fa-list"></i> Tamil Nadu Colleges & Institutions (DCE Data)</h3>
+                <div class="table-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search colleges...">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="nrlm-table" id="collegesTable">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> S.No</th>
+                            <th><i class="fas fa-university"></i> College Name</th>
+                            <th><i class="fas fa-map-marker-alt"></i> District</th>
+                            <th><i class="fas fa-map"></i> Region</th>
+                            <th><i class="fas fa-graduation-cap"></i> Type</th>
+                            <th><i class="fas fa-tag"></i> Category</th>
+                            <th><i class="fas fa-phone"></i> Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for edu in edu_data %}
+                        <tr data-district="{{ edu[2] }}" data-type="{{ edu[5] }}" data-region="{{ edu[3] }}">
+                            <td>{{ edu[0] }}</td>
+                            <td>
+                                <strong>{{ edu[1] }}</strong>
+                                {% if edu[7] %}
+                                    <br><small style="color: #666;"><i class="fas fa-globe"></i> {{ edu[7] }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="shg-name">{{ edu[2] }}</span>
+                            </td>
+                            <td>
+                                <span class="member-code">{{ edu[3] }}</span>
+                            </td>
+                            <td>
+                                <span class="shg-name">{{ edu[4] }}</span>
+                            </td>
+                            <td>
+                                <span class="member-code">{{ edu[5] }}</span>
+                            </td>
+                            <td>
+                                {% if edu[6] %}
+                                    <span style="color: #1976d2;">
+                                        <i class="fas fa-phone"></i>
+                                        {{ edu[6] }}
+                                    </span>
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                {% if not edu_data %}
+                <div class="empty-state">
+                    <i class="fas fa-university"></i>
+                    <h3>No Education Data</h3>
+                    <p>No education data available for Tamil Nadu. Please run the DCE scraper to fetch data.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>Powered by Nexoplus Innovations Pvt Ltd</p>
+    </footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const districtFilter = document.getElementById('districtFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const regionFilter = document.getElementById('regionFilter');
+    const clearFilters = document.getElementById('clearFilters');
+    const tableRows = document.querySelectorAll('#collegesTable tbody tr');
+    const totalCount = document.getElementById('totalCount');
+    const filteredCount = document.getElementById('filteredCount');
+    
+    // Populate filter options
+    const districts = [...new Set(Array.from(tableRows).map(row => row.dataset.district).filter(Boolean))].sort();
+    const regions = [...new Set(Array.from(tableRows).map(row => row.dataset.region).filter(Boolean))].sort();
+    
+    districts.forEach(district => {
+        const option = document.createElement('option');
+        option.value = district;
+        option.textContent = district;
+        districtFilter.appendChild(option);
+    });
+    
+    regions.forEach(region => {
+        const option = document.createElement('option');
+        option.value = region;
+        option.textContent = region;
+        regionFilter.appendChild(option);
+    });
+    
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedDistrict = districtFilter.value;
+        const selectedType = typeFilter.value;
+        const selectedRegion = regionFilter.value;
+        
+        let visibleCount = 0;
+        
+        tableRows.forEach(row => {
+            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const district = row.dataset.district;
+            const type = row.dataset.type;
+            const region = row.dataset.region;
+            
+            const matchesSearch = name.includes(searchTerm);
+            const matchesDistrict = !selectedDistrict || district === selectedDistrict;
+            const matchesType = !selectedType || type === selectedType;
+            const matchesRegion = !selectedRegion || region === selectedRegion;
+            
+            const isVisible = matchesSearch && matchesDistrict && matchesType && matchesRegion;
+            row.style.display = isVisible ? '' : 'none';
+            
+            if (isVisible) visibleCount++;
+        });
+        
+        filteredCount.textContent = `${visibleCount} Showing`;
+    }
+    
+    // Event listeners
+    searchInput.addEventListener('input', filterTable);
+    districtFilter.addEventListener('change', filterTable);
+    typeFilter.addEventListener('change', filterTable);
+    regionFilter.addEventListener('change', filterTable);
+    
+    clearFilters.addEventListener('click', function() {
+        searchInput.value = '';
+        districtFilter.value = '';
+        typeFilter.value = '';
+        regionFilter.value = '';
+        filterTable();
+    });
+    
+    // Initial filter
+    filterTable();
+});
+</script>
+{% endblock %}

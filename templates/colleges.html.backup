@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">G</div>
+            </div>
+            <h1 class="app-title">Data Explorer</h1>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ session.username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <i class="fas fa-database"></i>
+                <span>IN Data</span>
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>BAI Data</span>
+            </li>
+            <li class="nav-item active">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Colleges</span>
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-truck"></i>
+                <span>Eway Data</span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <div class="header-content">
+                <h2><i class="fas fa-graduation-cap"></i> Colleges Data</h2>
+                <div class="header-actions">
+                    <button id="importBtn" class="import-btn">
+                        <i class="fas fa-download"></i>
+                        Import Colleges Data
+                    </button>
+                    <div class="download-buttons">
+                        <a href="{{ url_for('download_colleges_csv') }}" class="download-btn csv-btn">
+                            <i class="fas fa-file-csv"></i>
+                            Download CSV
+                        </a>
+                        <a href="{{ url_for('download_colleges_excel') }}" class="download-btn excel-btn">
+                            <i class="fas fa-file-excel"></i>
+                            Download Excel
+                        </a>
+                    </div>
+                    <div class="stats">
+                        <span class="stat-item">
+                            <i class="fas fa-university"></i>
+                            <span id="totalColleges">{{ colleges|length }}</span> Total
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p>Importing colleges data...</p>
+                <small>This may take a few moments</small>
+            </div>
+        </div>
+
+        <!-- Colleges Table -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3><i class="fas fa-list"></i> Colleges List</h3>
+                <div class="table-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search colleges...">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="colleges-table" id="collegesTable">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> S.No</th>
+                            <th><i class="fas fa-id-badge"></i> Member Code</th>
+                            <th><i class="fas fa-university"></i> Institution Name</th>
+                            <th><i class="fas fa-calendar"></i> Year Established</th>
+                            <th><i class="fas fa-phone"></i> Contact No</th>
+                            <th><i class="fas fa-clock"></i> Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for college in colleges %}
+                        <tr>
+                            <td>{{ college[1] }}</td>
+                            <td>
+                                <span class="member-code">{{ college[2] }}</span>
+                            </td>
+                            <td>
+                                <div class="institution-info">
+                                    <strong>{{ college[3] }}</strong>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="year-badge">{{ college[4] or 'N/A' }}</span>
+                            </td>
+                            <td>
+                                {% if college[5] %}
+                                    <a href="tel:{{ college[5] }}" class="contact-link">
+                                        <i class="fas fa-phone"></i>
+                                        {{ college[5] }}
+                                    </a>
+                                {% else %}
+                                    <span class="no-data">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="date-info">
+                                    {{ college[7][:10] if college[7] else 'N/A' }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                {% if not colleges %}
+                <div class="empty-state">
+                    <i class="fas fa-university"></i>
+                    <h3>No Colleges Data</h3>
+                    <p>Click "Import Colleges Data" to fetch the latest information from the source.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>Powered by Nexoplus Innovations Pvt Ltd</p>
+    </footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const importBtn = document.getElementById('importBtn');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('collegesTable');
+    
+    // Import functionality
+    importBtn.addEventListener('click', async function() {
+        if (confirm('This will import colleges data from the external source. Continue?')) {
+            loadingOverlay.style.display = 'flex';
+            importBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/import-colleges', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`Import successful!\n\n${result.message}\n\nTotal scraped: ${result.total_scraped}\nNew: ${result.new_count}\nUpdated: ${result.updated_count}`);
+                    location.reload();
+                } else {
+                    alert('Import failed: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                loadingOverlay.style.display = 'none';
+                importBtn.disabled = false;
+            }
+        }
+    });
+    
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+            
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                    found = true;
+                    break;
+                }
+            }
+            
+            rows[i].style.display = found ? '' : 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

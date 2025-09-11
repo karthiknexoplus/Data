@@ -1,0 +1,589 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">G</div>
+            </div>
+            <h1 class="app-title">Data Explorer</h1>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ session.username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li class="nav-item active">
+                <a href="{{ url_for('in_data') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fas fa-database"></i>
+                    <span>IN Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>BAI Data</span>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('colleges') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Colleges</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('edu_list_tn') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fas fa-university"></i>
+                    <span>EDU list TN</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-truck"></i>
+                <span>Eway Data</span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <div class="header-content">
+                <h2><i class="fas fa-database"></i> NRLM Data (IN Data)</h2>
+                <div class="header-actions">
+                    <div class="download-buttons">
+                        <a href="{{ url_for('download_nrlm_csv') }}" class="download-btn csv-btn">
+                            <i class="fas fa-file-csv"></i>
+                            Download CSV
+                        </a>
+                        <a href="{{ url_for('download_nrlm_excel') }}" class="download-btn excel-btn">
+                            <i class="fas fa-file-excel"></i>
+                            Download Excel
+                        </a>
+                    </div>
+                    <div class="stats">
+                        <span class="stat-item">
+                            <i class="fas fa-users"></i>
+                            <span id="totalRecords">{{ nrlm_data|length }}</span> Total Records
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Selection Form -->
+        <div class="form-section">
+            <h3><i class="fas fa-map-marker-alt"></i> Select Location</h3>
+            <div class="location-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-map"></i> State</label>
+                        <select id="stateSelect" class="form-select">
+                            <option value="">Loading states...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-building"></i> District</label>
+                        <select id="districtSelect" class="form-select" disabled>
+                            <option value="">Select State First</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-home"></i> Block</label>
+                        <select id="blockSelect" class="form-select" disabled>
+                            <option value="">Select District First</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-village"></i> Grampanchayat</label>
+                        <select id="grampanchayatSelect" class="form-select" disabled>
+                            <option value="">Select Block First</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-map-pin"></i> Village</label>
+                        <select id="villageSelect" class="form-select" disabled>
+                            <option value="">Select Grampanchayat First</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button id="fetchDataBtn" class="fetch-btn" disabled>
+                            <i class="fas fa-search"></i>
+                            Fetch SHG Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p id="loadingText">Loading...</p>
+                <small id="loadingSubtext">Please wait</small>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="table-section" id="resultsSection" style="display: none;">
+            <div class="table-header">
+                <h3><i class="fas fa-list"></i> SHG Members Data</h3>
+                <div class="table-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search SHG data...">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="nrlm-table" id="nrlmTable">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-users"></i> SHG Name</th>
+                            <th><i class="fas fa-user"></i> Member Name</th>
+                            <th><i class="fas fa-id-badge"></i> Member Code</th>
+                        </tr>
+                    </thead>
+                    <tbody id="nrlmTableBody">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+                
+                <div id="noDataMessage" class="empty-state" style="display: none;">
+                    <i class="fas fa-database"></i>
+                    <h3>No SHG Data Found</h3>
+                    <p>No SHG members found for the selected location.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saved Data Table -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3><i class="fas fa-database"></i> Saved NRLM Data</h3>
+                <div class="table-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="savedSearchInput" placeholder="Search saved data...">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="nrlm-table" id="savedNrlmTable">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-map-marker-alt"></i> State</th>
+                            <th><i class="fas fa-building"></i> District</th>
+                            <th><i class="fas fa-home"></i> Block</th>
+                            <th><i class="fas fa-village"></i> Grampanchayat</th>
+                            <th><i class="fas fa-map-pin"></i> Village</th>
+                            <th><i class="fas fa-users"></i> SHG Name</th>
+                            <th><i class="fas fa-user"></i> Member Name</th>
+                            <th><i class="fas fa-id-badge"></i> Member Code</th>
+                            <th><i class="fas fa-clock"></i> Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in nrlm_data %}
+                        <tr>
+                            <td>
+                                <span class="state-badge">{{ record[0] }}</span>
+                            </td>
+                            <td>{{ record[1] }}</td>
+                            <td>{{ record[2] }}</td>
+                            <td>{{ record[3] }}</td>
+                            <td>{{ record[4] }}</td>
+                            <td>
+                                <span class="shg-name">{{ record[5] }}</span>
+                            </td>
+                            <td>
+                                <strong>{{ record[6] }}</strong>
+                            </td>
+                            <td>
+                                <span class="member-code">{{ record[7] }}</span>
+                            </td>
+                            <td>
+                                <span class="date-info">
+                                    {{ record[8][:10] if record[8] else 'N/A' }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                {% if not nrlm_data %}
+                <div class="empty-state">
+                    <i class="fas fa-database"></i>
+                    <h3>No Saved NRLM Data</h3>
+                    <p>Use the location selector above to fetch and save SHG data from the NRLM website.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>Powered by Nexoplus Innovations Pvt Ltd</p>
+    </footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stateSelect = document.getElementById('stateSelect');
+    const districtSelect = document.getElementById('districtSelect');
+    const blockSelect = document.getElementById('blockSelect');
+    const grampanchayatSelect = document.getElementById('grampanchayatSelect');
+    const villageSelect = document.getElementById('villageSelect');
+    const fetchDataBtn = document.getElementById('fetchDataBtn');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const resultsSection = document.getElementById('resultsSection');
+    const loadingText = document.getElementById('loadingText');
+    const loadingSubtext = document.getElementById('loadingSubtext');
+    
+    let selectedData = {
+        state: null,
+        district: null,
+        block: null,
+        grampanchayat: null,
+        village: null
+    };
+    
+    // Load states on page load
+    loadStates();
+    
+    async function loadStates() {
+        try {
+            loadingText.textContent = 'Loading states...';
+            loadingSubtext.textContent = 'Fetching from NRLM website';
+            loadingOverlay.style.display = 'flex';
+            
+            const response = await fetch('/api/states');
+            const result = await response.json();
+            
+            if (result.success) {
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                result.states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.code;
+                    option.textContent = state.name;
+                    stateSelect.appendChild(option);
+                });
+            } else {
+                stateSelect.innerHTML = '<option value="">Error loading states</option>';
+                alert('Error loading states: ' + result.message);
+            }
+        } catch (error) {
+            stateSelect.innerHTML = '<option value="">Error loading states</option>';
+            alert('Error: ' + error.message);
+        } finally {
+            loadingOverlay.style.display = 'none';
+        }
+    }
+    
+    // State change handler
+    stateSelect.addEventListener('change', async function() {
+        const stateCode = this.value;
+        selectedData.state = stateCode;
+        
+        if (stateCode) {
+            const stateName = this.options[this.selectedIndex].text;
+            selectedData.stateName = stateName;
+            await loadDistricts(stateCode);
+        } else {
+            resetDropdowns(['district', 'block', 'grampanchayat', 'village']);
+        }
+    });
+    
+    // District change handler
+    districtSelect.addEventListener('change', async function() {
+        const districtCode = this.value;
+        selectedData.district = districtCode;
+        
+        if (districtCode) {
+            const districtName = this.options[this.selectedIndex].text;
+            selectedData.districtName = districtName;
+            await loadBlocks(selectedData.state, districtCode);
+        } else {
+            resetDropdowns(['block', 'grampanchayat', 'village']);
+        }
+    });
+    
+    // Block change handler
+    blockSelect.addEventListener('change', async function() {
+        const blockCode = this.value;
+        selectedData.block = blockCode;
+        
+        if (blockCode) {
+            const blockName = this.options[this.selectedIndex].text;
+            selectedData.blockName = blockName;
+            await loadGrampanchayats(selectedData.state, selectedData.district, blockCode);
+        } else {
+            resetDropdowns(['grampanchayat', 'village']);
+        }
+    });
+    
+    // Grampanchayat change handler
+    grampanchayatSelect.addEventListener('change', async function() {
+        const grampanchayatCode = this.value;
+        selectedData.grampanchayat = grampanchayatCode;
+        
+        if (grampanchayatCode) {
+            const grampanchayatName = this.options[this.selectedIndex].text;
+            selectedData.grampanchayatName = grampanchayatName;
+            await loadVillages(selectedData.state, selectedData.district, selectedData.block, grampanchayatCode);
+        } else {
+            resetDropdowns(['village']);
+        }
+    });
+    
+    // Village change handler
+    villageSelect.addEventListener('change', function() {
+        const villageCode = this.value;
+        selectedData.village = villageCode;
+        
+        if (villageCode) {
+            const villageName = this.options[this.selectedIndex].text;
+            selectedData.villageName = villageName;
+            fetchDataBtn.disabled = false;
+        } else {
+            fetchDataBtn.disabled = true;
+        }
+    });
+    
+    // Fetch data button handler
+    fetchDataBtn.addEventListener('click', async function() {
+        await fetchSHGData();
+    });
+    
+    async function loadDistricts(stateCode) {
+        try {
+            loadingText.textContent = 'Loading districts...';
+            loadingSubtext.textContent = 'Fetching from NRLM website';
+            loadingOverlay.style.display = 'flex';
+            
+            const response = await fetch(`/api/districts/${stateCode}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                districtSelect.innerHTML = '<option value="">Select District</option>';
+                result.districts.forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district.code;
+                    option.textContent = district.name;
+                    districtSelect.appendChild(option);
+                });
+                districtSelect.disabled = false;
+            } else {
+                districtSelect.innerHTML = '<option value="">Error loading districts</option>';
+                alert('Error loading districts: ' + result.message);
+            }
+        } catch (error) {
+            districtSelect.innerHTML = '<option value="">Error loading districts</option>';
+            alert('Error: ' + error.message);
+        } finally {
+            loadingOverlay.style.display = 'none';
+        }
+    }
+    
+    async function loadBlocks(stateCode, districtCode) {
+        try {
+            loadingText.textContent = 'Loading blocks...';
+            loadingSubtext.textContent = 'Fetching from NRLM website';
+            loadingOverlay.style.display = 'flex';
+            
+            const response = await fetch(`/api/blocks/${stateCode}/${districtCode}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                blockSelect.innerHTML = '<option value="">Select Block</option>';
+                result.blocks.forEach(block => {
+                    const option = document.createElement('option');
+                    option.value = block.code;
+                    option.textContent = block.name;
+                    blockSelect.appendChild(option);
+                });
+                blockSelect.disabled = false;
+            } else {
+                blockSelect.innerHTML = '<option value="">Error loading blocks</option>';
+                alert('Error loading blocks: ' + result.message);
+            }
+        } catch (error) {
+            blockSelect.innerHTML = '<option value="">Error loading blocks</option>';
+            alert('Error: ' + error.message);
+        } finally {
+            loadingOverlay.style.display = 'none';
+        }
+    }
+    
+    async function loadGrampanchayats(stateCode, districtCode, blockCode) {
+        try {
+            loadingText.textContent = 'Loading grampanchayats...';
+            loadingSubtext.textContent = 'Fetching from NRLM website';
+            loadingOverlay.style.display = 'flex';
+            
+            const response = await fetch(`/api/grampanchayats/${stateCode}/${districtCode}/${blockCode}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                grampanchayatSelect.innerHTML = '<option value="">Select Grampanchayat</option>';
+                result.grampanchayats.forEach(grampanchayat => {
+                    const option = document.createElement('option');
+                    option.value = grampanchayat.code;
+                    option.textContent = grampanchayat.name;
+                    grampanchayatSelect.appendChild(option);
+                });
+                grampanchayatSelect.disabled = false;
+            } else {
+                grampanchayatSelect.innerHTML = '<option value="">Error loading grampanchayats</option>';
+                alert('Error loading grampanchayats: ' + result.message);
+            }
+        } catch (error) {
+            grampanchayatSelect.innerHTML = '<option value="">Error loading grampanchayats</option>';
+            alert('Error: ' + error.message);
+        } finally {
+            loadingOverlay.style.display = 'none';
+        }
+    }
+    
+    async function loadVillages(stateCode, districtCode, blockCode, grampanchayatCode) {
+        try {
+            loadingText.textContent = 'Loading villages...';
+            loadingSubtext.textContent = 'Fetching from NRLM website';
+            loadingOverlay.style.display = 'flex';
+            
+            const response = await fetch(`/api/villages/${stateCode}/${districtCode}/${blockCode}/${grampanchayatCode}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                villageSelect.innerHTML = '<option value="">Select Village</option>';
+                result.villages.forEach(village => {
+                    const option = document.createElement('option');
+                    option.value = village.code;
+                    option.textContent = village.name;
+                    villageSelect.appendChild(option);
+                });
+                villageSelect.disabled = false;
+            } else {
+                villageSelect.innerHTML = '<option value="">Error loading villages</option>';
+                alert('Error loading villages: ' + result.message);
+            }
+        } catch (error) {
+            villageSelect.innerHTML = '<option value="">Error loading villages</option>';
+            alert('Error: ' + error.message);
+        } finally {
+            loadingOverlay.style.display = 'none';
+        }
+    }
+    
+    async function fetchSHGData() {
+        try {
+            loadingText.textContent = 'Fetching SHG data...';
+            loadingSubtext.textContent = 'Getting member information from NRLM website';
+            loadingOverlay.style.display = 'flex';
+            
+            const response = await fetch('/api/shg-members', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(selectedData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                displaySHGData(result.members);
+                if (result.new_records_saved > 0) {
+                    alert(`Success! Found ${result.members.length} SHG members. ${result.new_records_saved} new records saved to database.`);
+                } else {
+                    alert(`Success! Found ${result.members.length} SHG members.`);
+                }
+            } else {
+                alert('Error fetching SHG data: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            loadingOverlay.style.display = 'none';
+        }
+    }
+    
+    function displaySHGData(members) {
+        const tableBody = document.getElementById('nrlmTableBody');
+        const noDataMessage = document.getElementById('noDataMessage');
+        
+        if (members.length > 0) {
+            tableBody.innerHTML = '';
+            members.forEach(member => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="shg-name">${member.shg_name}</span></td>
+                    <td><strong>${member.member_name}</strong></td>
+                    <td><span class="member-code">${member.member_code}</span></td>
+                `;
+                tableBody.appendChild(row);
+            });
+            noDataMessage.style.display = 'none';
+        } else {
+            tableBody.innerHTML = '';
+            noDataMessage.style.display = 'block';
+        }
+        
+        resultsSection.style.display = 'block';
+    }
+    
+    function resetDropdowns(dropdowns) {
+        dropdowns.forEach(dropdown => {
+            const select = document.getElementById(dropdown + 'Select');
+            if (select) {
+                select.innerHTML = `<option value="">Select ${dropdown.charAt(0).toUpperCase() + dropdown.slice(1)} First</option>`;
+                select.disabled = true;
+                select.value = '';
+            }
+        });
+        fetchDataBtn.disabled = true;
+    }
+    
+    // Search functionality for saved data
+    const savedSearchInput = document.getElementById('savedSearchInput');
+    savedSearchInput.addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#savedNrlmTable tbody tr');
+        
+        rows.forEach(row => {
+            const cells = row.getElementsByTagName('td');
+            let found = false;
+            
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                    found = true;
+                    break;
+                }
+            }
+            
+            row.style.display = found ? '' : 'none';
+        });
+    });
+});
+</script>
+<script src="{{ url_for('static', filename='js/improvements.js') }}"></script>
+{% endblock %}

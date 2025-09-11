@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="left-section">
+        <div class="background-overlay">
+            <div class="logo-section">
+                <div class="main-logo">
+                    <div class="logo-icon">G</div>
+                </div>
+                <h1 class="main-title">Data Explorer</h1>
+                <p class="greeting">Good Morning! Welcome!</p>
+            </div>
+            <div class="footer-text">
+                <p>Powered by Nexoplus Innovations Pvt Ltd</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="right-section">
+        <div class="form-card">
+            <div class="form-header">
+                <div class="form-logo">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h2>Welcome Back</h2>
+                <p>Login to Data Explorer</p>
+            </div>
+            
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <span>KYC Users: Use your contact number as username and password</span>
+            </div>
+            
+            <div class="logout-message">
+                <span>You have been logged out.</span>
+                <button class="close-btn">&times;</button>
+            </div>
+            
+            <form method="POST" class="login-form">
+                <div class="input-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" name="username" placeholder="Username" required>
+                    <i class="fas fa-key dropdown-icon"></i>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                
+                <button type="submit" class="login-btn">
+                    <span>Login</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+            
+            <div class="signup-link">
+                <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a></p>
+            </div>
+            
+            <div class="separator">
+                <span>or</span>
+            </div>
+            
+            <button class="google-btn">
+                <i class="fab fa-google"></i>
+                <span>Login with Google</span>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
