@@ -464,12 +464,10 @@ def signup():
     return render_template('signup.html')
 
 @app.route('/dashboard')
-@login_required
 def dashboard():
     return render_template('dashboard.html', username=session['username'])
 
 @app.route('/colleges')
-@login_required
 def colleges():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -480,7 +478,6 @@ def colleges():
     return render_template('colleges.html', colleges=colleges_data)
 
 @app.route('/in-data')
-@login_required
 def in_data():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -496,7 +493,6 @@ def in_data():
 
 # API endpoints for dropdowns
 @app.route('/api/states')
-@login_required
 def api_states():
     try:
         scraper = WorkingNRLMScraper()
@@ -510,7 +506,6 @@ def api_states():
         return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/districts/<state_code>')
-@login_required
 def api_districts(state_code):
     try:
         scraper = WorkingNRLMScraper()
@@ -523,7 +518,6 @@ def api_districts(state_code):
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
 @app.route('/api/blocks/<state_code>/<district_code>')
-@login_required
 def api_blocks(state_code, district_code):
     try:
         scraper = WorkingNRLMScraper()
@@ -537,7 +531,6 @@ def api_blocks(state_code, district_code):
         return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/grampanchayats/<state_code>/<district_code>/<block_code>')
-@login_required
 def api_grampanchayats(state_code, district_code, block_code):
     try:
         scraper = WorkingNRLMScraper()
@@ -551,7 +544,6 @@ def api_grampanchayats(state_code, district_code, block_code):
         return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/villages/<state_code>/<district_code>/<block_code>/<grampanchayat_code>')
-@login_required
 def api_villages(state_code, district_code, block_code, grampanchayat_code):
     try:
         scraper = WorkingNRLMScraper()
@@ -565,7 +557,6 @@ def api_villages(state_code, district_code, block_code, grampanchayat_code):
         return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/shg-members', methods=['POST'])
-@login_required
 def api_shg_members():
     try:
         data = request.get_json()
@@ -612,7 +603,6 @@ def api_shg_members():
         return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/import-colleges', methods=['POST'])
-@login_required
 def import_colleges():
     try:
         # Scrape data from website
@@ -636,7 +626,6 @@ def import_colleges():
         return jsonify({'success': False, 'message': f'Error: {str(e)}'})
 
 @app.route('/download-colleges-csv')
-@login_required
 def download_colleges_csv():
     """Download colleges data as CSV"""
     colleges_data = get_colleges_data()
@@ -659,7 +648,6 @@ def download_colleges_csv():
     return response
 
 @app.route('/download-colleges-excel')
-@login_required
 def download_colleges_excel():
     """Download colleges data as Excel"""
     colleges_data = get_colleges_data()
@@ -684,7 +672,6 @@ def download_colleges_excel():
     return response
 
 @app.route('/download-nrlm-csv')
-@login_required
 def download_nrlm_csv():
     """Download NRLM data as CSV"""
     nrlm_data = get_nrlm_data()
@@ -707,7 +694,6 @@ def download_nrlm_csv():
     return response
 
 @app.route('/download-nrlm-excel')
-@login_required
 def download_nrlm_excel():
     """Download NRLM data as Excel"""
     nrlm_data = get_nrlm_data()
@@ -742,7 +728,6 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 @app.route('/edu-list-tn')
-@login_required
 def edu_list_tn():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -757,7 +742,6 @@ def edu_list_tn():
     return render_template('edu_list_tn.html', edu_data=edu_data)
 
 @app.route('/refresh-dce-data')
-@login_required
 def refresh_dce_data():
     try:
         from dce_scraper_improved import DCEScraperImproved
@@ -774,7 +758,6 @@ def refresh_dce_data():
     return redirect(url_for('edu_list_tn'))
 
 @app.route('/download-dce-csv')
-@login_required
 def download_dce_csv():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -797,7 +780,6 @@ def download_dce_csv():
     return response
 
 @app.route('/download-dce-excel')
-@login_required
 def download_dce_excel():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -1059,7 +1041,6 @@ class WorkingNRLMScraper:
             return []
 
 @app.route('/iia-list')
-@login_required
 def iia_list():
     # Sample IIA data
     iia_data = [
@@ -1072,7 +1053,6 @@ def iia_list():
     return render_template('iia_list.html', iia_data=iia_data)
 
 @app.route('/creda-list')
-@login_required
 def creda_list():
     # Sample CREDAI data
     creda_data = [
@@ -1085,7 +1065,6 @@ def creda_list():
     return render_template('creda_list.html', creda_data=creda_data)
 
 @app.route('/ccmc-con')
-@login_required
 def ccmc_con():
     # Sample CCMC data
     ccmc_data = [
