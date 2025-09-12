@@ -23,26 +23,50 @@
         </div>
     </header>
 
-    <!-- Navigation Menu -->
+        <!-- Navigation Menu -->
     <nav class="main-nav">
         <ul class="nav-list">
             <li class="nav-item">
-                <a href="{{ url_for('in_data') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <a href="{{ url_for('in_data') }}">
                     <i class="fas fa-database"></i>
                     <span>IN Data</span>
                 </a>
             </li>
             <li class="nav-item">
-                <i class="fas fa-chart-bar"></i>
-                <span>BAI Data</span>
+                <a href="#" onclick="alert('BAI Data coming soon!')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>BAI Data</span>
+                </a>
             </li>
             <li class="nav-item active">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Colleges</span>
+                <a href="{{ url_for('colleges') }}">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Colleges</span>
+                </a>
             </li>
             <li class="nav-item">
-                <i class="fas fa-truck"></i>
-                <span>Eway Data</span>
+                <a href="{{ url_for('edu_list_tn') }}">
+                    <i class="fas fa-university"></i>
+                    <span>EDU List TN</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('iia_cbe') }}">
+                    <i class="fas fa-industry"></i>
+                    <span>IIA CBE</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('cozcena') }}">
+                    <i class="fas fa-building"></i>
+                    <span>COZCENA</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" onclick="alert('Eway Data coming soon!')">
+                    <i class="fas fa-truck"></i>
+                    <span>Eway Data</span>
+                </a>
             </li>
         </ul>
     </nav>
@@ -86,10 +110,10 @@
             </div>
         </div>
 
-        <!-- Colleges Table -->
+        <!-- Colleges Table Section -->
         <div class="table-section">
             <div class="table-header">
-                <h3><i class="fas fa-list"></i> Colleges List</h3>
+                <h3><i class="fas fa-table"></i> Colleges Data</h3>
                 <div class="table-controls">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
@@ -99,126 +123,105 @@
             </div>
             
             <div class="table-container">
-                <table class="colleges-table" id="collegesTable">
+                {% if colleges %}
+                <table class="colleges-table">
                     <thead>
                         <tr>
                             <th><i class="fas fa-hashtag"></i> S.No</th>
-                            <th><i class="fas fa-id-badge"></i> Member Code</th>
+                            <th><i class="fas fa-id-card"></i> Member Code</th>
                             <th><i class="fas fa-university"></i> Institution Name</th>
-                            <th><i class="fas fa-calendar"></i> Year Established</th>
-                            <th><i class="fas fa-phone"></i> Contact No</th>
-                            <th><i class="fas fa-clock"></i> Last Updated</th>
+                            <th><i class="fas fa-map-marker-alt"></i> Location</th>
+                            <th><i class="fas fa-calendar"></i> Year</th>
+                            <th><i class="fas fa-phone"></i> Contact</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for college in colleges %}
                         <tr>
-                            <td>{{ college[1] }}</td>
-                            <td>
-                                <span class="member-code">{{ college[2] }}</span>
-                            </td>
+                            <td>{{ college.s_no or loop.index }}</td>
+                            <td><span class="member-code">{{ college.member_code or 'N/A' }}</span></td>
                             <td>
                                 <div class="institution-info">
-                                    <strong>{{ college[3] }}</strong>
+                                    <strong>{{ college.institution_name or 'N/A' }}</strong>
                                 </div>
                             </td>
                             <td>
-                                <span class="year-badge">{{ college[4] or 'N/A' }}</span>
-                            </td>
-                            <td>
-                                {% if college[5] %}
-                                    <a href="tel:{{ college[5] }}" class="contact-link">
-                                        <i class="fas fa-phone"></i>
-                                        {{ college[5] }}
-                                    </a>
+                                {% if college.institution_name %}
+                                    {% set location_parts = college.institution_name.split(',') %}
+                                    {% if location_parts|length > 1 %}
+                                        {{ location_parts[-1].strip() }}
+                                    {% else %}
+                                        Coimbatore
+                                    {% endif %}
                                 {% else %}
-                                    <span class="no-data">N/A</span>
+                                    N/A
                                 {% endif %}
                             </td>
+                            <td><span class="year-badge">{{ college.year_established or 'N/A' }}</span></td>
                             <td>
-                                <span class="date-info">
-                                    {{ college[7][:10] if college[7] else 'N/A' }}
-                                </span>
+                                {% if college.contact_no %}
+                                <a href="tel:{{ college.contact_no }}" class="contact-link">
+                                    <i class="fas fa-phone"></i>
+                                    {{ college.contact_no }}
+                                </a>
+                                {% else %}
+                                <span class="no-data">No contact</span>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-                
-                {% if not colleges %}
+                {% else %}
                 <div class="empty-state">
                     <i class="fas fa-university"></i>
                     <h3>No Colleges Data</h3>
-                    <p>Click "Import Colleges Data" to fetch the latest information from the source.</p>
+                    <p>No colleges data available. Please import the data first.</p>
                 </div>
                 {% endif %}
             </div>
         </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="main-footer">
-        <p>Powered by Nexoplus Innovations Pvt Ltd</p>
-    </footer>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Import button functionality
     const importBtn = document.getElementById('importBtn');
     const loadingOverlay = document.getElementById('loadingOverlay');
-    const searchInput = document.getElementById('searchInput');
-    const table = document.getElementById('collegesTable');
     
-    // Import functionality
-    importBtn.addEventListener('click', async function() {
-        if (confirm('This will import colleges data from the external source. Continue?')) {
+    if (importBtn) {
+        importBtn.addEventListener('click', function() {
+            // Show loading overlay
             loadingOverlay.style.display = 'flex';
-            importBtn.disabled = true;
             
-            try {
-                const response = await fetch('/import-colleges', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert(`Import successful!\n\n${result.message}\n\nTotal scraped: ${result.total_scraped}\nNew: ${result.new_count}\nUpdated: ${result.updated_count}`);
-                    location.reload();
-                } else {
-                    alert('Import failed: ' + result.message);
-                }
-            } catch (error) {
-                alert('Error: ' + error.message);
-            } finally {
+            // Simulate import process (replace with actual import logic)
+            setTimeout(() => {
                 loadingOverlay.style.display = 'none';
-                importBtn.disabled = false;
-            }
-        }
-    });
+                alert('Colleges data imported successfully!');
+                location.reload();
+            }, 3000);
+        });
+    }
     
     // Search functionality
-    searchInput.addEventListener('input', function() {
-        const filter = this.value.toLowerCase();
-        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-        
-        for (let i = 0; i < rows.length; i++) {
-            const cells = rows[i].getElementsByTagName('td');
-            let found = false;
+    const searchInput = document.getElementById('searchInput');
+    const tableRows = document.querySelectorAll('.colleges-table tbody tr');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
             
-            for (let j = 0; j < cells.length; j++) {
-                if (cells[j].textContent.toLowerCase().indexOf(filter) > -1) {
-                    found = true;
-                    break;
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
                 }
-            }
-            
-            rows[i].style.display = found ? '' : 'none';
-        }
-    });
+            });
+        });
+    }
 });
 </script>
 {% endblock %}

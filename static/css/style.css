@@ -2026,3 +2026,424 @@ body {
         max-width: 250px;
     }
 }
+
+/* Enhanced Navigation Menu - Clean & Professional */
+.main-nav {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    border-bottom: 1px solid #e1e5e9;
+    padding: 0.8rem 2rem;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.nav-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.5rem;
+    align-items: center;
+    max-width: 1200px;
+    width: 100%;
+    justify-content: center;
+}
+
+.nav-item {
+    position: relative;
+    margin: 0;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 10px;
+}
+
+.nav-item:hover::before {
+    opacity: 0.1;
+}
+
+.nav-item.active::before {
+    opacity: 1;
+}
+
+.nav-item a {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 12px 18px;
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    font-size: 14px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.nav-item:hover a {
+    color: #764ba2;
+    transform: translateY(-1px);
+}
+
+.nav-item.active a {
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+}
+
+.nav-item a i {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.nav-item:hover a i {
+    transform: scale(1.1);
+}
+
+.nav-item.active a i {
+    transform: scale(1.1);
+}
+
+.nav-item a span {
+    font-size: 14px;
+    letter-spacing: 0.3px;
+}
+
+/* Responsive Navigation */
+@media (max-width: 1024px) {
+    .nav-list {
+        gap: 0.3rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .nav-item a {
+        padding: 10px 14px;
+        min-width: 100px;
+        font-size: 13px;
+    }
+    
+    .nav-item a i {
+        font-size: 14px;
+        width: 18px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-nav {
+        padding: 0.6rem 1rem;
+    }
+    
+    .nav-list {
+        gap: 0.2rem;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding: 0 1rem;
+    }
+    
+    .nav-item a {
+        padding: 8px 12px;
+        min-width: 80px;
+        font-size: 12px;
+    }
+    
+    .nav-item a span {
+        display: none;
+    }
+    
+    .nav-item a i {
+        font-size: 16px;
+        width: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-list {
+        gap: 0.1rem;
+    }
+    
+    .nav-item a {
+        padding: 6px 10px;
+        min-width: 60px;
+    }
+}
+
+/* Enhanced Header Styling */
+.main-header {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    box-shadow: 0 2px 16px rgba(80,80,160,0.08);
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.logo .logo-icon {
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+}
+
+.app-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 0.5px;
+    margin: 0;
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.welcome-text {
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 8px 16px;
+    background: #f8f9fa;
+    color: #666;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid #e1e5e9;
+}
+
+.logout-btn:hover {
+    background: #e9ecef;
+    color: #333;
+    transform: translateY(-1px);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(118, 75, 162, 0.3);
+}
+
+.menu-icon {
+    font-size: 20px;
+    color: #666;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.menu-icon:hover {
+    background: #f8f9fa;
+    color: #333;
+}
+
+/* Enhanced Content Styling */
+.main-content {
+    background: linear-gradient(135deg, #f4f6fb 0%, #f8f9ff 100%);
+    min-height: calc(100vh - 140px);
+}
+
+.content-header h2 {
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.content-header h2 i {
+    color: #764ba2;
+    font-size: 1.5rem;
+}
+
+/* Enhanced Form Sections */
+.form-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid rgba(118, 75, 162, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.form-section:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+/* Enhanced Buttons */
+.download-btn {
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.csv-btn {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.csv-btn:hover {
+    background: linear-gradient(135deg, #218838, #1ea085);
+}
+
+.excel-btn {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+}
+
+.excel-btn:hover {
+    background: linear-gradient(135deg, #0056b3, #004085);
+}
+
+/* Enhanced Stats */
+.stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #f8f9ff, #ffffff);
+    border-radius: 10px;
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+    border: 1px solid #e1e5e9;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.stat-item i {
+    color: #764ba2;
+    font-size: 16px;
+}
+
+/* Enhanced Footer */
+.main-footer {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    border-top: 1px solid #e1e5e9;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    color: #888;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Smooth Animations */
+* {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus States for Accessibility */
+.nav-item a:focus,
+.download-btn:focus,
+.logout-btn:focus {
+    outline: 2px solid #764ba2;
+    outline-offset: 2px;
+}
+
+/* Loading States */
+.nav-item.loading a {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.nav-item.loading a::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #764ba2;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -471,35 +471,16 @@ def dashboard():
 def colleges():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT id, s_no, member_code, institution_name, year_established, contact_no, created_at FROM colleges ORDER BY institution_name')
+    cursor.execute('SELECT * FROM colleges ORDER BY institution_name')
     colleges_data = cursor.fetchall()
     conn.close()
     
-    # Convert tuples to dictionaries for easier template access
-    colleges_list = []
-    for row in colleges_data:
-        college_dict = {
-            'id': row[0],
-            's_no': row[1],
-            'member_code': row[2],
-            'institution_name': row[3],
-            'year_established': row[4],
-            'contact_no': row[5],
-            'created_at': row[6]
-        }
-        colleges_list.append(college_dict)
-    
-    return render_template('colleges.html', colleges=colleges_list)
+    return render_template('colleges.html', colleges=colleges_data)
 
 @app.route('/iia-cbe')
 def iia_cbe():
     """IIA Coimbatore data page"""
     return render_template('iia_cbe.html')
-
-@app.route('/cozcena')
-def cozcena():
-    """COZCENA - Covai Zone Civil Engineers Association data page"""
-    return render_template('cozcena.html')
 
 @app.route('/in-data')
 def in_data():

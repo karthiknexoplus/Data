@@ -23,52 +23,50 @@
         </div>
     </header>
 
-    <!-- Navigation Menu -->
+        <!-- Navigation Menu -->
     <nav class="main-nav">
         <ul class="nav-list">
             <li class="nav-item">
-                <a href="{{ url_for('in_data') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <a href="{{ url_for('in_data') }}">
                     <i class="fas fa-database"></i>
                     <span>IN Data</span>
                 </a>
             </li>
             <li class="nav-item">
-                <i class="fas fa-chart-bar"></i>
-                <span>BAI Data</span>
+                <a href="#" onclick="alert('BAI Data coming soon!')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>BAI Data</span>
+                </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('colleges') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <a href="{{ url_for('colleges') }}">
                     <i class="fas fa-graduation-cap"></i>
                     <span>Colleges</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('edu_list_tn') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <a href="{{ url_for('edu_list_tn') }}">
                     <i class="fas fa-university"></i>
-                    <span>EDU list TN</span>
-                </a>
-            </li>
-            <li class="nav-item active">
-                <a href="{{ url_for('iia_list') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
-                    <i class="fas fa-drafting-compass"></i>
-                    <span>IIA List</span>
+                    <span>EDU List TN</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('creda_list') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <a href="{{ url_for('iia_cbe') }}">
+                    <i class="fas fa-industry"></i>
+                    <span>IIA CBE</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('cozcena') }}">
                     <i class="fas fa-building"></i>
-                    <span>CREDAI</span>
+                    <span>COZCENA</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('ccmc_con') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
-                    <i class="fas fa-city"></i>
-                    <span>CCMC Con</span>
+                <a href="#" onclick="alert('Eway Data coming soon!')">
+                    <i class="fas fa-truck"></i>
+                    <span>Eway Data</span>
                 </a>
-            </li>
-            <li class="nav-item">
-                <i class="fas fa-truck"></i>
-                <span>Eway Data</span>
             </li>
         </ul>
     </nav>

@@ -27,7 +27,7 @@
     <nav class="main-nav">
         <ul class="nav-list">
             <li class="nav-item">
-                <a href="{{ url_for('in_data') }}" class="nav-item" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <a href="{{ url_for('in_data') }}" class="nav-item active" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
                     <i class="fas fa-database"></i>
                     <span>IN Data</span>
                 </a>
@@ -37,30 +37,21 @@
                 <span>BAI Data</span>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('colleges') }}" class="nav-item" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <a href="{{ url_for('colleges') }}" class="nav-item active" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
                     <i class="fas fa-graduation-cap"></i>
                     <span>Colleges</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('edu_list_tn') }}" class="nav-item" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <a href="{{ url_for('edu_list_tn') }}" class="nav-item active" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
                     <i class="fas fa-university"></i>
                     <span>EDU list TN</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('iia_cbe') }}" class="nav-item" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <a href="{{ url_for('iia_cbe') }}" class="nav-item active" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
                     <i class="fas fa-industry"></i>
                     <span>IIA Cbe</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                        </li>                            
-            <li class="nav-item">
-                            <li class="nav-item">
-                <a href="{{ url_for('cozcena') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
-                    <i class="fas fa-building"></i>
-                    <span>COZCENA</span>
                 </a>
             </li>
             <li class="nav-item">

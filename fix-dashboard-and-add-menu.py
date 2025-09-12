@@ -1,83 +1,75 @@
-{% extends "base.html" %}
+import re
 
-{% block content %}
-<div class="dashboard-container">
-    <!-- Header Navigation -->
-    <header class="main-header">
-        <div class="header-left">
-            <div class="logo">
-                <div class="logo-icon">G</div>
-            </div>
-            <h1 class="app-title">Data Explorer</h1>
-        </div>
-        <div class="header-right">
-            <div class="user-info">
-                <span class="welcome-text">Welcome, {{ username }}</span>
-                <a href="{{ url_for('logout') }}" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </a>
-            </div>
-            <div class="user-avatar">K</div>
-            <div class="menu-icon">⋮</div>
-        </div>
-    </header>
-
-    <!-- Navigation Menu -->
-    <!-- Navigation Menu -->
-    <nav class="main-nav">
-        <ul class="nav-list">
-            <li class="nav-item active">
-                <a href="{{ url_for('in_data') }}">
-                    <i class="fas fa-database"></i>
-                    <span>IN Data</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" onclick="alert('BAI Data coming soon!')">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>BAI Data</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('colleges') }}">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span>Colleges</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('edu_list_tn') }}">
-                    <i class="fas fa-university"></i>
-                    <span>EDU List TN</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('iia_cbe') }}">
+def fix_dashboard_and_add_menu():
+    """Fix dashboard to show NRLM data and add IIA Cbe menu"""
+    
+    # Read the current dashboard template
+    with open('templates/dashboard.html', 'r') as f:
+        content = f.read()
+    
+    # Add IIA Cbe menu item
+    old_nav = '''            <li class="nav-item">
+                <i class="fas fa-truck"></i>
+                <span>Eway Data</span>
+            </li>'''
+    
+    new_nav = '''            <li class="nav-item">
+                <a href="{{ url_for('iia_cbe') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
                     <i class="fas fa-industry"></i>
-                    <span>IIA CBE</span>
+                    <span>IIA Cbe</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('cozcena') }}">
-                    <i class="fas fa-building"></i>
-                    <span>COZCENA</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" onclick="alert('Eway Data coming soon!')">
-                    <i class="fas fa-truck"></i>
-                    <span>Eway Data</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="content-header">
-            <h2><i class="fas fa-database"></i> IN Data</h2>
-        </div>
-
-        <!-- NRLM Data Section -->
+                <i class="fas fa-truck"></i>
+                <span>Eway Data</span>
+            </li>'''
+    
+    content = content.replace(old_nav, new_nav)
+    
+    # Replace the Add Location form with proper NRLM data interface
+    old_content = '''        <!-- Add Location Form -->
+        <div class="form-section">
+            <div class="form-grid">
+                <div class="form-column">
+                    <div class="input-group">
+                        <i class="fas fa-building"></i>
+                        <input type="text" placeholder="Name" name="name">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" placeholder="ORG ID (e.g. PGSH)" name="org_id">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-credit-card"></i>
+                        <input type="text" placeholder="Acquirer ID (e.g. 727274)" name="acquirer_id">
+                    </div>
+                </div>
+                <div class="form-column">
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" placeholder="Address" name="address">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-hashtag"></i>
+                        <input type="text" placeholder="Plaza ID (e.g. 712764)" name="plaza_id">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-building"></i>
+                        <input type="text" placeholder="Agency ID (e.g. TCABO)" name="agency_id">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-globe"></i>
+                        <input type="text" placeholder="Geo Code (e.g. 11.0185,76.9778)" name="geo_code">
+                    </div>
+                </div>
+            </div>
+            <button class="add-btn">
+                <i class="fas fa-plus"></i>
+                Add Location
+            </button>
+        </div>'''
+    
+    new_content = '''        <!-- NRLM Data Section -->
         <div class="content-header">
             <div class="header-content">
                 <h2><i class="fas fa-database"></i> NRLM Data (IN Data)</h2>
@@ -211,45 +203,15 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div>'''
+    
+    content = content.replace(old_content, new_content)
+    
+    # Write the updated content
+    with open('templates/dashboard.html', 'w') as f:
+        f.write(content)
+    
+    print("✅ Fixed dashboard to show NRLM data and added IIA Cbe menu!")
 
-        <!-- Saved Locations Table -->
-        <div class="table-section">
-            <h3><i class="fas fa-list"></i> Saved Locations</h3>
-            <div class="table-container">
-                <table class="locations-table">
-                    <thead>
-                        <tr>
-                            <th><i class="fas fa-building"></i> Name</th>
-                            <th><i class="fas fa-map-marker-alt"></i> Address</th>
-                            <th>Site ID</th>
-                            <th>ORG ID</th>
-                            <th>Plaza ID</th>
-                            <th>Agency ID</th>
-                            <th>Acquirer ID</th>
-                            <th>Geo Co</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>PGS HOSPITAL</td>
-                            <td>COIMBATORE</td>
-                            <td>SITE001</td>
-                            <td>PGSH</td>
-                            <td>712764</td>
-                            <td>TCABO</td>
-                            <td>727274</td>
-                            <td>11.0185,</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="main-footer">
-        <p>Powered by Nexoplus Innovations Pvt Ltd</p>
-    </footer>
-</div>
-{% endblock %}
+if __name__ == "__main__":
+    fix_dashboard_and_add_menu()
