@@ -1,0 +1,597 @@
+{
+  "scraped_at": "2025-09-12T09:01:35.068431",
+  "source": "CREDAI Coimbatore",
+  "total_records": 98,
+  "data": {
+    "members": [
+      {
+        "name": "Aalayam Foundation Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063006"
+      },
+      {
+        "name": "Abhinitha Foundation Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063096"
+      },
+      {
+        "name": "Ananya Shelters Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063115"
+      },
+      {
+        "name": "Arima Constructions Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063144"
+      },
+      {
+        "name": "Brookefields Estates Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063170"
+      },
+      {
+        "name": "Casa Grande Coimbatore Llp",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063182"
+      },
+      {
+        "name": "Chathamkulam Projects And Developers Pvt.ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063203"
+      },
+      {
+        "name": "Coral Crest Builders",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063217"
+      },
+      {
+        "name": "Cordon Bleu Properties & Infrastructure Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063228"
+      },
+      {
+        "name": "DAC Developers Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063243"
+      },
+      {
+        "name": "Dhiya Foundation Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063255"
+      },
+      {
+        "name": "Diamond City Developers (India) Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063268"
+      },
+      {
+        "name": "Elysium Real Properties Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063280"
+      },
+      {
+        "name": "Fairyland Foundations Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063293"
+      },
+      {
+        "name": "Foundation One Infrastructures P Ltd.",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063306"
+      },
+      {
+        "name": "Globuse Realtors Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063319"
+      },
+      {
+        "name": "Gowtham Housing Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063329"
+      },
+      {
+        "name": "Green Field Housing India Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063343"
+      },
+      {
+        "name": "India Builders (Chennai) Limited",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063373"
+      },
+      {
+        "name": "Infinium Developers Llp",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063393"
+      },
+      {
+        "name": "Jagannaath Properties",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063404"
+      },
+      {
+        "name": "Jain Housing & Constructions Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063414"
+      },
+      {
+        "name": "KRC Housing & Infrastructure Co",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063425"
+      },
+      {
+        "name": "Mayflower Enterprises Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063453"
+      },
+      {
+        "name": "Merestone Properties Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063465"
+      },
+      {
+        "name": "Mount Housing & Infrastructure Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063476"
+      },
+      {
+        "name": "Nithya Estate Developers India Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063485"
+      },
+      {
+        "name": "Patteeswara Developers India Private Limited",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063500"
+      },
+      {
+        "name": "PNR Prime Realty Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063512"
+      },
+      {
+        "name": "Promag Foundations & Structures Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063538"
+      },
+      {
+        "name": "Prozone Palms (Alliance Mall Developers Pvt Ltd)",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063549"
+      },
+      {
+        "name": "Puravankara Projects Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063560"
+      },
+      {
+        "name": "Purnaya developers pvt ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063570"
+      },
+      {
+        "name": "Radiant Real Properties India Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063580"
+      },
+      {
+        "name": "Rajadurai Constructions Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063596"
+      },
+      {
+        "name": "Ramani Realtors Pvt Limited",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063607"
+      },
+      {
+        "name": "Ravi Murugaa Constructions Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063617"
+      },
+      {
+        "name": "Renaatus Projects Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063627"
+      },
+      {
+        "name": "RKS Builders LLP",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063649"
+      },
+      {
+        "name": "RMV Builders",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063662"
+      },
+      {
+        "name": "RR Housing (India) Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063675"
+      },
+      {
+        "name": "SAI UVR Properties Private Limited",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063694"
+      },
+      {
+        "name": "Sakthi Constructions (India) Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063705"
+      },
+      {
+        "name": "Samridhi Unique Spaces LLP",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063732"
+      },
+      {
+        "name": "Samsurya Constructions Private Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063743"
+      },
+      {
+        "name": "Shriram Properties (Coimbatore) Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063764"
+      },
+      {
+        "name": "Sobha Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063773"
+      },
+      {
+        "name": "Sree Daksha Propety Developers(India) Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063787"
+      },
+      {
+        "name": "Sree Dharma Realtors",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063804"
+      },
+      {
+        "name": "Sreevatsa Real Estates Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063816"
+      },
+      {
+        "name": "Sri Raghavendra Constructions",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063838"
+      },
+      {
+        "name": "Sri Subiksham Builders",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063848"
+      },
+      {
+        "name": "Srivari Infrastructure Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063858"
+      },
+      {
+        "name": "Srivari Property Developers",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063870"
+      },
+      {
+        "name": "Sukra Developers Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063880"
+      },
+      {
+        "name": "TNCD Llp",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063890"
+      },
+      {
+        "name": "Trisquare Properties Private Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063900"
+      },
+      {
+        "name": "Triumph Realtors India Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063909"
+      },
+      {
+        "name": "Vakaman Developers India Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063930"
+      },
+      {
+        "name": "Vascon Engineering Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063940"
+      },
+      {
+        "name": "Vrindhavana Properties Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063955"
+      },
+      {
+        "name": "VSK Housing India",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.063965"
+      },
+      {
+        "name": "Aalayam Foundation Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067508"
+      },
+      {
+        "name": "Abhinitha Foundation Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067534"
+      },
+      {
+        "name": "Ananya Shelters Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067548"
+      },
+      {
+        "name": "Arima Constructions Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067564"
+      },
+      {
+        "name": "Brookefields Estates Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067586"
+      },
+      {
+        "name": "Chathamkulam Projects And Developers Pvt.ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067618"
+      },
+      {
+        "name": "Cordon Bleu Properties & Infrastructure Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067638"
+      },
+      {
+        "name": "DAC Developers Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067650"
+      },
+      {
+        "name": "Dhiya Foundation Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067662"
+      },
+      {
+        "name": "Diamond City Developers (India) Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067685"
+      },
+      {
+        "name": "Elysium Real Properties Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067696"
+      },
+      {
+        "name": "Fairyland Foundations Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067721"
+      },
+      {
+        "name": "Globuse Realtors Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067752"
+      },
+      {
+        "name": "Gowtham Housing Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067764"
+      },
+      {
+        "name": "Green Field Housing India Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067776"
+      },
+      {
+        "name": "Mayflower Enterprises Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067849"
+      },
+      {
+        "name": "Merestone Properties Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067862"
+      },
+      {
+        "name": "Nithya Estate Developers India Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067881"
+      },
+      {
+        "name": "Promag Foundations & Structures Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067921"
+      },
+      {
+        "name": "Prozone Palms (Alliance Mall Developers Pvt Ltd)",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067933"
+      },
+      {
+        "name": "Purnaya developers pvt ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067952"
+      },
+      {
+        "name": "Radiant Real Properties India Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067965"
+      },
+      {
+        "name": "Rajadurai Constructions Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067977"
+      },
+      {
+        "name": "Ramani Realtors Pvt Limited",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.067990"
+      },
+      {
+        "name": "Ravi Murugaa Constructions Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.068002"
+      },
+      {
+        "name": "Renaatus Projects Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.068022"
+      },
+      {
+        "name": "RR Housing (India) Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.068061"
+      },
+      {
+        "name": "Sakthi Constructions (India) Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.068087"
+      },
+      {
+        "name": "Shriram Properties (Coimbatore) Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.068133"
+      },
+      {
+        "name": "Sree Daksha Propety Developers(India) Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.068154"
+      },
+      {
+        "name": "Sreevatsa Real Estates Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.068173"
+      },
+      {
+        "name": "Srivari Infrastructure Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.068205"
+      },
+      {
+        "name": "Sukra Developers Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.068225"
+      },
+      {
+        "name": "Triumph Realtors India Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.068252"
+      },
+      {
+        "name": "Vakaman Developers India Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.068280"
+      },
+      {
+        "name": "Vrindhavana Properties Pvt Ltd",
+        "type": "Member",
+        "source_url": "https://www.credaicoimbatore.com/about/members-of-credai",
+        "scraped_at": "2025-09-12T09:01:35.068305"
+      }
+    ]
+  }
+}

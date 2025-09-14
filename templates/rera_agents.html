@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-left">
+            <a href="{{ url_for('in_data') }}" class="logo-link">
+            <div class="logo">
+                <div class="logo-icon"></div>
+            </div>
+            <h1 class="app-title">Data Explorer</h1></a>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+        <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="{{ url_for('in_data') }}">
+                    <i class="fas fa-database"></i>
+                    <span>IN Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('bai_members') }}">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>BAI Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('colleges') }}">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Colleges</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('edu_list_tn') }}">
+                    <i class="fas fa-university"></i>
+                    <span>EDU List TN</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('iia_cbe') }}">
+                    <i class="fas fa-industry"></i>
+                    <span>IIA CBE</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('cozcena') }}">
+                    <i class="fas fa-building"></i>
+                    <span>COZCENA</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('sr_office') }}">
+                    <i class="fas fa-landmark"></i>
+                    <span>SR Office</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('tcea_members') }}">
+                    <i class="fas fa-users"></i>
+                    <span>TCEA Members</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('credai_members') }}">
+                    <i class="fas fa-building"></i>
+                    <span>CREDAI</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('rera_agents') }}">
+                    <i class="fas fa-gavel"></i>
+                    <span>RERA</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('ccmc_contractors') }}">
+                    <i class="fas fa-hard-hat"></i>
+                    <span>CCMC</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" onclick="alert('Eway Data coming soon!')">
+                    <i class="fas fa-truck"></i>
+                    <span>Eway Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('cbe_wards') }}">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>CBE Ward</span>
+                </a>
+            </li>        </ul>
+    </nav>
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <div class="header-content">
+                <h2><i class="fas fa-gavel"></i> TN RERA Registered Agents</h2>
+                <div class="header-actions">
+                    <div class="download-buttons">
+                        <a href="{{ url_for('download_rera_csv') }}" class="download-btn csv-btn">
+                            <i class="fas fa-file-csv"></i>
+                            Download CSV
+                        </a>
+                        <a href="{{ url_for('download_rera_excel') }}" class="download-btn excel-btn">
+                            <i class="fas fa-file-excel"></i>
+                            Download Excel
+                        </a>
+                    </div>
+                    <div class="stats">
+                        <span class="stat-item">
+                            <i class="fas fa-gavel"></i>
+                            <span id="totalRecords">{{ total_records }}</span> Total Agents
+                        </span>
+                        <span class="stat-item">
+                            <i class="fas fa-list"></i>
+                            Page {{ current_page }} of {{ total_pages }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-controls" style="padding: 10px 20px; background: white; margin: 0 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="color: #666; font-size: 14px;">
+                        Showing {{ ((current_page - 1) * per_page) + 1 }} to {{ [current_page * per_page, total_records]|min }} of {{ total_records }} agents
+                    </span>
+                </div>
+                <div class="pagination">
+                    {% if current_page > 1 %}
+                        <a href="{{ url_for('rera_agents', page=1) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">First</a>
+                        <a href="{{ url_for('rera_agents', page=current_page-1) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">Previous</a>
+                    {% endif %}
+                    
+                    {% for page_num in range([1, current_page-2]|max, [total_pages+1, current_page+3]|min) %}
+                        {% if page_num == current_page %}
+                            <span class="page-btn current" style="padding: 8px 12px; margin: 0 2px; background: #4b2e83; color: white; border-radius: 4px;">{{ page_num }}</span>
+                        {% else %}
+                            <a href="{{ url_for('rera_agents', page=page_num) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">{{ page_num }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if current_page < total_pages %}
+                        <a href="{{ url_for('rera_agents', page=current_page+1) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">Next</a>
+                        <a href="{{ url_for('rera_agents', page=total_pages) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">Last</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Display -->
+        <div class="data-container" style="padding: 20px; background: white; margin: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            
+            <!-- Agents Table -->
+            <div class="data-section">
+                <h3 style="color: #764ba2; border-bottom: 2px solid #764ba2; padding-bottom: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-gavel"></i> RERA Registered Agents ({{ rera_data|length }} on this page)
+                </h3>
+                <div class="simple-table" style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left; width: 60px;">S.No</th>
+                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left; width: 200px;">Registration Number</th>
+                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Name & Address</th>
+                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left; width: 120px;">Type</th>
+                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left; width: 100px;">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for agent in rera_data %}
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">{{ ((current_page - 1) * per_page) + loop.index }}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; color: #764ba2;">{{ agent.registration_number }}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ agent.name_address }}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">
+                                    <span style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                        {{ agent.type }}
+                                    </span>
+                                </td>
+                                <td style="padding: 10px; border: 1px solid #ddd; color: #666;">{{ agent.date }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Pagination -->
+        <div class="pagination-controls" style="padding: 10px 20px; background: white; margin: 0 20px 20px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: center;">
+                <div class="pagination">
+                    {% if current_page > 1 %}
+                        <a href="{{ url_for('rera_agents', page=1) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">First</a>
+                        <a href="{{ url_for('rera_agents', page=current_page-1) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">Previous</a>
+                    {% endif %}
+                    
+                    {% for page_num in range([1, current_page-2]|max, [total_pages+1, current_page+3]|min) %}
+                        {% if page_num == current_page %}
+                            <span class="page-btn current" style="padding: 8px 12px; margin: 0 2px; background: #4b2e83; color: white; border-radius: 4px;">{{ page_num }}</span>
+                        {% else %}
+                            <a href="{{ url_for('rera_agents', page=page_num) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">{{ page_num }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if current_page < total_pages %}
+                        <a href="{{ url_for('rera_agents', page=current_page+1) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">Next</a>
+                        <a href="{{ url_for('rera_agents', page=total_pages) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">Last</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

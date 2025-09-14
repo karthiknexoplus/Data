@@ -1,0 +1,625 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-left">
+            <a href="{{ url_for('in_data') }}" class="logo-link">
+            <div class="logo">
+                <div class="logo-icon"></div>
+            </div>
+            <h1 class="app-title">Data Explorer</h1>
+            </a>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+
+        <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="{{ url_for('in_data') }}">
+                    <i class="fas fa-database"></i>
+                    <span>IN Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" onclick="alert('BAI Data coming soon!')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>BAI Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('colleges') }}">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Colleges</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('edu_list_tn') }}">
+                    <i class="fas fa-university"></i>
+                    <span>EDU List TN</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('iia_cbe') }}">
+                    <i class="fas fa-industry"></i>
+                    <span>IIA CBE</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('cozcena') }}">
+                    <i class="fas fa-building"></i>
+                    <span>COZCENA</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('sr_office') }}">
+                    <i class="fas fa-landmark"></i>
+                    <span>SR Office</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('tcea_members') }}">
+                    <i class="fas fa-users"></i>
+                    <span>TCEA Members</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('credai_members') }}">
+                    <i class="fas fa-building"></i>
+                    <span>CREDAI</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('rera_agents') }}">
+                    <i class="fas fa-gavel"></i>
+                    <span>RERA</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('ccmc_contractors') }}">
+                    <i class="fas fa-hard-hat"></i>
+                    <span>CCMC</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a href="{{ url_for('cbe_wards') }}">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>CBE Ward</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" onclick="alert('Eway Data coming soon!')">
+                    <i class="fas fa-truck"></i>
+                    <span>Eway Data</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <div class="header-content">
+                <h2><i class="fas fa-map-marked-alt"></i> Coimbatore Ward List</h2>
+                <div class="header-actions">
+                    <div class="download-buttons">
+                        <a href="{{ url_for('download_cbe_wards_csv') }}" class="download-btn csv-btn">
+                            <i class="fas fa-file-csv"></i>
+                            Download CSV
+                        </a>
+                    </div>
+                    <div class="stats">
+                        <span class="stat-item">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span id="totalRecords">{{ total_records }}</span> Total Wards
+                        </span>
+                        <span class="stat-item">
+                            <i class="fas fa-list"></i>
+                            Page {{ current_page }} of {{ total_pages }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="form-section">
+            <h3><i class="fas fa-search"></i> Search Wards</h3>
+            <form method="GET" class="search-form">
+                <div class="search-row">
+                    <div class="search-group">
+                        <input type="text" name="search" class="search-input" 
+                               placeholder="Search by ward name, number, or location..." 
+                               value="{{ search_query }}">
+                    </div>
+                    <div class="search-group">
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                            Search
+                        </button>
+                    </div>
+                    {% if search_query %}
+                    <div class="search-group">
+                        <a href="{{ url_for('cbe_wards') }}" class="clear-btn">
+                            <i class="fas fa-times"></i>
+                            Clear
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Summary -->
+        {% if search_query %}
+        <div class="results-summary">
+            <i class="fas fa-info-circle"></i>
+            Showing {{ ward_data|length }} of {{ total_records }} wards matching "<strong>{{ search_query }}</strong>"
+        </div>
+        {% endif %}
+
+        <!-- Pagination Controls -->
+        <div class="pagination-controls" style="padding: 10px 20px; background: white; margin: 0 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="color: #666; font-size: 14px;">
+                        Showing {{ ((current_page - 1) * per_page) + 1 }} to {{ [current_page * per_page, total_records]|min }} of {{ total_records }} wards
+                    </span>
+                </div>
+                <div class="pagination">
+                    {% if current_page > 1 %}
+                        <a href="{{ url_for('cbe_wards', page=1, search=search_query) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">First</a>
+                        <a href="{{ url_for('cbe_wards', page=current_page-1, search=search_query) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">Previous</a>
+                    {% endif %}
+                    
+                    {% for page_num in range([1, current_page-2]|max, [total_pages+1, current_page+3]|min) %}
+                        {% if page_num == current_page %}
+                            <span class="page-btn current" style="padding: 8px 12px; margin: 0 2px; background: #4b2e83; color: white; border-radius: 4px;">{{ page_num }}</span>
+                        {% else %}
+                            <a href="{{ url_for('cbe_wards', page=page_num, search=search_query) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">{{ page_num }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if current_page < total_pages %}
+                        <a href="{{ url_for('cbe_wards', page=current_page+1, search=search_query) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">Next</a>
+                        <a href="{{ url_for('cbe_wards', page=total_pages, search=search_query) }}" class="page-btn" style="padding: 8px 12px; margin: 0 2px; background: #764ba2; color: white; text-decoration: none; border-radius: 4px;">Last</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Display -->
+        <div class="data-container" style="padding: 20px; background: white; margin: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            
+            <!-- Wards Display -->
+            <div class="data-section">
+                <h3 style="color: #764ba2; border-bottom: 2px solid #764ba2; padding-bottom: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-map-marked-alt"></i> Coimbatore Corporation Wards ({{ ward_data|length }} on this page)
+                </h3>
+                
+                {% if ward_data %}
+                    {% for ward in ward_data %}
+                    <div class="ward-card" style="border: 1px solid #e1e5e9; border-radius: 8px; margin-bottom: 20px; padding: 20px; background: #f8f9fa;">
+                        <div class="ward-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h4 style="color: #764ba2; margin: 0; font-size: 1.2em;">
+                                <i class="fas fa-map-pin"></i> {{ ward.ward_name }}
+                            </h4>
+                            <span class="ward-number" style="background: #764ba2; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9em;">
+                                Ward #{{ ward.ward_number }}
+                            </span>
+                        </div>
+                        
+                        <div class="ward-directions" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                            {% for direction, descriptions in ward.directions.items() %}
+                            {% if descriptions %}
+                            <div class="direction-section clickable-direction" 
+                                 style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #764ba2; cursor: pointer; transition: all 0.3s ease;"
+                                 data-direction="{{ direction }}"
+                                 data-ward="{{ ward.ward_name }}"
+                                 data-ward-number="{{ ward.ward_number }}"
+                                 data-descriptions="{{ descriptions|join('|') }}">
+                                <h5 style="color: #4b2e83; margin: 0 0 10px 0; text-transform: uppercase; font-size: 0.9em; display: flex; align-items: center; justify-content: space-between;">
+                                    <span><i class="fas fa-compass"></i> {{ direction.title() }}</span>
+                                    <i class="fas fa-map-marked-alt" style="color: #764ba2; font-size: 0.8em;"></i>
+                                </h5>
+                                {% for desc in descriptions %}
+                                <p style="margin: 5px 0; font-size: 0.9em; line-height: 1.4; color: #555;">
+                                    {{ desc }}
+                                </p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-data-message" style="text-align: center; padding: 40px 20px; color: #6c757d;">
+                        <div class="no-data-icon" style="font-size: 48px; color: #ccc; margin-bottom: 16px;">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3 style="margin: 0 0 8px 0; color: #333;">No wards found</h3>
+                        <p style="margin: 0 0 24px 0; color: #666;">Try adjusting your search criteria.</p>
+                        <a href="{{ url_for('cbe_wards') }}" class="clear-filters-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #f5f5f5; color: #333; text-decoration: none; border-radius: 6px; transition: all 0.2s;">
+                            <i class="fas fa-times"></i>
+                            Clear Search
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Map Modal -->
+<div id="mapModal" class="map-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; padding: 20px; box-sizing: border-box;">
+    <div class="map-modal-content" style="background: white; border-radius: 12px; width: 100%; max-width: 1000px; height: 80%; margin: 0 auto; position: relative; overflow: hidden;">
+        <div class="map-modal-header" style="padding: 20px; border-bottom: 1px solid #e1e5e9; display: flex; justify-content: space-between; align-items: center;">
+            <h3 id="mapModalTitle" style="margin: 0; color: #764ba2; font-size: 1.3em;">
+                <i class="fas fa-map-marked-alt"></i> <span id="modalWardName"></span> - <span id="modalDirection"></span>
+            </h3>
+            <button onclick="closeMapModal()" style="background: none; border: none; font-size: 24px; color: #666; cursor: pointer; padding: 5px;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="map-modal-body" style="height: calc(100% - 80px); padding: 20px; overflow-y: auto;">
+            <div id="mapContainer" style="width: 100%; height: 100%; border-radius: 8px; overflow: hidden; background: #f5f5f5; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <div style="max-width: 600px;">
+                    <i class="fas fa-map" style="font-size: 64px; color: #764ba2; margin-bottom: 20px;"></i>
+                    <h4 style="color: #333; margin-bottom: 12px; font-size: 1.5em;">Interactive Map</h4>
+                    <p style="color: #666; margin-bottom: 24px; font-size: 1.1em; line-height: 1.5;">
+                        Click the button below to view the route and directions for this ward boundary on Google Maps.
+                    </p>
+                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                        <a id="googleMapsLink" href="#" target="_blank" style="background: #764ba2; color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 1.1em; font-weight: 500; transition: all 0.3s ease;">
+                            <i class="fas fa-external-link-alt"></i> Open in Google Maps
+                        </a>
+                        <button onclick="copyMapLink()" style="background: #6c757d; color: white; padding: 16px 24px; border: none; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 1.1em; font-weight: 500; transition: all 0.3s ease;">
+                            <i class="fas fa-copy"></i> Copy Link
+                        </button>
+                    </div>
+                    <div id="mapLinkDisplay" style="margin-top: 20px; padding: 12px; background: #f8f9fa; border-radius: 6px; border: 1px solid #dee2e6; font-family: monospace; font-size: 0.9em; color: #495057; word-break: break-all; display: none;">
+                        <strong>Generated Link:</strong><br>
+                        <span id="mapLinkText"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Search form styles */
+.search-form {
+    margin-bottom: 20px;
+}
+
+.search-row {
+    display: flex;
+    gap: 12px;
+    align-items: end;
+}
+
+.search-group {
+    flex: 1;
+}
+
+.search-group:last-child {
+    flex: 0 0 auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #764ba2;
+    box-shadow: 0 0 0 2px rgba(118, 75, 162, 0.1);
+}
+
+.search-btn {
+    background: #764ba2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.search-btn:hover {
+    background: #4b2e83;
+}
+
+.clear-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.clear-btn:hover {
+    background: #5a6268;
+    color: white;
+    text-decoration: none;
+}
+
+.results-summary {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 16px 0;
+    color: #1976d2;
+    font-size: 14px;
+}
+
+.results-summary i {
+    margin-right: 8px;
+}
+
+.clear-filters-btn:hover {
+    background: #e0e0e0;
+    color: #764ba2;
+}
+
+/* Clickable direction styles */
+.clickable-direction:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(118, 75, 162, 0.2);
+    border-left-color: #4b2e83;
+}
+
+.clickable-direction:hover h5 {
+    color: #4b2e83;
+}
+
+.clickable-direction:hover .fas.fa-map-marked-alt {
+    color: #4b2e83 !important;
+    transform: scale(1.1);
+}
+
+/* Map modal styles */
+.map-modal {
+    backdrop-filter: blur(5px);
+}
+
+.map-modal-content {
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+#googleMapsLink:hover {
+    background: #4b2e83;
+    transform: translateY(-2px);
+}
+
+button:hover {
+    background: #5a6268 !important;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .map-modal {
+        padding: 10px;
+    }
+    
+    .map-modal-content {
+        height: 95%;
+    }
+    
+    .map-modal-header h3 {
+        font-size: 1.1em;
+    }
+}
+</style>
+
+<script>
+// Auto-submit form on Enter key
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('.search-input');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                this.form.submit();
+            }
+        });
+    }
+    
+    // Add click listeners to direction sections
+    const directionSections = document.querySelectorAll('.clickable-direction');
+    console.log('Found direction sections:', directionSections.length);
+    
+    directionSections.forEach((section, index) => {
+        console.log(`Adding click listener to section ${index}`);
+        section.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Direction section clicked!');
+            
+            const direction = this.getAttribute('data-direction') || 'Unknown';
+            const wardName = this.getAttribute('data-ward') || 'Unknown Ward';
+            const wardNumber = this.getAttribute('data-ward-number') || '0';
+            const descriptionsText = this.getAttribute('data-descriptions') || '';
+            
+            // Get descriptions from the section
+            const descriptions = descriptionsText.split('|').filter(d => d.trim());
+            
+            console.log('Opening modal with:', { direction, wardName, wardNumber, descriptions });
+            showMapModal(direction, wardName, wardNumber, descriptions);
+        });
+    });
+});
+
+// Map modal functions
+function showMapModal(direction, wardName, wardNumber, descriptions) {
+    console.log('showMapModal called with:', { direction, wardName, wardNumber, descriptions });
+    
+    const modal = document.getElementById('mapModal');
+    const modalWardName = document.getElementById('modalWardName');
+    const modalDirection = document.getElementById('modalDirection');
+    const googleMapsLink = document.getElementById('googleMapsLink');
+    const mapLinkText = document.getElementById('mapLinkText');
+    const mapLinkDisplay = document.getElementById('mapLinkDisplay');
+    
+    if (!modal) {
+        console.error('Modal not found!');
+        return;
+    }
+    
+    // Update modal content
+    modalWardName.textContent = wardName;
+    modalDirection.textContent = direction.toUpperCase();
+    
+    // Extract locations from descriptions
+    const locations = extractLocations(descriptions);
+    console.log('Extracted locations:', locations);
+    
+    // Create Google Maps directions URL
+    let mapsUrl;
+    if (locations.length >= 2) {
+        // Create directions between first and last location
+        const origin = locations[0];
+        const destination = locations[locations.length - 1];
+        mapsUrl = createGoogleMapsDirectionsUrl(origin, destination, locations.slice(1, -1));
+    } else if (locations.length === 1) {
+        // Single location search
+        mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locations[0] + ' Coimbatore')}`;
+    } else {
+        // Fallback: search for ward area
+        mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(wardName + ' ' + direction + ' Coimbatore')}`;
+    }
+    
+    googleMapsLink.href = mapsUrl;
+    mapLinkText.textContent = mapsUrl;
+    mapLinkDisplay.style.display = 'block';
+    
+    // Show modal
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    
+    console.log('Modal should be visible now with URL:', mapsUrl);
+}
+
+function createGoogleMapsDirectionsUrl(origin, destination, waypoints = []) {
+    const baseUrl = "https://www.google.com/maps/dir/";
+    const encodedOrigin = encodeURIComponent(origin);
+    const encodedDestination = encodeURIComponent(destination);
+    
+    let path = `${encodedOrigin}/${encodedDestination}`;
+    
+    // Add waypoints if any
+    if (waypoints.length > 0) {
+        const encodedWaypoints = waypoints.map(wp => encodeURIComponent(wp));
+        path = `${encodedOrigin}/${encodedWaypoints.join('/')}/${encodedDestination}`;
+    }
+    
+    return `${baseUrl}${path}`;
+}
+
+function extractLocations(descriptions) {
+    const locations = [];
+    
+    // Common location patterns
+    const patterns = [
+        /from\s+([^,]+?)(?:\s+to|\s+via|\s+upto|$)/gi,
+        /to\s+([^,]+?)(?:\s+via|\s+upto|$)/gi,
+        /via\s+([^,]+?)(?:\s+upto|$)/gi,
+        /upto\s+([^,]+?)(?:\s+via|$)/gi,
+        /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:Road|Street|Nagar|Colony|Hospital|Bus Stand|Junction|Office))/gi,
+        /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:Thottam|Nagar|Colony|Avenue|Layout))/gi
+    ];
+    
+    descriptions.forEach(desc => {
+        patterns.forEach(pattern => {
+            let match;
+            while ((match = pattern.exec(desc)) !== null) {
+                const location = match[1].trim();
+                if (location && location.length > 3 && !locations.includes(location)) {
+                    locations.push(location);
+                }
+            }
+        });
+    });
+    
+    return locations.slice(0, 5); // Limit to 5 locations
+}
+
+function copyMapLink() {
+    const mapLinkText = document.getElementById('mapLinkText');
+    const link = mapLinkText.textContent;
+    
+    navigator.clipboard.writeText(link).then(function() {
+        // Show success message
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.style.background = '#28a745';
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.background = '#6c757d';
+        }, 2000);
+    }).catch(function(err) {
+        console.error('Could not copy text: ', err);
+        alert('Could not copy link. Please copy manually from the text above.');
+    });
+}
+
+function closeMapModal() {
+    console.log('Closing modal');
+    const modal = document.getElementById('mapModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('mapModal');
+    if (e.target === modal) {
+        closeMapModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeMapModal();
+    }
+});
+</script>
+{% endblock %}

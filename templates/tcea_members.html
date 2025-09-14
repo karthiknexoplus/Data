@@ -1,0 +1,517 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-left">
+            <a href="{{ url_for('in_data') }}" class="logo-link">
+            <div class="logo">
+                <div class="logo-icon"></div>
+            </div>
+            <h1 class="app-title">Data Explorer</h1>
+            </a>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="{{ url_for('in_data') }}">
+                    <i class="fas fa-database"></i>
+                    <span>IN Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('bai_members') }}">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>BAI Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('colleges') }}">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Colleges</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('edu_list_tn') }}">
+                    <i class="fas fa-university"></i>
+                    <span>EDU List TN</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('iia_cbe') }}">
+                    <i class="fas fa-industry"></i>
+                    <span>IIA CBE</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('cozcena') }}">
+                    <i class="fas fa-building"></i>
+                    <span>COZCENA</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('sr_office') }}">
+                    <i class="fas fa-landmark"></i>
+                    <span>SR Office</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a href="{{ url_for('tcea_members') }}">
+                    <i class="fas fa-users"></i>
+                    <span>TCEA Members</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('credai_members') }}">
+                    <i class="fas fa-building"></i>
+                    <span>CREDAI</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('rera_agents') }}">
+                    <i class="fas fa-gavel"></i>
+                    <span>RERA</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('ccmc_contractors') }}">
+                    <i class="fas fa-hard-hat"></i>
+                    <span>CCMC</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('cbe_wards') }}">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>CBE Ward</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" onclick="alert('Eway Data coming soon!')">
+                    <i class="fas fa-truck"></i>
+                    <span>Eway Data</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <div class="header-content">
+                <h2><i class="fas fa-users"></i> TCEA Complete Directory</h2>
+                <div class="header-actions">
+                    <div class="download-buttons">
+                        <a href="{{ url_for('download_tcea_csv') }}" class="download-btn csv-btn">
+                            <i class="fas fa-file-csv"></i>
+                            Download CSV
+                        </a>
+                        <a href="{{ url_for('download_tcea_excel') }}" class="download-btn excel-btn">
+                            <i class="fas fa-file-excel"></i>
+                            Download Excel
+                        </a>
+                    </div>
+                    <div class="stats">
+                        <span class="stat-item">
+                            <i class="fas fa-users"></i>
+                            <span id="totalRecords">{{ (tcea_data.members|length + tcea_data.office_bearers|length + tcea_data.ec_members|length + tcea_data.past_leaders|length) if tcea_data else 0 }}</span> Total Records
+                        </span>
+                        <span class="stat-item">
+                            <i class="fas fa-list"></i>
+                            <span id="currentPage">{{ current_page if current_page else 1 }}</span> of <span id="totalPages">{{ total_pages if total_pages else 1 }}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="form-section">
+            <h3><i class="fas fa-search"></i> Search TCEA Members</h3>
+            <form method="GET" class="search-form">
+                <div class="search-row">
+                    <div class="search-group">
+                        <input type="text" name="search" class="search-input" 
+                               placeholder="Search by name, position, or category..." 
+                               value="{{ search_query if search_query else '' }}">
+                    </div>
+                    <div class="search-group">
+                        <select name="category" class="search-input">
+                            <option value="">All Categories</option>
+                            <option value="members" {{ 'selected' if category == 'members' else '' }}>Members</option>
+                            <option value="office_bearers" {{ 'selected' if category == 'office_bearers' else '' }}>Office Bearers</option>
+                            <option value="ec_members" {{ 'selected' if category == 'ec_members' else '' }}>EC Members</option>
+                            <option value="past_leaders" {{ 'selected' if category == 'past_leaders' else '' }}>Past Leaders</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                            Search
+                        </button>
+                    </div>
+                    {% if search_query or category %}
+                    <div class="search-group">
+                        <a href="{{ url_for('tcea_members') }}" class="clear-btn">
+                            <i class="fas fa-times"></i>
+                            Clear
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Summary -->
+        {% if search_query or category %}
+        <div class="results-summary">
+            <i class="fas fa-info-circle"></i>
+            Showing {{ filtered_data|length if filtered_data else 0 }} of {{ (tcea_data.members|length + tcea_data.office_bearers|length + tcea_data.ec_members|length + tcea_data.past_leaders|length) if tcea_data else 0 }} records
+            {% if search_query %}matching "<strong>{{ search_query }}</strong>"{% endif %}
+            {% if category %}in category "<strong>{{ category.replace('_', ' ').title() }}</strong>"{% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Data Display -->
+        <div class="data-container" style="padding: 20px; background: white; margin: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            
+            <!-- Members Section -->
+            <div class="data-section" style="margin-bottom: 30px;">
+                <h3 style="color: #764ba2; border-bottom: 2px solid #764ba2; padding-bottom: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-users"></i> Members ({{ tcea_data.members|length }})
+                </h3>
+                <div class="modern-table" style="overflow-x: auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <table style="width: 100%; border-collapse: collapse; margin: 0;">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #764ba2, #667eea); color: white;">
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">S.No</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Name</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Page</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in tcea_data.members %}
+                            <tr style="border-bottom: 1px solid #f0f0f0; transition: all 0.3s ease;" onmouseover="this.style.background='#f8f9ff'" onmouseout="this.style.background='white'">
+                                <td style="padding: 12px; font-weight: 500; color: #666;">{{ loop.index }}</td>
+                                <td style="padding: 12px; font-weight: 600; color: #333;">{{ member.name }}</td>
+                                <td style="padding: 12px;">
+                                    {% if member.page == 0 %}
+                                        <span style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 12px; font-size: 0.85em;">Main Page</span>
+                                    {% else %}
+                                        <span style="background: #f3e5f5; color: #7b1fa2; padding: 4px 8px; border-radius: 12px; font-size: 0.85em;">Page {{ member.page }}</span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 12px;">
+                                    <a href="{{ member.url }}" target="_blank" style="color: #764ba2; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 5px;">
+                                        <i class="fas fa-external-link-alt"></i> View Source
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Office Bearers Section -->
+            <div class="data-section" style="margin-bottom: 30px;">
+                <h3 style="color: #764ba2; border-bottom: 2px solid #764ba2; padding-bottom: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-crown"></i> Office Bearers ({{ tcea_data.office_bearers|length }})
+                </h3>
+                <div class="modern-table" style="overflow-x: auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <table style="width: 100%; border-collapse: collapse; margin: 0;">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #764ba2, #667eea); color: white;">
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">S.No</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Name</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Position</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for bearer in tcea_data.office_bearers %}
+                            <tr style="border-bottom: 1px solid #f0f0f0; transition: all 0.3s ease;" onmouseover="this.style.background='#f8f9ff'" onmouseout="this.style.background='white'">
+                                <td style="padding: 12px; font-weight: 500; color: #666;">{{ loop.index }}</td>
+                                <td style="padding: 12px; font-weight: 600; color: #333;">{{ bearer.name }}</td>
+                                <td style="padding: 12px;">
+                                    <span style="background: #fff3e0; color: #f57c00; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; font-weight: 500;">{{ bearer.position }}</span>
+                                </td>
+                                <td style="padding: 12px;">
+                                    <a href="{{ bearer.url }}" target="_blank" style="color: #764ba2; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 5px;">
+                                        <i class="fas fa-external-link-alt"></i> View Source
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- EC Members Section -->
+            <div class="data-section" style="margin-bottom: 30px;">
+                <h3 style="color: #764ba2; border-bottom: 2px solid #764ba2; padding-bottom: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-user-tie"></i> EC Members ({{ tcea_data.ec_members|length }})
+                </h3>
+                <div class="modern-table" style="overflow-x: auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <table style="width: 100%; border-collapse: collapse; margin: 0;">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #764ba2, #667eea); color: white;">
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">S.No</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Name</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Position</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ec in tcea_data.ec_members %}
+                            <tr style="border-bottom: 1px solid #f0f0f0; transition: all 0.3s ease;" onmouseover="this.style.background='#f8f9ff'" onmouseout="this.style.background='white'">
+                                <td style="padding: 12px; font-weight: 500; color: #666;">{{ loop.index }}</td>
+                                <td style="padding: 12px; font-weight: 600; color: #333;">{{ ec.name }}</td>
+                                <td style="padding: 12px;">
+                                    <span style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; font-weight: 500;">{{ ec.position }}</span>
+                                </td>
+                                <td style="padding: 12px;">
+                                    <a href="{{ ec.url }}" target="_blank" style="color: #764ba2; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 5px;">
+                                        <i class="fas fa-external-link-alt"></i> View Source
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Past Leaders Section -->
+            <div class="data-section" style="margin-bottom: 30px;">
+                <h3 style="color: #764ba2; border-bottom: 2px solid #764ba2; padding-bottom: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-history"></i> Past Leaders ({{ tcea_data.past_leaders|length }})
+                </h3>
+                <div class="modern-table" style="overflow-x: auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <table style="width: 100%; border-collapse: collapse; margin: 0;">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #764ba2, #667eea); color: white;">
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">S.No</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Name</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Position</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for leader in tcea_data.past_leaders %}
+                            <tr style="border-bottom: 1px solid #f0f0f0; transition: all 0.3s ease;" onmouseover="this.style.background='#f8f9ff'" onmouseout="this.style.background='white'">
+                                <td style="padding: 12px; font-weight: 500; color: #666;">{{ loop.index }}</td>
+                                <td style="padding: 12px; font-weight: 600; color: #333;">{{ leader.name }}</td>
+                                <td style="padding: 12px;">
+                                    <span style="background: #fce4ec; color: #c2185b; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; font-weight: 500;">{{ leader.position }}</span>
+                                </td>
+                                <td style="padding: 12px;">
+                                    <a href="{{ leader.url }}" target="_blank" style="color: #764ba2; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 5px;">
+                                        <i class="fas fa-external-link-alt"></i> View Source
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<style>
+/* Search form styles */
+.search-form {
+    margin-bottom: 20px;
+}
+
+.search-row {
+    display: flex;
+    gap: 12px;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.search-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-group:last-child {
+    flex: 0 0 auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #764ba2;
+    box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+    transform: translateY(-1px);
+}
+
+.search-btn {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(118, 75, 162, 0.3);
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(118, 75, 162, 0.4);
+}
+
+.clear-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.clear-btn:hover {
+    background: #5a6268;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.results-summary {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    border: 1px solid #bbdefb;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    color: #1976d2;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.results-summary i {
+    margin-right: 8px;
+    color: #764ba2;
+}
+
+/* Modern table enhancements */
+.modern-table {
+    transition: all 0.3s ease;
+}
+
+.modern-table:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .search-row {
+        flex-direction: column;
+    }
+    
+    .search-group {
+        min-width: 100%;
+    }
+    
+    .modern-table {
+        font-size: 0.9em;
+    }
+    
+    .modern-table th,
+    .modern-table td {
+        padding: 8px !important;
+    }
+}
+
+/* Animation for table rows */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modern-table tbody tr {
+    animation: fadeInUp 0.3s ease forwards;
+}
+
+.modern-table tbody tr:nth-child(even) {
+    animation-delay: 0.1s;
+}
+
+.modern-table tbody tr:nth-child(odd) {
+    animation-delay: 0.05s;
+}
+</style>
+
+<script>
+// Auto-submit form on Enter key
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('.search-input');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                this.form.submit();
+            }
+        });
+    }
+    
+    // Add smooth scrolling for better UX
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

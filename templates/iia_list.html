@@ -6,7 +6,7 @@
     <header class="main-header">
         <div class="header-left">
             <div class="logo">
-                <div class="logo-icon">G</div>
+                <div class="logo-icon"></div>
             </div>
             <h1 class="app-title">Data Explorer</h1>
         </div>
@@ -23,7 +23,7 @@
         </div>
     </header>
 
-        <!-- Navigation Menu -->
+            <!-- Navigation Menu -->
     <nav class="main-nav">
         <ul class="nav-list">
             <li class="nav-item">
@@ -33,7 +33,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" onclick="alert('BAI Data coming soon!')">
+                <a href="{{ url_for('bai_members') }}">
                     <i class="fas fa-chart-bar"></i>
                     <span>BAI Data</span>
                 </a>
@@ -61,6 +61,23 @@
                     <i class="fas fa-building"></i>
                     <span>COZCENA</span>
                 </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('sr_office') }}">
+                    <i class="fas fa-landmark"></i>
+                    <span>SR Office</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('tcea_members') }}">
+                    <i class="fas fa-users"></i>
+                    <span>TCEA Members</span>
+            <li class="nav-item">
+                <a href="{{ url_for('credai_members') }}">
+                    <i class="fas fa-building"></i>
+                    <span>CREDAI</span>
+                </a>
+            </li>                </a>
             </li>
             <li class="nav-item">
                 <a href="#" onclick="alert('Eway Data coming soon!')">

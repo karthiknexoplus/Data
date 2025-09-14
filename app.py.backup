@@ -1,3 +1,5 @@
+import json
+import csv
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, make_response
 import sqlite3
 import hashlib
@@ -471,16 +473,35 @@ def dashboard():
 def colleges():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM colleges ORDER BY institution_name')
+    cursor.execute('SELECT id, s_no, member_code, institution_name, year_established, contact_no, created_at FROM colleges ORDER BY institution_name')
     colleges_data = cursor.fetchall()
     conn.close()
     
-    return render_template('colleges.html', colleges=colleges_data)
+    # Convert tuples to dictionaries for easier template access
+    colleges_list = []
+    for row in colleges_data:
+        college_dict = {
+            'id': row[0],
+            's_no': row[1],
+            'member_code': row[2],
+            'institution_name': row[3],
+            'year_established': row[4],
+            'contact_no': row[5],
+            'created_at': row[6]
+        }
+        colleges_list.append(college_dict)
+    
+    return render_template('colleges.html', colleges=colleges_list)
 
 @app.route('/iia-cbe')
 def iia_cbe():
     """IIA Coimbatore data page"""
     return render_template('iia_cbe.html')
+
+@app.route('/cozcena')
+def cozcena():
+    """COZCENA - Covai Zone Civil Engineers Association data page"""
+    return render_template('cozcena.html')
 
 @app.route('/in-data')
 def in_data():
@@ -1082,3 +1103,97 @@ def ccmc_con():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+# TCEA Members Routes
+@app.route('/tcea-members')
+@login_required
+def tcea_members():
+    """Display TCEA members page"""
+    try:
+        # Load TCEA members data
+        tcea_data = load_tcea_data()
+        return render_template('tcea_members.html', tcea_data=tcea_data, username=session.get('username'))
+    except Exception as e:
+        flash(f'Error loading TCEA data: {str(e)}', 'error')
+        return render_template('tcea_members.html', tcea_data=[], username=session.get('username'))
+
+@app.route('/download-tcea-csv')
+@login_required
+def download_tcea_csv():
+    """Download TCEA members as CSV"""
+    try:
+        tcea_data = load_tcea_data()
+        
+        # Create CSV response
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Write header
+        writer.writerow(['S.No', 'Name', 'Page', 'Source URL'])
+        
+        # Write data
+        for i, member in enumerate(tcea_data, 1):
+            writer.writerow([
+                i,
+                member.get('name', ''),
+                member.get('page', ''),
+                member.get('url', '')
+            ])
+        
+        # Create response
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = 'attachment; filename=tcea_members.csv'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating CSV: {str(e)}', 'error')
+        return redirect(url_for('tcea_members'))
+
+@app.route('/download-tcea-excel')
+@login_required
+def download_tcea_excel():
+    """Download TCEA members as Excel"""
+    try:
+        tcea_data = load_tcea_data()
+        
+        # Create DataFrame
+        df_data = []
+        for i, member in enumerate(tcea_data, 1):
+            df_data.append({
+                'S.No': i,
+                'Name': member.get('name', ''),
+                'Page': member.get('page', ''),
+                'Source URL': member.get('url', '')
+            })
+        
+        df = pd.DataFrame(df_data)
+        
+        # Create Excel response
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name='TCEA Members', index=False)
+        
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        response.headers['Content-Disposition'] = 'attachment; filename=tcea_members.xlsx'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating Excel: {str(e)}', 'error')
+        return redirect(url_for('tcea_members'))
+
+def load_tcea_data():
+    """Load TCEA members data from JSON file"""
+    try:
+        if os.path.exists('tcea_members.json'):
+            with open('tcea_members.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data.get('members', [])
+        else:
+            # If no JSON file exists, return empty list
+            return []
+    except Exception as e:
+        print(f"Error loading TCEA data: {str(e)}")
+        return []
+

@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon"></div>
+            </div>
+            <h1 class="app-title">Data Explorer</h1>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="{{ url_for('in_data') }}">
+                    <i class="fas fa-database"></i>
+                    <span>IN Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" onclick="alert('BAI Data coming soon!')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>BAI Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('colleges') }}">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Colleges</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('edu_list_tn') }}">
+                    <i class="fas fa-university"></i>
+                    <span>EDU List TN</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('iia_cbe') }}">
+                    <i class="fas fa-industry"></i>
+                    <span>IIA CBE</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('cozcena') }}">
+                    <i class="fas fa-building"></i>
+                    <span>COZCENA</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a href="{{ url_for('tcea_members') }}">
+                    <i class="fas fa-users"></i>
+                    <span>TCEA Members</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" onclick="alert('Eway Data coming soon!')">
+                    <i class="fas fa-truck"></i>
+                    <span>Eway Data</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <div class="header-content">
+                <h2><i class="fas fa-users"></i> TCEA Complete Directory</h2>
+                <div class="header-actions">
+                    <div class="download-buttons">
+                        <a href="{{ url_for('download_tcea_csv') }}" class="download-btn csv-btn">
+                            <i class="fas fa-file-csv"></i>
+                            Download CSV
+                        </a>
+                        <a href="{{ url_for('download_tcea_excel') }}" class="download-btn excel-btn">
+                            <i class="fas fa-file-excel"></i>
+                            Download Excel
+                        </a>
+                    </div>
+                    <div class="stats">
+                        <span class="stat-item">
+                            <i class="fas fa-users"></i>
+                            <span id="totalRecords">{{ (tcea_data.members|length + tcea_data.office_bearers|length + tcea_data.ec_members|length + tcea_data.past_leaders|length) if tcea_data else 0 }}</span> Total Records
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                </div>
+            </div>
+        </div>
+
+        {% if tcea_data %}
+        <!-- Data Tabs -->
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="members">
+                    <i class="fas fa-users"></i>
+                    Members ({{ tcea_data.members|length }})
+                </button>
+                <button class="tab-btn" data-tab="office-bearers">
+                    <i class="fas fa-crown"></i>
+                    Office Bearers ({{ tcea_data.office_bearers|length }})
+                </button>
+                <button class="tab-btn" data-tab="ec-members">
+                    <i class="fas fa-user-tie"></i>
+                    EC Members ({{ tcea_data.ec_members|length }})
+                </button>
+                <button class="tab-btn" data-tab="past-leaders">
+                    <i class="fas fa-history"></i>
+                    Past Leaders ({{ tcea_data.past_leaders|length }})
+                </button>
+            </div>
+
+            <!-- Members Tab -->
+            <div class="tab-content active" id="members">
+                <div class="table-section">
+                    <div class="table-header">
+                        <h3><i class="fas fa-users"></i> TCEA Members Directory</h3>
+                        <div class="table-controls">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchMembers" placeholder="Search members...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="tcea-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-hashtag"></i> S.No</th>
+                                    <th><i class="fas fa-user"></i> Member Name</th>
+                                    <th><i class="fas fa-file-alt"></i> Page</th>
+                                    <th><i class="fas fa-link"></i> Source</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for member in tcea_data.members %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>
+                                        <div class="member-name">
+                                            <strong>{{ member.name }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="page-badge">
+                                            {% if member.page == 0 %}
+                                                Main Page
+                                            {% else %}
+                                                Page {{ member.page }}
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ member.url }}" target="_blank" class="source-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            View Source
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Office Bearers Tab -->
+            <div class="tab-content" id="office-bearers">
+                <div class="table-section">
+                    <div class="table-header">
+                        <h3><i class="fas fa-crown"></i> Current Office Bearers (2025-2026)</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="tcea-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-hashtag"></i> S.No</th>
+                                    <th><i class="fas fa-user"></i> Name</th>
+                                    <th><i class="fas fa-briefcase"></i> Position</th>
+                                    <th><i class="fas fa-link"></i> Source</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bearer in tcea_data.office_bearers %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>
+                                        <div class="member-name">
+                                            <strong>{{ bearer.name }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="position-badge">{{ bearer.position }}</span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ bearer.url }}" target="_blank" class="source-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            View Source
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EC Members Tab -->
+            <div class="tab-content" id="ec-members">
+                <div class="table-section">
+                    <div class="table-header">
+                        <h3><i class="fas fa-user-tie"></i> Executive Committee Members (2025-2026)</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="tcea-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-hashtag"></i> S.No</th>
+                                    <th><i class="fas fa-user"></i> Name</th>
+                                    <th><i class="fas fa-briefcase"></i> Position</th>
+                                    <th><i class="fas fa-link"></i> Source</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ec in tcea_data.ec_members %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>
+                                        <div class="member-name">
+                                            <strong>{{ ec.name }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="position-badge">{{ ec.position }}</span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ ec.url }}" target="_blank" class="source-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            View Source
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Past Leaders Tab -->
+            <div class="tab-content" id="past-leaders">
+                <div class="table-section">
+                    <div class="table-header">
+                        <h3><i class="fas fa-history"></i> Past Leaders (2000-2025)</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="tcea-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-hashtag"></i> S.No</th>
+                                    <th><i class="fas fa-user"></i> Name</th>
+                                    <th><i class="fas fa-briefcase"></i> Position</th>
+                                    <th><i class="fas fa-calendar"></i> Period</th>
+                                    <th><i class="fas fa-link"></i> Source</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for leader in tcea_data.past_leaders %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>
+                                        <div class="member-name">
+                                            <strong>{{ leader.name }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="position-badge">{{ leader.position }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="period-badge">{{ leader.period }}</span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ leader.url }}" target="_blank" class="source-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            View Source
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-users"></i>
+            <h3>No TCEA Data Available</h3>
+            <p>No TCEA data is currently available. Please run the scraper to collect the latest data.</p>
+        </div>
+        {% endif %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>Powered by Nexoplus Innovations Pvt Ltd</p>
+    </footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab functionality
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            
+            // Remove active class from all tabs and contents
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            this.classList.add('active');
+            document.getElementById(targetTab).classList.add('active');
+        });
+    });
+    
+    // Search functionality for members
+    const searchInput = document.getElementById('searchMembers');
+    if (searchInput) {
+        const memberRows = document.querySelectorAll('#members .tcea-table tbody tr');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            memberRows.forEach(row => {
+                const memberName = row.querySelector('.member-name strong').textContent.toLowerCase();
+                if (memberName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
+    
+    // Add loading states to download buttons
+    const downloadBtns = document.querySelectorAll('.download-btn');
+    downloadBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            this.style.pointerEvents = 'none';
+        });
+    });
+});
+</script>
+{% endblock %}

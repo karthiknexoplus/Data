@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-left">
+            <a href="{{ url_for('in_data') }}" class="logo-link">
+            <div class="logo">
+                <div class="logo-icon"></div>
+            </div>
+            <h1 class="app-title">Data Explorer</h1></a>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+        <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="{{ url_for('in_data') }}">
+                    <i class="fas fa-database"></i>
+                    <span>IN Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('bai_members') }}">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>BAI Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('colleges') }}">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Colleges</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('edu_list_tn') }}">
+                    <i class="fas fa-university"></i>
+                    <span>EDU List TN</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('iia_cbe') }}">
+                    <i class="fas fa-industry"></i>
+                    <span>IIA CBE</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('cozcena') }}">
+                    <i class="fas fa-building"></i>
+                    <span>COZCENA</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('sr_office') }}">
+                    <i class="fas fa-landmark"></i>
+                    <span>SR Office</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('tcea_members') }}">
+                    <i class="fas fa-users"></i>
+                    <span>TCEA Members</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('credai_members') }}">
+                    <i class="fas fa-building"></i>
+                    <span>CREDAI</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('rera_agents') }}">
+                    <i class="fas fa-gavel"></i>
+                    <span>RERA</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('ccmc_contractors') }}">
+                    <i class="fas fa-hard-hat"></i>
+                    <span>CCMC</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" onclick="alert('Eway Data coming soon!')">
+                    <i class="fas fa-truck"></i>
+                    <span>Eway Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('cbe_wards') }}">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>CBE Ward</span>
+                </a>
+            </li>        </ul>
+    </nav>
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <div class="header-content">
+                <h2><i class="fas fa-building"></i> CREDAI Coimbatore Members</h2>
+            <li class="nav-item">
+                <a href="{{ url_for('rera_agents') }}">
+                    <i class="fas fa-gavel"></i>
+                    <span>RERA</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('ccmc_contractors') }}">
+                    <i class="fas fa-hard-hat"></i>
+                    <span>CCMC</span>                </a>
+            </li>                <div class="header-actions">
+                    <div class="download-buttons">
+                        <a href="{{ url_for('download_credai_csv') }}" class="download-btn csv-btn">
+                            <i class="fas fa-file-csv"></i>
+                            Download CSV
+                        </a>
+                        <a href="{{ url_for('download_credai_excel') }}" class="download-btn excel-btn">
+                            <i class="fas fa-file-excel"></i>
+                            Download Excel
+                        </a>
+                    </div>
+                    <div class="stats">
+                        <span class="stat-item">
+                            <i class="fas fa-building"></i>
+                            <span id="totalRecords">{{ credai_data|length }}</span> Total Members
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simple Data Display -->
+        <div class="data-container" style="padding: 20px; background: white; margin: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            
+            <!-- Members Section -->
+            <div class="data-section" style="margin-bottom: 30px;">
+                <h3 style="color: #764ba2; border-bottom: 2px solid #764ba2; padding-bottom: 10px;">
+                    <i class="fas fa-building"></i> CREDAI Members ({{ credai_data|length }})
+            <li class="nav-item">
+                <a href="{{ url_for('rera_agents') }}">
+                    <i class="fas fa-gavel"></i>
+                    <span>RERA</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('ccmc_contractors') }}">
+                    <i class="fas fa-hard-hat"></i>
+                    <span>CCMC</span>                </a>
+            </li>                </h3>
+                <div class="simple-table" style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">S.No</th>
+                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Company Name</th>
+                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Type</th>
+                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in credai_data %}
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ loop.index }}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">{{ member.name }}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ member.type }}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">
+                                    <a href="{{ member.source_url }}" target="_blank" style="color: #764ba2;">View Source</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+{% endblock %}

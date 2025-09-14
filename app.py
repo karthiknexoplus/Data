@@ -1,3 +1,5 @@
+import json
+import csv
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, make_response
 import sqlite3
 import hashlib
@@ -155,7 +157,7 @@ class NRLMScraper:
             return districts
         except Exception as e:
             print(f"Error getting districts for state {state_code}: {e}")
-            return []
+            return {}
     
     def get_blocks(self, state_code, district_code):
         """Get blocks for a given state and district"""
@@ -182,7 +184,7 @@ class NRLMScraper:
             return blocks
         except Exception as e:
             print(f"Error getting blocks for state {state_code}, district {district_code}: {e}")
-            return []
+            return {}
     
     def get_grampanchayats(self, state_code, district_code, block_code):
         """Get grampanchayats for given parameters"""
@@ -210,7 +212,7 @@ class NRLMScraper:
             return grampanchayats
         except Exception as e:
             print(f"Error getting grampanchayats: {e}")
-            return []
+            return {}
     
     def get_villages(self, state_code, district_code, block_code, grampanchayat_code):
         """Get villages for given parameters"""
@@ -239,7 +241,7 @@ class NRLMScraper:
             return villages
         except Exception as e:
             print(f"Error getting villages: {e}")
-            return []
+            return {}
     
     def get_shg_members(self, state_code, district_code, block_code, grampanchayat_code, village_code):
         """Get SHG members data"""
@@ -275,7 +277,7 @@ class NRLMScraper:
             return members
         except Exception as e:
             print(f"Error getting SHG members: {e}")
-            return []
+            return {}
 
 def scrape_colleges_data():
     """Scrape colleges data from the website"""
@@ -465,7 +467,7 @@ def signup():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html', username=session['username'])
+    return render_template('dashboard.html', username=session.get('username'))
 
 @app.route('/colleges')
 def colleges():
@@ -747,9 +749,106 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
 
-if __name__ == '__main__':
-    init_db()
+# CBE Ward Routes
+@app.route("/cbe-wards")
+@login_required
+def cbe_wards():
+    """Display Coimbatore ward data with pagination and search"""
+    try:
+        page = request.args.get("page", 1, type=int)
+        search_query = request.args.get("search", "")
+        per_page = 20
+        
+        # Load CBE ward data
+        ward_data = load_cbe_ward_data()
+        
+        # Apply search filter
+        filtered_data = ward_data
+        if search_query:
+            search_lower = search_query.lower()
+            filtered_data = []
+            for ward in ward_data:
+                # Search in ward name, ward number, and directions
+                if (search_lower in ward.get('ward_name', '').lower() or
+                    search_lower in str(ward.get('ward_number', '')).lower() or
+                    any(search_lower in str(directions).lower() for directions in ward.get('directions', {}).values())):
+                    filtered_data.append(ward)
+        
+        # Calculate pagination
+        total_records = len(filtered_data)
+        total_pages = (total_records + per_page - 1) // per_page
+        
+        # Get current page data
+        start_idx = (page - 1) * per_page
+        end_idx = start_idx + per_page
+        current_page_data = filtered_data[start_idx:end_idx]
+        
+        return render_template("cbe_wards.html", 
+                             ward_data=current_page_data, 
+                             username=session.get("username"),
+                             current_page=page,
+                             total_pages=total_pages,
+                             total_records=total_records,
+                             per_page=per_page,
+                             search_query=search_query)
+    except Exception as e:
+        flash(f"Error loading CBE ward data: {str(e)}", "error")
+        return render_template("cbe_wards.html", 
+                             ward_data=[], 
+                             username=session.get("username"),
+                             current_page=1,
+                             total_pages=1,
+                             total_records=0,
+                             per_page=20,
+                             search_query="")
 
+@app.route("/download-cbe-wards-csv")
+@login_required
+def download_cbe_wards_csv():
+    """Download CBE ward data as CSV"""
+    try:
+        ward_data = load_cbe_ward_data()
+        
+        # Create CSV response
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Write header
+        writer.writerow(["Ward Number", "Ward Name", "Direction", "Description"])
+        
+        # Write data
+        for ward in ward_data:
+            for direction, descriptions in ward["directions"].items():
+                for desc in descriptions:
+                    writer.writerow([
+                        ward["ward_number"],
+                        ward["ward_name"],
+                        direction.title(),
+                        desc
+                    ])
+        
+        # Create response
+        response = make_response(output.getvalue())
+        response.headers["Content-Type"] = "text/csv"
+        response.headers["Content-Disposition"] = "attachment; filename=cbe_wards.csv"
+        
+        return response
+    except Exception as e:
+        flash(f"Error generating CSV: {str(e)}", "error")
+        return redirect(url_for("cbe_wards"))
+
+def load_cbe_ward_data():
+    """Load CBE ward data from JSON file"""
+    try:
+        if os.path.exists("coimbatore_wards.json"):
+            with open("coimbatore_wards.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data.get("data", {}).get("wards", [])
+        else:
+            return []
+    except Exception as e:
+        print(f"Error loading CBE ward data: {str(e)}")
+        return []
 @app.route('/edu-list-tn')
 def edu_list_tn():
     conn = sqlite3.connect('users.db')
@@ -919,7 +1018,7 @@ class WorkingNRLMScraper:
             return districts
         except Exception as e:
             print(f"Error getting districts for state {state_code}: {e}")
-            return []
+            return {}
     
     def get_blocks(self, state_code, district_code):
         """Get blocks for a given state and district"""
@@ -952,7 +1051,7 @@ class WorkingNRLMScraper:
             return blocks
         except Exception as e:
             print(f"Error getting blocks for state {state_code}, district {district_code}: {e}")
-            return []
+            return {}
     
     def get_grampanchayats(self, state_code, district_code, block_code):
         """Get grampanchayats for given parameters"""
@@ -986,7 +1085,7 @@ class WorkingNRLMScraper:
             return grampanchayats
         except Exception as e:
             print(f"Error getting grampanchayats: {e}")
-            return []
+            return {}
     
     def get_villages(self, state_code, district_code, block_code, grampanchayat_code):
         """Get villages for given parameters"""
@@ -1021,7 +1120,7 @@ class WorkingNRLMScraper:
             return villages
         except Exception as e:
             print(f"Error getting villages: {e}")
-            return []
+            return {}
     
     def get_shg_members(self, state_code, district_code, block_code, grampanchayat_code, village_code):
         """Get SHG members data"""
@@ -1061,7 +1160,7 @@ class WorkingNRLMScraper:
             return members
         except Exception as e:
             print(f"Error getting SHG members: {e}")
-            return []
+            return {}
 
 @app.route('/iia-list')
 def iia_list():
@@ -1099,5 +1198,819 @@ def ccmc_con():
     ]
     return render_template('ccmc_con.html', ccmc_data=ccmc_data)
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
+# TCEA Members Routes
+@app.route('/tcea-members')
+@login_required
+def tcea_members():
+    """Display TCEA members page with search and pagination"""
+    try:
+        page = request.args.get("page", 1, type=int)
+        search_query = request.args.get("search", "")
+        category = request.args.get("category", "")
+        per_page = 20
+        
+        # Load TCEA members data
+        tcea_data = load_complete_tcea_data()
+        
+        # Combine all data for filtering
+        all_data = []
+        if tcea_data:
+            # Add members
+            for member in tcea_data.get('members', []):
+                all_data.append({
+                    'name': member.get('name', ''),
+                    'position': 'Member',
+                    'category': 'members',
+                    'page': member.get('page', 0),
+                    'url': member.get('url', ''),
+                    'type': 'member'
+                })
+            
+            # Add office bearers
+            for bearer in tcea_data.get('office_bearers', []):
+                all_data.append({
+                    'name': bearer.get('name', ''),
+                    'position': bearer.get('position', ''),
+                    'category': 'office_bearers',
+                    'page': 0,
+                    'url': bearer.get('url', ''),
+                    'type': 'office_bearer'
+                })
+            
+            # Add EC members
+            for ec in tcea_data.get('ec_members', []):
+                all_data.append({
+                    'name': ec.get('name', ''),
+                    'position': ec.get('position', ''),
+                    'category': 'ec_members',
+                    'page': 0,
+                    'url': ec.get('url', ''),
+                    'type': 'ec_member'
+                })
+            
+            # Add past leaders
+            for leader in tcea_data.get('past_leaders', []):
+                all_data.append({
+                    'name': leader.get('name', ''),
+                    'position': leader.get('position', ''),
+                    'category': 'past_leaders',
+                    'page': 0,
+                    'url': leader.get('url', ''),
+                    'type': 'past_leader'
+                })
+        
+        # Apply filters
+        filtered_data = all_data
+        if search_query:
+            search_lower = search_query.lower()
+            filtered_data = [item for item in filtered_data 
+                           if search_lower in item.get('name', '').lower() or 
+                              search_lower in item.get('position', '').lower()]
+        
+        if category:
+            filtered_data = [item for item in filtered_data 
+                           if item.get('category') == category]
+        
+        # Calculate pagination
+        total_records = len(filtered_data)
+        total_pages = (total_records + per_page - 1) // per_page
+        
+        # Get current page data
+        start_idx = (page - 1) * per_page
+        end_idx = start_idx + per_page
+        current_page_data = filtered_data[start_idx:end_idx]
+        
+        return render_template('tcea_members.html', 
+                             tcea_data=tcea_data,
+                             filtered_data=current_page_data,
+                             username=session.get('username'),
+                             current_page=page,
+                             total_pages=total_pages,
+                             total_records=total_records,
+                             per_page=per_page,
+                             search_query=search_query,
+                             category=category)
+    except Exception as e:
+        flash(f'Error loading TCEA data: {str(e)}', 'error')
+        return render_template('tcea_members.html', 
+                             tcea_data={},
+                             filtered_data=[],
+                             username=session.get('username'),
+                             current_page=1,
+                             total_pages=1,
+                             total_records=0,
+                             per_page=20,
+                             search_query="",
+                             category="")
+
+@app.route('/download-tcea-csv')
+@login_required
+def download_tcea_csv():
+    """Download TCEA members as CSV"""
+    try:
+        tcea_data = load_complete_tcea_data()
+        
+        # Create CSV response
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Write header
+        writer.writerow(['S.No', 'Name', 'Page', 'Source URL'])
+        
+        # Write data
+        for i, member in enumerate(tcea_data, 1):
+            writer.writerow([
+                i,
+                member.get('name', ''),
+                member.get('page', ''),
+                member.get('url', '')
+            ])
+        
+        # Create response
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = 'attachment; filename=tcea_members.csv'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating CSV: {str(e)}', 'error')
+        return redirect(url_for('tcea_members'))
+
+@app.route('/download-tcea-excel')
+@login_required
+def download_tcea_excel():
+    """Download TCEA members as Excel"""
+    try:
+        tcea_data = load_complete_tcea_data()
+        
+        # Create DataFrame
+        df_data = []
+        for i, member in enumerate(tcea_data, 1):
+            df_data.append({
+                'S.No': i,
+                'Name': member.get('name', ''),
+                'Page': member.get('page', ''),
+                'Source URL': member.get('url', '')
+            })
+        
+        df = pd.DataFrame(df_data)
+        
+        # Create Excel response
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name='TCEA Members', index=False)
+        
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        response.headers['Content-Disposition'] = 'attachment; filename=tcea_members.xlsx'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating Excel: {str(e)}', 'error')
+        return redirect(url_for('tcea_members'))
+
+def load_complete_tcea_data():
+    """Load TCEA members data from JSON file"""
+    try:
+        if os.path.exists('tcea_complete_data.json'):
+            with open('tcea_complete_data.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data.get('data', {})
+        else:
+            # If no JSON file exists, return empty list
+            return {}
+    except Exception as e:
+        print(f"Error loading TCEA data: {str(e)}")
+        return {}
+
+
+
+
+# CREDAI Members Routes
+@app.route('/credai-members')
+@login_required
+def credai_members():
+    """Display CREDAI members page"""
+    try:
+        # Load CREDAI members data
+        credai_data = load_credai_data()
+        return render_template('credai_members.html', credai_data=credai_data, username=session.get('username'))
+    except Exception as e:
+        flash(f'Error loading CREDAI data: {str(e)}', 'error')
+        return render_template('credai_members.html', credai_data=[], username=session.get('username'))
+
+@app.route('/download-credai-csv')
+@login_required
+def download_credai_csv():
+    """Download CREDAI members as CSV"""
+    try:
+        credai_data = load_credai_data()
+        
+        # Create CSV response
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Write header
+        writer.writerow(['S.No', 'Name', 'Type', 'Source URL', 'Scraped At'])
+        
+        # Write data
+        for i, member in enumerate(credai_data, 1):
+            writer.writerow([
+                i,
+                member.get('name', ''),
+                member.get('type', ''),
+                member.get('source_url', ''),
+                member.get('scraped_at', '')
+            ])
+        
+        # Create response
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = 'attachment; filename=credai_members.csv'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating CSV: {str(e)}', 'error')
+        return redirect(url_for('credai_members'))
+
+@app.route('/download-credai-excel')
+@login_required
+def download_credai_excel():
+    """Download CREDAI members as Excel"""
+    try:
+        credai_data = load_credai_data()
+        
+        # Create DataFrame
+        df_data = []
+        for i, member in enumerate(credai_data, 1):
+            df_data.append({
+                'S.No': i,
+                'Name': member.get('name', ''),
+                'Type': member.get('type', ''),
+                'Source URL': member.get('source_url', ''),
+                'Scraped At': member.get('scraped_at', '')
+            })
+        
+        df = pd.DataFrame(df_data)
+        
+        # Create Excel response
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name='CREDAI Members', index=False)
+        
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        response.headers['Content-Disposition'] = 'attachment; filename=credai_members.xlsx'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating Excel: {str(e)}', 'error')
+        return redirect(url_for('credai_members'))
+
+def load_credai_data():
+    """Load CREDAI members data from JSON file"""
+    try:
+        if os.path.exists('credai_members.json'):
+            with open('credai_members.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data.get('data', {}).get('members', [])
+        else:
+            # If no JSON file exists, return empty list
+            return []
+    except Exception as e:
+        print(f"Error loading CREDAI data: {str(e)}")
+        return []
+
+
+
+
+# RERA Agents Routes
+@app.route('/rera-agents')
+@login_required
+def rera_agents():
+    """Display RERA agents page with pagination"""
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = 200
+        
+        # Load RERA agents data
+        rera_data = load_rera_data()
+        
+        # Calculate pagination
+        total_records = len(rera_data)
+        total_pages = (total_records + per_page - 1) // per_page
+        
+        # Get current page data
+        start_idx = (page - 1) * per_page
+        end_idx = start_idx + per_page
+        current_page_data = rera_data[start_idx:end_idx]
+        
+        return render_template('rera_agents.html', 
+                             rera_data=current_page_data, 
+                             username=session.get('username'),
+                             current_page=page,
+                             total_pages=total_pages,
+                             total_records=total_records,
+                             per_page=per_page)
+    except Exception as e:
+        flash(f'Error loading RERA data: {str(e)}', 'error')
+        return render_template('rera_agents.html', 
+                             rera_data=[], 
+                             username=session.get('username'),
+                             current_page=1,
+                             total_pages=1,
+                             total_records=0,
+                             per_page=200)
+
+@app.route('/download-rera-csv')
+@login_required
+def download_rera_csv():
+    """Download RERA agents as CSV"""
+    try:
+        rera_data = load_rera_data()
+        
+        # Create CSV response
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Write header
+        writer.writerow(['S.No', 'Registration Number', 'Name & Address', 'Type', 'Date', 'Source URL', 'Scraped At'])
+        
+        # Write data
+        for i, agent in enumerate(rera_data, 1):
+            writer.writerow([
+                i,
+                agent.get('registration_number', ''),
+                agent.get('name_address', ''),
+                agent.get('type', ''),
+                agent.get('date', ''),
+                agent.get('source_url', ''),
+                agent.get('scraped_at', '')
+            ])
+        
+        # Create response
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = 'attachment; filename=rera_agents.csv'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating CSV: {str(e)}', 'error')
+        return redirect(url_for('rera_agents'))
+
+@app.route('/download-rera-excel')
+@login_required
+def download_rera_excel():
+    """Download RERA agents as Excel"""
+    try:
+        rera_data = load_rera_data()
+        
+        # Create DataFrame
+        df_data = []
+        for i, agent in enumerate(rera_data, 1):
+            df_data.append({
+                'S.No': i,
+                'Registration Number': agent.get('registration_number', ''),
+                'Name & Address': agent.get('name_address', ''),
+                'Type': agent.get('type', ''),
+                'Date': agent.get('date', ''),
+                'Source URL': agent.get('source_url', ''),
+                'Scraped At': agent.get('scraped_at', '')
+            })
+        
+        df = pd.DataFrame(df_data)
+        
+        # Create Excel response
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name='RERA Agents', index=False)
+        
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        response.headers['Content-Disposition'] = 'attachment; filename=rera_agents.xlsx'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating Excel: {str(e)}', 'error')
+        return redirect(url_for('rera_agents'))
+
+def load_rera_data():
+    """Load RERA agents data from JSON file"""
+    try:
+        if os.path.exists('rera_agents.json'):
+            with open('rera_agents.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data.get('data', {}).get('agents', [])
+        else:
+            return []
+    except Exception as e:
+        print(f"Error loading RERA data: {str(e)}")
+
+# CCMC Contractors Routes
+@app.route('/ccmc-contractors')
+@login_required
+def ccmc_contractors():
+    """Display CCMC contractors page with pagination"""
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = 200
+        
+        # Load CCMC contractors data
+        ccmc_data = load_ccmc_data()
+        
+        # Calculate pagination
+        total_records = len(ccmc_data)
+        total_pages = (total_records + per_page - 1) // per_page
+        
+        # Get current page data
+        start_idx = (page - 1) * per_page
+        end_idx = start_idx + per_page
+        current_page_data = ccmc_data[start_idx:end_idx]
+        
+        return render_template('ccmc_contractors.html', 
+                             ccmc_data=current_page_data, 
+                             username=session.get('username'),
+                             current_page=page,
+                             total_pages=total_pages,
+                             total_records=total_records,
+                             per_page=per_page)
+    except Exception as e:
+        flash(f'Error loading CCMC data: {str(e)}', 'error')
+        return render_template('ccmc_contractors.html', 
+                             ccmc_data=[], 
+                             username=session.get('username'),
+                             current_page=1,
+                             total_pages=1,
+                             total_records=0,
+                             per_page=200)
+
+@app.route('/download-ccmc-csv')
+@login_required
+def download_ccmc_csv():
+    """Download CCMC contractors as CSV"""
+    try:
+        ccmc_data = load_ccmc_data()
+        
+        # Create CSV response
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Write header
+        writer.writerow(['S.No', 'Name', 'Class', 'Address', 'Phone', 'Source', 'Extracted At'])
+        
+        # Write data
+        for i, contractor in enumerate(ccmc_data, 1):
+            writer.writerow([
+                i,
+                contractor.get('name', ''),
+                contractor.get('class', ''),
+                contractor.get('address', ''),
+                contractor.get('phone', ''),
+                contractor.get('source', ''),
+                contractor.get('extracted_at', '')
+            ])
+        
+        # Create response
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = 'attachment; filename=ccmc_contractors.csv'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating CSV: {str(e)}', 'error')
+        return redirect(url_for('ccmc_contractors'))
+
+@app.route('/download-ccmc-excel')
+@login_required
+def download_ccmc_excel():
+    """Download CCMC contractors as Excel"""
+    try:
+        ccmc_data = load_ccmc_data()
+        
+        # Create DataFrame
+        df_data = []
+        for i, contractor in enumerate(ccmc_data, 1):
+            df_data.append({
+                'S.No': i,
+                'Name': contractor.get('name', ''),
+                'Class': contractor.get('class', ''),
+                'Address': contractor.get('address', ''),
+                'Phone': contractor.get('phone', ''),
+                'Source': contractor.get('source', ''),
+                'Extracted At': contractor.get('extracted_at', '')
+            })
+        
+        df = pd.DataFrame(df_data)
+        
+        # Create Excel response
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name='CCMC Contractors', index=False)
+        
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        response.headers['Content-Disposition'] = 'attachment; filename=ccmc_contractors.xlsx'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating Excel: {str(e)}', 'error')
+        return redirect(url_for('ccmc_contractors'))
+
+def load_ccmc_data():
+    """Load CCMC contractors data from JSON file"""
+    try:
+        if os.path.exists('ccmc_contractors.json'):
+            with open('ccmc_contractors.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data.get('data', {}).get('contractors', [])
+        else:
+            return []
+    except Exception as e:
+        print(f"Error loading CCMC data: {str(e)}")
+        return []
+
+        return []
+
+def load_sub_reg_data():
+    """Load Sub Registrar office data from JSON file"""
+    try:
+        if os.path.exists('sub_reg_offices.json'):
+            with open('sub_reg_offices.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data.get('data', [])
+        else:
+            return []
+    except Exception as e:
+        print(f"Error loading Sub Registrar data: {str(e)}")
+        return []
+
+@app.route('/sr-office')
+@login_required
+def sr_office():
+    """Display Sub Registrar offices with filtering"""
+    try:
+        sub_reg_data = load_sub_reg_data()
+        
+        # Get filter parameters
+        zone_filter = request.args.get('zone', '')
+        search_query = request.args.get('search', '')
+        
+        # Apply filters
+        filtered_data = sub_reg_data
+        
+        if zone_filter:
+            filtered_data = [office for office in filtered_data if office.get('zone', '').lower() == zone_filter.lower()]
+        
+        if search_query:
+            search_lower = search_query.lower()
+            filtered_data = [office for office in filtered_data if 
+                           search_lower in office.get('office_name', '').lower() or
+                           search_lower in office.get('designation', '').lower() or
+                           search_lower in office.get('address', '').lower()]
+        
+        # Get unique zones for filter dropdown
+        zones = sorted(set(office.get('zone', '') for office in sub_reg_data if office.get('zone')))
+        
+        # Pagination
+        page = int(request.args.get('page', 1))
+        per_page = 50
+        start_idx = (page - 1) * per_page
+        end_idx = start_idx + per_page
+        paginated_data = filtered_data[start_idx:end_idx]
+        
+        total_pages = (len(filtered_data) + per_page - 1) // per_page
+        
+        return render_template('sr_office.html', 
+                             sub_reg_data=paginated_data,
+                             zones=zones,
+                             current_zone=zone_filter,
+                             search_query=search_query,
+                             username=session.get('username'),
+                             current_page=page,
+                             total_pages=total_pages,
+                             total_records=len(filtered_data),
+                             per_page=per_page)
+    except Exception as e:
+        flash(f'Error loading Sub Registrar data: {str(e)}', 'error')
+        return render_template('sr_office.html', 
+                             sub_reg_data=[], 
+                             zones=[],
+                             username=session.get('username'),
+                             current_page=1,
+                             total_pages=1,
+                             total_records=0,
+                             per_page=50)
+
+@app.route('/download-sr-office-csv')
+@login_required
+def download_sr_office_csv():
+    """Download Sub Registrar offices as CSV"""
+    try:
+        sub_reg_data = load_sub_reg_data()
+        
+        # Get filter parameters
+        zone_filter = request.args.get('zone', '')
+        search_query = request.args.get('search', '')
+        
+        # Apply same filters as main page
+        filtered_data = sub_reg_data
+        
+        if zone_filter:
+            filtered_data = [office for office in filtered_data if office.get('zone', '').lower() == zone_filter.lower()]
+        
+        if search_query:
+            search_lower = search_query.lower()
+            filtered_data = [office for office in filtered_data if 
+                           search_lower in office.get('office_name', '').lower() or
+                           search_lower in office.get('designation', '').lower() or
+                           search_lower in office.get('address', '').lower()]
+        
+        # Create CSV response
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Write header
+        writer.writerow(['Zone', 'Office Name', 'Designation', 'STD Code', 'Office Phone', 'Email', 'Address'])
+        
+        # Write data
+        for office in filtered_data:
+            writer.writerow([
+                office.get('zone', ''),
+                office.get('office_name', ''),
+                office.get('designation', ''),
+                office.get('std_code', ''),
+                office.get('office_phone', ''),
+                office.get('email', ''),
+                office.get('address', '')
+            ])
+        
+        output.seek(0)
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = f'attachment; filename=sub_registrar_offices_{zone_filter or "all"}.csv'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating CSV: {str(e)}', 'error')
+        return redirect(url_for('sr_office'))
+
+
+@app.route('/api/ward-map-url')
+@login_required
+def ward_map_url():
+    """API endpoint to generate Google Maps URL for ward boundaries"""
+    try:
+        from google_maps_helper import create_ward_boundary_map_url
+        
+        ward_name = request.args.get('ward_name', '')
+        direction = request.args.get('direction', '')
+        descriptions = request.args.getlist('descriptions')
+        
+        if not descriptions:
+            descriptions_str = request.args.get('descriptions_str', '')
+            descriptions = descriptions_str.split('|') if descriptions_str else []
+        
+        if ward_name and direction and descriptions:
+            map_url = create_ward_boundary_map_url(ward_name, direction, descriptions)
+            return jsonify({
+                'success': True,
+                'map_url': map_url,
+                'ward_name': ward_name,
+                'direction': direction
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Missing required parameters: ward_name, direction, descriptions'
+            }), 400
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# BAI Members route
+@app.route('/bai-members')
+@login_required
+def bai_members():
+    """Display BAI members data"""
+    try:
+        conn = sqlite3.connect('users.db')
+        cursor = conn.cursor()
+        
+        # Get pagination parameters
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 50))
+        search_query = request.args.get('search', '').strip()
+        
+        # Build query
+        query = "SELECT * FROM bai_members WHERE 1=1"
+        params = []
+        
+        if search_query:
+            query += " AND (company_name LIKE ? OR contact_person LIKE ? OR address LIKE ?)"
+            search_param = f"%{search_query}%"
+            params.extend([search_param, search_param, search_param])
+        
+        # Get total count
+        count_query = f"SELECT COUNT(*) FROM ({query})"
+        cursor.execute(count_query, params)
+        total_records = cursor.fetchone()[0]
+        
+        # Calculate pagination
+        total_pages = (total_records + per_page - 1) // per_page
+        offset = (page - 1) * per_page
+        
+        # Get paginated data
+        query += " ORDER BY company_name LIMIT ? OFFSET ?"
+        params.extend([per_page, offset])
+        
+        cursor.execute(query, params)
+        columns = [description[0] for description in cursor.description]
+        bai_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        
+        conn.close()
+        
+        return render_template('bai_members.html', 
+                             bai_data=bai_data,
+                             username=session.get('username'),
+                             current_page=page,
+                             total_pages=total_pages,
+                             total_records=total_records,
+                             per_page=per_page,
+                             search_query=search_query)
+    except Exception as e:
+        flash(f'Error loading BAI data: {str(e)}', 'error')
+        return render_template('bai_members.html', 
+                             bai_data=[],
+                             username=session.get('username'),
+                             current_page=1,
+                             total_pages=1,
+                             total_records=0,
+                             per_page=50,
+                             search_query='')
+
+@app.route('/download-bai-csv')
+@login_required
+def download_bai_csv():
+    """Download BAI members as CSV"""
+    try:
+        conn = sqlite3.connect('users.db')
+        cursor = conn.cursor()
+        
+        # Get filter parameters
+        search_query = request.args.get('search', '')
+        
+        # Build query
+        query = "SELECT company_name, contact_person, address, phone, email, source_url, scraped_at FROM bai_members WHERE 1=1"
+        params = []
+        
+        if search_query:
+            query += " AND (company_name LIKE ? OR contact_person LIKE ? OR address LIKE ?)"
+            search_param = f"%{search_query}%"
+            params.extend([search_param, search_param, search_param])
+        
+        query += " ORDER BY company_name"
+        
+        cursor.execute(query, params)
+        columns = [description[0] for description in cursor.description]
+        bai_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        
+        conn.close()
+        
+        # Create CSV response
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Write header
+        writer.writerow(['Company Name', 'Contact Person', 'Address', 'Phone', 'Email', 'Source URL', 'Scraped At'])
+        
+        # Write data
+        for member in bai_data:
+            writer.writerow([
+                member.get('company_name', ''),
+                member.get('contact_person', ''),
+                member.get('address', ''),
+                member.get('phone', ''),
+                member.get('email', ''),
+                member.get('source_url', ''),
+                member.get('scraped_at', '')
+            ])
+        
+        output.seek(0)
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = f'attachment; filename=bai_members_{search_query or "all"}.csv'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating CSV: {str(e)}', 'error')
+        return redirect(url_for('bai_members'))
+
+
+if __name__ == '__main__':
+    init_db()
+    app.run(debug=True, host='0.0.0.0', port=5000)
+
