@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">G</div>
+            </div>
+            <h1 class="app-title">Data Explorer</h1>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="{{ url_for('in_data') }}">
+                    <i class="fas fa-database"></i>
+                    <span>IN Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('bai_members') }}">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>BAI Data</span>
+                </a>
+            </li>
+            <!-- <li class="nav-item">
+                <a href="{{ url_for('colleges') }}">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Colleges</span>
+                </a>
+            </li> -->
+            <li class="nav-item">
+                <a href="{{ url_for('edu_list_tn') }}">
+                    <i class="fas fa-university"></i>
+                    <span>EDU List TN</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('iia_cbe') }}">
+                    <i class="fas fa-industry"></i>
+                    <span>IIA CBE</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('cozcena') }}">
+                    <i class="fas fa-building"></i>
+                    <span>COZCENA</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('sr_office') }}">
+                    <i class="fas fa-landmark"></i>
+                    <span>SR Office</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('tcea_members') }}">
+                    <i class="fas fa-users"></i>
+                    <span>TCEA Members</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('credai_members') }}">
+                    <i class="fas fa-building"></i>
+                    <span>CREDAI</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('rera_agents') }}">
+                    <i class="fas fa-user-tie"></i>
+                    <span>RERA Agents</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('ccmc_contractors') }}">
+                    <i class="fas fa-tools"></i>
+                    <span>CCMC Contractors</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('cbe_wards') }}">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>CBE Wards</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a href="{{ url_for('pollachi_wards') }}">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Pollachi Wards</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" onclick="alert('Eway Data coming soon!')">
+                    <i class="fas fa-truck"></i>
+                    <span>Eway Data</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <div class="header-content">
+                <h2><i class="fas fa-map-marked-alt"></i> Pollachi Wards</h2>
+                <p class="subtitle">Pollachi Municipality - Ward Information</p>
+                <div class="header-actions">
+                    <a href="{{ url_for('download_pollachi_wards_csv', search=search_query) }}" class="download-btn csv-btn">
+                        <i class="fas fa-file-csv"></i>
+                        Download CSV
+                    </a>
+                    <a href="{{ url_for('dashboard') }}" class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        ← Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="search-section">
+            <form method="GET" class="search-form">
+                <div class="search-container">
+                    <input type="text" 
+                           name="search" 
+                           value="{{ search_query }}" 
+                           placeholder="Search by ward number, name, or description..." 
+                           class="search-input">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                        Search
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Summary -->
+        <div class="results-summary">
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <div class="summary-content">
+                    <h3>{{ total_wards }} of {{ total_wards }} Pollachi Wards</h3>
+                    <p>Pollachi Municipality - Ward Information</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wards Data Display -->
+        {% if wards_data %}
+        <div class="data-container">
+            <div class="data-grid">
+                {% for ward in wards_data %}
+                <div class="ward-card">
+                    <div class="ward-header">
+                        <div class="ward-number">{{ ward.ward_number }}</div>
+                        <div class="ward-info">
+                            <h3>{{ ward.ward_name }}</h3>
+                            {% if ward.description %}
+                            <p class="ward-description">{{ ward.description }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="ward-details">
+                        {% if ward.general_landmarks %}
+                        <div class="detail-section">
+                            <h4><i class="fas fa-landmark"></i> Landmarks</h4>
+                            <div class="tags">
+                                {% for landmark in ward.general_landmarks[:5] %}
+                                <span class="tag">{{ landmark }}</span>
+                                {% endfor %}
+                                {% if ward.general_landmarks|length > 5 %}
+                                <span class="tag more">+{{ ward.general_landmarks|length - 5 }} more</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if ward.general_roads %}
+                        <div class="detail-section">
+                            <h4><i class="fas fa-road"></i> Roads</h4>
+                            <div class="tags">
+                                {% for road in ward.general_roads[:3] %}
+                                <span class="tag road-tag">{{ road[:30] }}{% if road|length > 30 %}...{% endif %}</span>
+                                {% endfor %}
+                                {% if ward.general_roads|length > 3 %}
+                                <span class="tag more">+{{ ward.general_roads|length - 3 }} more</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if ward.boundaries %}
+                        <div class="detail-section">
+                            <h4><i class="fas fa-map"></i> Boundaries</h4>
+                            <div class="tags">
+                                {% for boundary in ward.boundaries %}
+                                <span class="tag boundary-tag">{{ boundary }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if current_page > 1 %}
+            <a href="{{ url_for('pollachi_wards', page=current_page-1, search=search_query) }}" class="page-btn prev-btn">
+                <i class="fas fa-chevron-left"></i>
+                Previous
+            </a>
+            {% endif %}
+            
+            {% for page_num in range(1, total_pages + 1) %}
+                {% if page_num == current_page %}
+                <span class="page-number current">{{ page_num }}</span>
+                {% elif page_num <= 3 or page_num > total_pages - 3 or (page_num >= current_page - 1 and page_num <= current_page + 1) %}
+                <a href="{{ url_for('pollachi_wards', page=page_num, search=search_query) }}" class="page-number">{{ page_num }}</a>
+                {% elif page_num == 4 or page_num == total_pages - 3 %}
+                <span class="page-ellipsis">...</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if current_page < total_pages %}
+            <a href="{{ url_for('pollachi_wards', page=current_page+1, search=search_query) }}" class="page-btn next-btn">
+                Next
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- No Data State -->
+        <div class="no-data">
+            <div class="no-data-icon">
+                <i class="fas fa-map-marked-alt"></i>
+            </div>
+            <h3>No Pollachi Wards Found</h3>
+            <p>No ward data matches your current search criteria.</p>
+            <a href="{{ url_for('pollachi_wards') }}" class="clear-filters-btn">
+                <i class="fas fa-times"></i>
+                Clear Filters
+            </a>
+        </div>
+        {% endif %}
+    </main>
+</div>
+
+<style>
+.ward-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: 1px solid #e1e5e9;
+    transition: all 0.3s ease;
+}
+
+.ward-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.ward-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.ward-number {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.ward-info h3 {
+    margin: 0 0 5px 0;
+    color: #2c3e50;
+    font-size: 18px;
+}
+
+.ward-description {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.ward-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.detail-section h4 {
+    margin: 0 0 8px 0;
+    color: #34495e;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-section h4 i {
+    color: #3498db;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag {
+    background: #ecf0f1;
+    color: #2c3e50;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.tag.more {
+    background: #3498db;
+    color: white;
+}
+
+.tag.road-tag {
+    background: #e8f5e8;
+    color: #27ae60;
+}
+
+.tag.boundary-tag {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .data-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .ward-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .ward-number {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+</style>
+{% endblock %}

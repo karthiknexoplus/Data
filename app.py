@@ -2010,7 +2010,115 @@ def download_bai_csv():
         return redirect(url_for('bai_members'))
 
 
+
+# Pollachi Wards functionality
+def load_pollachi_wards_data():
+    """Load Pollachi wards data from JSON file"""
+    try:
+        if os.path.exists('pollachi_wards.json'):
+            with open('pollachi_wards.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data.get('wards', [])
+        else:
+            return []
+    except Exception as e:
+        print(f"Error loading Pollachi wards data: {str(e)}")
+        return []
+
+@app.route('/pollachi-wards')
+@login_required
+def pollachi_wards():
+    """Display Pollachi wards with filtering"""
+    try:
+        wards_data = load_pollachi_wards_data()
+        
+        # Get filter parameters
+        search_query = request.args.get('search', '')
+        
+        # Apply filters
+        filtered_data = wards_data
+        
+        if search_query:
+            search_lower = search_query.lower()
+            filtered_data = [ward for ward in filtered_data if 
+                           search_lower in str(ward.get('ward_number', '')).lower() or
+                           search_lower in ward.get('ward_name', '').lower() or
+                           search_lower in str(ward.get('description', '')).lower()]
+        
+        # Pagination
+        page = int(request.args.get('page', 1))
+        per_page = 50
+        start_idx = (page - 1) * per_page
+        end_idx = start_idx + per_page
+        paginated_data = filtered_data[start_idx:end_idx]
+        
+        total_pages = (len(filtered_data) + per_page - 1) // per_page
+        
+        return render_template('pollachi_wards.html', 
+                             wards_data=paginated_data,
+                             search_query=search_query,
+                             username=session.get('username'),
+                             current_page=page,
+                             total_pages=total_pages,
+                             total_wards=len(filtered_data))
+    except Exception as e:
+        flash(f'Error loading Pollachi wards data: {str(e)}', 'error')
+        return render_template('pollachi_wards.html', 
+                             wards_data=[],
+                             search_query='',
+                             username=session.get('username'),
+                             current_page=1,
+                             total_pages=1,
+                             total_wards=0)
+
+@app.route('/download-pollachi-wards-csv')
+@login_required
+def download_pollachi_wards_csv():
+    """Download Pollachi wards data as CSV"""
+    try:
+        wards_data = load_pollachi_wards_data()
+        
+        # Get search query for filename
+        search_query = request.args.get('search', '')
+        
+        # Create CSV content
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Write header
+        writer.writerow([
+            'Ward Number', 'Ward Name', 'Description', 'Landmarks', 
+            'Roads', 'Boundaries', 'Population', 'Area'
+        ])
+        
+        # Write data
+        for ward in wards_data:
+            landmarks = '; '.join(ward.get('general_landmarks', [])) if ward.get('general_landmarks') else ''
+            roads = '; '.join(ward.get('general_roads', [])) if ward.get('general_roads') else ''
+            boundaries = '; '.join(ward.get('boundaries', [])) if ward.get('boundaries') else ''
+            
+            writer.writerow([
+                ward.get('ward_number', ''),
+                ward.get('ward_name', ''),
+                ward.get('description', ''),
+                landmarks,
+                roads,
+                boundaries,
+                ward.get('population', ''),
+                ward.get('area', '')
+            ])
+        
+        output.seek(0)
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = f'attachment; filename=pollachi_wards_{search_query or "all"}.csv'
+        
+        return response
+    except Exception as e:
+        flash(f'Error generating CSV: {str(e)}', 'error')
+        return redirect(url_for('pollachi_wards'))
+
+
 if __name__ == '__main__':
     init_db()
     app.run(debug=True, host='0.0.0.0', port=5000)
-

@@ -509,15 +509,20 @@
 }
 
 .address {
-    max-width: 300px;
+    max-width: 400px;
+    min-width: 300px;
 }
 
 .address-text {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-word;
     color: #7f8c8d;
     font-size: 0.9rem;
+    line-height: 1.4;
+    max-height: none;
 }
 
 .phone, .email {
@@ -716,3 +721,61 @@
 }
 </style>
 {% endblock %}
+
+/* Additional improvements for address display */
+.data-table {
+    table-layout: auto;
+    width: 100%;
+}
+
+.data-table th,
+.data-table td {
+    vertical-align: top;
+    padding: 12px 8px;
+}
+
+.address {
+    max-width: 400px;
+    min-width: 300px;
+    word-wrap: break-word;
+}
+
+.address-text {
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-word;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    max-height: none;
+    display: block;
+}
+
+/* Make table responsive */
+@media (max-width: 1200px) {
+    .address {
+        max-width: 300px;
+        min-width: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .address {
+        max-width: 200px;
+        min-width: 150px;
+    }
+    
+    .address-text {
+        font-size: 0.8rem;
+    }
+}
+
+/* Hover effect for better readability */
+.address-text:hover {
+    background-color: #f8f9fa;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
