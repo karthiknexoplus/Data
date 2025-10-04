@@ -1,0 +1,594 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-left">
+            <a href="{{ url_for('dashboard') }}" class="logo-link">
+                <div class="logo"><div class="logo-icon"></div></div>
+                <h1 class="app-title">Data Explorer</h1>
+            </a>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+
+
+    <!-- Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <div class="header-content">
+                <h2><i class="fas fa-truck"></i> Suppliers Directory</h2>
+                <p class="subtitle">Search suppliers by State, District, Pincode, and Category</p>
+                <div class="header-actions">
+                    <div class="summary-chips">
+                        {% if current_state %}<span class="chip"><i class="fas fa-flag"></i> {{ current_state }}</span>{% endif %}
+                        {% if current_district %}<span class="chip"><i class="fas fa-city"></i> {{ current_district }}</span>{% endif %}
+                        {% if current_pincode %}<span class="chip"><i class="fas fa-mail-bulk"></i> {{ current_pincode }}</span>{% endif %}
+                        {% if current_category %}<span class="chip"><i class="fas fa-tags"></i> {{ current_category }}</span>{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="filters-row">
+            <form method="GET" class="search-form" id="searchForm">
+                <div class="filter-group">
+                    <label for="state">State</label>
+                    <select name="state" id="state" onchange="loadDistricts()">
+                        <option value="">All States</option>
+                        {% for state in states %}
+                        <option value="{{ state }}" {{ 'selected' if state == current_state else '' }}>{{ state }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="district">District</label>
+                    <select name="district" id="district" onchange="loadPincodes()">
+                        <option value="">All Districts</option>
+                        {% for district in districts %}
+                        <option value="{{ district }}" {{ 'selected' if district == current_district else '' }}>{{ district }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="pincode">Pincode</label>
+                    <select name="pincode" id="pincode">
+                        <option value="">Select Pincode</option>
+                        {% for pincode in pincodes %}
+                        <option value="{{ pincode }}" {{ 'selected' if pincode == current_pincode else '' }}>{{ pincode }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="category">Category</label>
+                    <select name="category" id="category">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}" {{ 'selected' if cat == current_category else '' }}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="search">Search</label>
+                    <input type="text" name="search" id="search" value="{{ search_query or '' }}" placeholder="Search suppliers...">
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="btn primary"><i class="fas fa-search"></i> Search</button>
+                    <a href="{{ url_for('suppliers') }}" class="btn light">Clear</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Summary + Pagination Top -->
+        <div class="summary-row">
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fas fa-truck"></i></div>
+                <div class="summary-text">
+                    <h3>{{ total_records }} Suppliers</h3>
+                    <p>Page {{ current_page }} of {{ total_pages }}</p>
+                </div>
+            </div>
+            {% if current_pincode %}
+            <div class="pincode-actions">
+                <a href="{{ url_for('download_suppliers_csv', pincode=current_pincode, category=current_category) }}" 
+                   class="btn success">
+                    <i class="fas fa-file-csv"></i> Download CSV
+                </a>
+            </div>
+            {% endif %}
+            {% if total_pages > 1 %}
+            <div class="paginator">
+                {% if current_page > 1 %}
+                <a class="btn light" href="{{ url_for('suppliers', page=1, state=current_state, district=current_district, pincode=current_pincode, category=current_category, search=search_query) }}"><i class="fas fa-angle-double-left"></i></a>
+                <a class="btn light" href="{{ url_for('suppliers', page=current_page-1, state=current_state, district=current_district, pincode=current_pincode, category=current_category, search=search_query) }}"><i class="fas fa-angle-left"></i></a>
+                {% endif %}
+                <span class="page-info">{{ current_page }}/{{ total_pages }}</span>
+                {% if current_page < total_pages %}
+                <a class="btn light" href="{{ url_for('suppliers', page=current_page+1, state=current_state, district=current_district, pincode=current_pincode, category=current_category, search=search_query) }}"><i class="fas fa-angle-right"></i></a>
+                <a class="btn light" href="{{ url_for('suppliers', page=total_pages, state=current_state, district=current_district, pincode=current_pincode, category=current_category, search=search_query) }}"><i class="fas fa-angle-double-right"></i></a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Suppliers Grid -->
+        {% if suppliers %}
+        <div class="suppliers-grid">
+            {% for supplier in suppliers %}
+            <div class="supplier-card">
+                <div class="supplier-header">
+                    <div class="supplier-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="supplier-info">
+                        <h3>{{ supplier.get('name', 'N/A') }}</h3>
+                        <p class="supplier-category">{{ supplier.get('category', 'N/A') }}</p>
+                    </div>
+                </div>
+                <div class="supplier-details">
+                    <div class="detail-row">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ supplier.get('address', 'N/A') }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-phone"></i>
+                        <span>{{ supplier.get('phone', 'N/A') }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ supplier.get('email', 'N/A') }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-star"></i>
+                        <span>{{ supplier.get('rating', 'N/A') }} ({{ supplier.get('reviews_count', '0') }} reviews)</span>
+                    </div>
+                </div>
+                <div class="supplier-actions">
+                    <a href="{{ supplier.get('website', '#') }}" target="_blank" class="btn small primary">
+                        <i class="fas fa-external-link-alt"></i> Website
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-data">
+            <div class="no-data-icon">
+                <i class="fas fa-truck"></i>
+            </div>
+            <h3>No Suppliers Found</h3>
+            <p>
+                {% if current_pincode %}
+                    No suppliers data found for pincode {{ current_pincode }}. 
+                    <a href="{{ url_for('scrape_suppliers_by_pincode', pincode=current_pincode, state=current_state, district=current_district) }}" 
+                       class="btn primary">Scrape Data</a>
+                {% else %}
+                    Please select a state, district, and pincode to view suppliers data.
+                {% endif %}
+            </p>
+        </div>
+        {% endif %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>Powered by Nexoplus Innovations Pvt Ltd</p>
+    </footer>
+</div>
+
+<style>
+.suppliers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 24px;
+    padding: 24px;
+}
+
+.supplier-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.supplier-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.supplier-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.supplier-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    margin-right: 16px;
+}
+
+}
+
+.cache-info i {
+    color: #3b82f6;
+}
+
+.supplier-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.supplier-category {
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.supplier-details {
+    margin-bottom: 16px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #374151;
+}
+
+.detail-row i {
+    width: 16px;
+    margin-right: 12px;
+    color: #6b7280;
+}
+
+.supplier-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn.small {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.pincode-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.no-data {
+    text-align: center;
+    padding: 60px 24px;
+    color: #6b7280;
+}
+
+.no-data-icon {
+    font-size: 48px;
+    color: #d1d5db;
+    margin-bottom: 16px;
+}
+
+.no-data h3 {
+    margin: 0 0 8px 0;
+    color: #374151;
+}
+
+.no-data p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.filters-row {
+    background: white;
+    padding: 24px;
+    margin: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.search-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn.primary {
+    background: #8b5cf6;
+    color: white;
+}
+
+.btn.primary:hover {
+    background: #7c3aed;
+}
+
+.btn.secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.btn.secondary:hover {
+    background: #4b5563;
+}
+
+.btn.success {
+    background: #10b981;
+    color: white;
+}
+
+.btn.success:hover {
+    background: #059669;
+}
+
+.btn.light {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.btn.light:hover {
+    background: #e5e7eb;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.summary-card {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.summary-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    margin-right: 16px;
+}
+
+.summary-text h3 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.summary-text p {
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.paginator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-info {
+    padding: 8px 12px;
+    background: #f3f4f6;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #374151;
+}
+
+.summary-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #f3f4f6;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #374151;
+}
+
+.chip i {
+    color: #8b5cf6;
+}
+
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+</style>
+
+<script>
+function loadDistricts() {
+    const state = document.getElementById('state').value;
+    const districtSelect = document.getElementById('district');
+    const pincodeSelect = document.getElementById('pincode');
+    
+    // Clear dependent selects
+    districtSelect.innerHTML = '<option value="">All Districts</option>';
+    pincodeSelect.innerHTML = '<option value="">Select Pincode</option>';
+    
+    if (state) {
+        // Show loading state
+        districtSelect.disabled = true;
+        districtSelect.innerHTML = '<option value="">Loading districts...</option>';
+        
+        // Fetch districts via AJAX
+        console.log("Fetching districts for state:", state); fetch(`/api/suppliers/districts/${encodeURIComponent(state)}`, { credentials: "include" })
+            .then(response => { console.log("Response status:", response.status); return response.json(); })
+            .then(data => { console.log("Received data:", data);
+                districtSelect.innerHTML = '<option value="">All Districts</option>';
+                data.districts.forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district;
+                    option.textContent = district;
+                    districtSelect.appendChild(option);
+                });
+                districtSelect.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error loading districts:', error);
+                districtSelect.innerHTML = '<option value="">Error loading districts</option>';
+                districtSelect.disabled = false;
+            });
+    } else {
+        districtSelect.disabled = true;
+        pincodeSelect.disabled = true;
+    }
+}
+
+function loadPincodes() {
+    const state = document.getElementById('state').value;
+    const district = document.getElementById('district').value;
+    const pincodeSelect = document.getElementById('pincode');
+    
+    // Clear pincode select
+    pincodeSelect.innerHTML = '<option value="">Select Pincode</option>';
+    
+    if (district && state) {
+        // Show loading state
+        pincodeSelect.disabled = true;
+        pincodeSelect.innerHTML = '<option value="">Loading pincodes...</option>';
+        
+        // Fetch pincodes via AJAX
+        fetch(`/api/suppliers/pincodes/${encodeURIComponent(state)}/${encodeURIComponent(district)}`, { credentials: "include" })
+            .then(response => { console.log("Response status:", response.status); return response.json(); })
+            .then(data => { console.log("Received data:", data);
+                pincodeSelect.innerHTML = '<option value="">Select Pincode</option>';
+                data.pincodes.forEach(pincode => {
+                    const option = document.createElement('option');
+                    option.value = pincode;
+                    option.textContent = pincode;
+                    pincodeSelect.appendChild(option);
+                });
+                pincodeSelect.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error loading pincodes:', error);
+                pincodeSelect.innerHTML = '<option value="">Error loading pincodes</option>';
+                pincodeSelect.disabled = false;
+            });
+    } else {
+        pincodeSelect.disabled = true;
+    }
+}
+
+
+// Initialize form state
+document.addEventListener("DOMContentLoaded", function() {
+    const state = document.getElementById("state").value;
+    const district = document.getElementById("district").value;
+    
+    if (state) {
+        loadDistricts();
+    }
+    if (district) {
+        loadPincodes();
+    }
+    
+    // Add event listener for pincode change
+    const pincodeSelect = document.getElementById("pincode");
+    if (pincodeSelect) {
+        pincodeSelect.addEventListener("change", function() {
+            
+        });
+    }
+    
+    // Update cache status for current pincode
+    const currentPincode = "{{ current_pincode }}";
+    if (currentPincode) {
+        
+    }
+});
+</script>
+{% endblock %}

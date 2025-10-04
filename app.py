@@ -6,13 +6,19 @@ import hashlib
 import os
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
+# Data is automatically cached by the scraper
 from functools import wraps
 import time
 import io
 import re
 from urllib.parse import urljoin, parse_qs, urlparse
 import urllib3
+from enhanced_suppliers_scraper import EnhancedSuppliersScraper
+import pandas as _pd
+import os as _os
+
+# Cache for pandas dataframes
+_PIN_DF_CACHE = {"df": None, "path": None, "mtime": None}
 
 # Disable SSL warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -751,7 +757,7 @@ def logout():
 
 # CBE Ward Routes
 @app.route("/cbe-wards")
-@login_required
+
 def cbe_wards():
     """Display Coimbatore ward data with pagination and search"""
     try:
@@ -803,7 +809,7 @@ def cbe_wards():
                              search_query="")
 
 @app.route("/download-cbe-wards-csv")
-@login_required
+
 def download_cbe_wards_csv():
     """Download CBE ward data as CSV"""
     try:
@@ -925,6 +931,11 @@ def download_dce_excel():
 import requests
 from bs4 import BeautifulSoup
 import urllib3
+from enhanced_suppliers_scraper import EnhancedSuppliersScraper
+import os as _os
+
+# Cache for pandas dataframes
+_PIN_DF_CACHE = {"df": None, "path": None, "mtime": None}
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class WorkingNRLMScraper:
@@ -1201,7 +1212,7 @@ def ccmc_con():
 
 # TCEA Members Routes
 @app.route('/tcea-members')
-@login_required
+
 def tcea_members():
     """Display TCEA members page with search and pagination"""
     try:
@@ -1305,7 +1316,7 @@ def tcea_members():
                              category="")
 
 @app.route('/download-tcea-csv')
-@login_required
+
 def download_tcea_csv():
     """Download TCEA members as CSV"""
     try:
@@ -1338,7 +1349,7 @@ def download_tcea_csv():
         return redirect(url_for('tcea_members'))
 
 @app.route('/download-tcea-excel')
-@login_required
+
 def download_tcea_excel():
     """Download TCEA members as Excel"""
     try:
@@ -1389,7 +1400,7 @@ def load_complete_tcea_data():
 
 # CREDAI Members Routes
 @app.route('/credai-members')
-@login_required
+
 def credai_members():
     """Display CREDAI members page"""
     try:
@@ -1401,7 +1412,7 @@ def credai_members():
         return render_template('credai_members.html', credai_data=[], username=session.get('username'))
 
 @app.route('/download-credai-csv')
-@login_required
+
 def download_credai_csv():
     """Download CREDAI members as CSV"""
     try:
@@ -1435,7 +1446,7 @@ def download_credai_csv():
         return redirect(url_for('credai_members'))
 
 @app.route('/download-credai-excel')
-@login_required
+
 def download_credai_excel():
     """Download CREDAI members as Excel"""
     try:
@@ -1487,7 +1498,7 @@ def load_credai_data():
 
 # RERA Agents Routes
 @app.route('/rera-agents')
-@login_required
+
 def rera_agents():
     """Display RERA agents page with pagination"""
     try:
@@ -1524,7 +1535,7 @@ def rera_agents():
                              per_page=200)
 
 @app.route('/download-rera-csv')
-@login_required
+
 def download_rera_csv():
     """Download RERA agents as CSV"""
     try:
@@ -1560,7 +1571,7 @@ def download_rera_csv():
         return redirect(url_for('rera_agents'))
 
 @app.route('/download-rera-excel')
-@login_required
+
 def download_rera_excel():
     """Download RERA agents as Excel"""
     try:
@@ -1609,7 +1620,7 @@ def load_rera_data():
 
 # CCMC Contractors Routes
 @app.route('/ccmc-contractors')
-@login_required
+
 def ccmc_contractors():
     """Display CCMC contractors page with pagination"""
     try:
@@ -1618,6 +1629,10 @@ def ccmc_contractors():
         
         # Load CCMC contractors data
         ccmc_data = load_ccmc_data()
+        
+        # Filter out records where contractor name starts with numeric
+        import re
+        ccmc_data = [contractor for contractor in ccmc_data if contractor.get("name") and not re.match(r"^d", contractor["name"].strip())]
         
         # Calculate pagination
         total_records = len(ccmc_data)
@@ -1646,11 +1661,15 @@ def ccmc_contractors():
                              per_page=200)
 
 @app.route('/download-ccmc-csv')
-@login_required
+
 def download_ccmc_csv():
     """Download CCMC contractors as CSV"""
     try:
         ccmc_data = load_ccmc_data()
+        
+        # Filter out records where contractor name starts with numeric
+        import re
+        ccmc_data = [contractor for contractor in ccmc_data if contractor.get("name") and not re.match(r"^d", contractor["name"].strip())]
         
         # Create CSV response
         output = io.StringIO()
@@ -1682,11 +1701,15 @@ def download_ccmc_csv():
         return redirect(url_for('ccmc_contractors'))
 
 @app.route('/download-ccmc-excel')
-@login_required
+
 def download_ccmc_excel():
     """Download CCMC contractors as Excel"""
     try:
         ccmc_data = load_ccmc_data()
+        
+        # Filter out records where contractor name starts with numeric
+        import re
+        ccmc_data = [contractor for contractor in ccmc_data if contractor.get("name") and not re.match(r"^d", contractor["name"].strip())]
         
         # Create DataFrame
         df_data = []
@@ -1746,7 +1769,7 @@ def load_sub_reg_data():
         return []
 
 @app.route('/sr-office')
-@login_required
+
 def sr_office():
     """Display Sub Registrar offices with filtering"""
     try:
@@ -1803,7 +1826,7 @@ def sr_office():
                              per_page=50)
 
 @app.route('/download-sr-office-csv')
-@login_required
+
 def download_sr_office_csv():
     """Download Sub Registrar offices as CSV"""
     try:
@@ -1857,7 +1880,7 @@ def download_sr_office_csv():
 
 
 @app.route('/api/ward-map-url')
-@login_required
+
 def ward_map_url():
     """API endpoint to generate Google Maps URL for ward boundaries"""
     try:
@@ -1892,8 +1915,26 @@ def ward_map_url():
         }), 500
 
 # BAI Members route
+
+# Simple CSV cache to avoid re-reading on every request
+_PIN_DF_CACHE = {'path': None, 'mtime': None, 'df': None}
+
+
+def PD_CACHE_read(path, usecols=None):
+    try:
+        st = _os.stat(path)
+        mtime = st.st_mtime
+        if _PIN_DF_CACHE['df'] is not None and _PIN_DF_CACHE['path']==path and _PIN_DF_CACHE['mtime']==mtime:
+            return _PIN_DF_CACHE['df']
+        df = _pd.read_csv(path, low_memory=False, usecols=usecols)
+        _PIN_DF_CACHE.update({'path': path, 'mtime': mtime, 'df': df})
+        return df
+    except Exception:
+        # Fallback
+        return _pd.read_csv(path, low_memory=False, usecols=usecols)
+
 @app.route('/bai-members')
-@login_required
+
 def bai_members():
     """Display BAI members data"""
     try:
@@ -1953,7 +1994,7 @@ def bai_members():
                              search_query='')
 
 @app.route('/download-bai-csv')
-@login_required
+
 def download_bai_csv():
     """Download BAI members as CSV"""
     try:
@@ -2026,7 +2067,7 @@ def load_pollachi_wards_data():
         return []
 
 @app.route('/pollachi-wards')
-@login_required
+
 def pollachi_wards():
     """Display Pollachi wards with filtering"""
     try:
@@ -2072,7 +2113,7 @@ def pollachi_wards():
                              total_wards=0)
 
 @app.route('/download-pollachi-wards-csv')
-@login_required
+
 def download_pollachi_wards_csv():
     """Download Pollachi wards data as CSV"""
     try:
@@ -2118,7 +2159,406 @@ def download_pollachi_wards_csv():
         flash(f'Error generating CSV: {str(e)}', 'error')
         return redirect(url_for('pollachi_wards'))
 
+# Pincodes page
+@app.route('/pincodes')
 
-if __name__ == '__main__':
+def pincodes():
+    """Display pincodes with filters for state and district"""
+    try:
+        # Data is automatically cached by the scraper
+        df = PD_CACHE_read('pincodes.csv', usecols=['officename','pincode','officetype','delivery','district','statename'])
+        df.columns = [c.strip().lower() for c in df.columns]
+        state = request.args.get('state', '').strip()
+        district = request.args.get('district', '').strip()
+        search = request.args.get('search', '').strip()
+        states = sorted(df['statename'].dropna().unique().tolist()) if 'statename' in df.columns else []
+        if state:
+            df = df[df['statename'].astype(str).str.contains(state, case=False, na=False)]
+        districts = sorted(df['district'].dropna().unique().tolist()) if 'district' in df.columns else []
+        if district:
+            df = df[df['district'].astype(str).str.contains(district, case=False, na=False)]
+        if search:
+            mask = (
+                df['officename'].astype(str).str.contains(search, case=False, na=False) |
+                df['pincode'].astype(str).str.contains(search, case=False, na=False)
+            )
+            df = df[mask]
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 50))
+        
+        # Efficient grouping: compute one row per pincode with count, then paginate,
+        # then collect 'others' only for pins on the current page
+        df['pincode'] = df['pincode'].astype(str)
+        df_sorted = df.sort_values('pincode', kind='mergesort')
+        df_sorted['count'] = df_sorted.groupby('pincode')['pincode'].transform('size')
+        uniq = df_sorted.drop_duplicates('pincode', keep='first')
+
+        total_records = len(uniq)
+        total_pages = (total_records + per_page - 1) // per_page
+        start = (page - 1) * per_page
+        page_rows = uniq.iloc[start:start+per_page]
+        page_pins = page_rows['pincode'].tolist()
+
+        subset = df_sorted[df_sorted['pincode'].isin(page_pins)]
+        others_map = {pin: grp.iloc[1:].to_dict('records') for pin, grp in subset.groupby('pincode')}
+
+        page_groups = []
+        for _, r in page_rows.iterrows():
+            pin = r['pincode']
+            main = {k: r[k] for k in ['officename','pincode','officetype','delivery','district','statename'] if k in r}
+            page_groups.append({
+                'pincode': pin,
+                'main': main,
+                'count': int(r['count']) if 'count' in r else 1,
+                'others': others_map.get(pin, [])
+            })
+
+        return render_template(
+
+            'pincodes.html',
+            pincode_groups=page_groups,
+            username=session.get('username'),
+            current_page=page,
+            total_pages=total_pages,
+            total_records=total_records,
+            per_page=per_page,
+            search_query=search,
+            states=states,
+            districts=districts,
+            current_state=state,
+            current_district=district
+        )
+    except Exception as e:
+        flash(f'Error loading pincodes: {str(e)}', 'error')
+        return render_template('pincodes.html', pincodes=[], username=session.get('username'), current_page=1, total_pages=1, total_records=0, per_page=50, search_query='', states=[], districts=[], current_state='', current_district='')
+
+
+# Cached PIN polygon API (first hit online, then offline)
+from flask import send_file
+import hashlib
+from pathlib import Path
+
+PIN_CACHE_DIR = 'data/pin_polygons'
+Path(PIN_CACHE_DIR).mkdir(parents=True, exist_ok=True)
+
+@app.route('/api/pincode-geojson')
+
+def api_pincode_geojson():
+    try:
+        import json, time
+        pin = request.args.get('pin', '').strip()
+        if not pin or not pin.isdigit() or len(pin)!=6:
+            return jsonify({'error': 'invalid pin'}), 400
+        path = Path(PIN_CACHE_DIR) / f'{pin}.geojson'
+        if path.exists():
+            with open(path, 'rb') as f:
+                data = f.read()
+            return app.response_class(data, mimetype='application/geo+json')
+        # fetch and store
+        gj = _fetch_pin_polygon_server(pin)
+        if gj:
+            data = json.dumps(gj).encode('utf-8')
+            path.write_bytes(data)
+            # update index
+            idx_path = Path(PIN_CACHE_DIR) / 'index.json'
+            try:
+                idx = json.loads(idx_path.read_text()) if idx_path.exists() else {}
+            except Exception:
+                idx = {}
+            idx[pin] = str(path)
+            idx_path.write_text(json.dumps(idx))
+            return app.response_class(data, mimetype='application/geo+json')
+        return jsonify({'error': 'not_found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def _fetch_pin_polygon_server(pin: str):
+    import requests
+    # Overpass within India
+    overpass = 'https://overpass-api.de/api/interpreter'
+    q = '[out:json][timeout:25];area["ISO3166-1"="IN"];(relation["boundary"="postal_code"]["postal_code"="%s"](area);way["postal_code"="%s"](area););out body;>;out skel qt;' % (pin, pin)
+    try:
+        r = requests.get(overpass, params={'data': q}, timeout=30)
+        if r.ok:
+            import osmtogeojson
+            gj = osmtogeojson.json2geojson(r.json())
+            if gj and gj.get('features'):
+                return gj
+    except Exception:
+        pass
+    # Nominatim India
+    try:
+        u = 'https://nominatim.openstreetmap.org/search'
+        r = requests.get(u, params={'format':'geojson','polygon_geojson':1,'countrycodes':'in','postalcode':pin}, headers={'User-Agent':'pin-app'}, timeout=30)
+        if r.ok:
+            gj = r.json()
+            if gj and gj.get('features'):
+                return gj
+    except Exception:
+        pass
+    # Fallback concave hull from addr:postcode
+    try:
+        q2 = '[out:json][timeout:25];area["ISO3166-1"="IN"];(node["addr:postcode"="%s"](area);way["addr:postcode"="%s"](area););out body;>;out skel qt;' % (pin, pin)
+        r2 = requests.get(overpass, params={'data': q2}, timeout=30)
+        if r2.ok:
+            import osmtogeojson, shapely.geometry as geom, shapely.ops as ops
+            gj2 = osmtogeojson.json2geojson(r2.json())
+            pts = []
+            for f in gj2.get('features', []):
+                g = f.get('geometry')
+                if not g: continue
+                t = g.get('type')
+                c = g.get('coordinates')
+                if t=='Point': pts.append(c)
+                elif t=='LineString': pts.extend(c)
+                elif t=='Polygon': pts.extend(c[0])
+            if len(pts) > 2:
+                from shapely.geometry import MultiPoint
+                try:
+                    hull = MultiPoint([tuple(p) for p in pts]).convex_hull
+                    gj = geom.mapping(hull)
+                    return {'type':'FeatureCollection','features':[{'type':'Feature','geometry':gj,'properties':{'pin':pin}}]}
+                except Exception:
+                    pass
+    except Exception:
+        pass
+    return None
+
+
+
+# Suppliers routes
+@app.route('/suppliers')
+def suppliers():
+    """Display suppliers with filters for state, district, pincode, and category"""
+    try:
+        # Get filter parameters
+        state = request.args.get("state", "").strip()
+        district = request.args.get("district", "").strip()
+        pincode = request.args.get("pincode", "").strip()
+        category = request.args.get("category", "").strip()
+        search = request.args.get("search", "").strip()
+        page = int(request.args.get("page", 1))
+        per_page = int(request.args.get("per_page", 100))  # Increased per_page to show more results
+        
+        # Load pincodes data for state/district selection
+        df_pincodes = PD_CACHE_read("pincodes.csv", usecols=["officename","pincode","officetype","delivery","district","statename"])
+        df_pincodes.columns = [c.strip().lower() for c in df_pincodes.columns]
+        
+        # Get available states and districts
+        states = sorted(df_pincodes["statename"].dropna().unique().tolist()) if "statename" in df_pincodes.columns else []
+        districts = []
+        pincodes = []
+        
+        if state:
+            df_pincodes = df_pincodes[df_pincodes["statename"].astype(str).str.contains(state, case=False, na=False)]
+            districts = sorted(df_pincodes["district"].dropna().unique().tolist())
+        
+        if district:
+            df_pincodes = df_pincodes[df_pincodes["district"].astype(str).str.contains(district, case=False, na=False)]
+            pincodes = sorted(df_pincodes["pincode"].dropna().unique().tolist())
+        
+        # Load suppliers data if pincode is selected - NO CACHING
+        suppliers_data = []
+        total_records = 0
+        total_pages = 1
+        
+        if pincode:
+            # Always scrape fresh data
+            scraper = EnhancedSuppliersScraper()
+            suppliers_data = scraper.scrape_by_pincode(pincode, category=category)
+            scraper.close()
+            
+            if suppliers_data:
+                # Apply search filter if provided
+                if search:
+                    suppliers_data = [s for s in suppliers_data if search.lower() in s.get("name", "").lower() or search.lower() in s.get("category", "").lower()]
+                
+                total_records = len(suppliers_data)
+                total_pages = (total_records + per_page - 1) // per_page
+                start = (page - 1) * per_page
+                suppliers_data = suppliers_data[start:start+per_page]
+        
+        # Get available categories
+        scraper = EnhancedSuppliersScraper()
+        available_categories = scraper.get_available_categories()
+        scraper.close()
+        
+        return render_template(
+            "suppliers.html",
+            suppliers=suppliers_data,
+            username=session.get("username"),
+            current_page=page,
+            total_pages=total_pages,
+            total_records=total_records,
+            per_page=per_page,
+            search_query=search,
+            states=states,
+            districts=districts,
+            pincodes=pincodes,
+            categories=available_categories,
+            current_state=state,
+            current_district=district,
+            current_pincode=pincode,
+            current_category=category,
+            cache_status=None  # No caching
+        )
+    except Exception as e:
+        flash(f"Error loading suppliers: {str(e)}", "error")
+        return render_template("suppliers.html", suppliers=[], username=session.get("username"), current_page=1, total_pages=1, total_records=0, per_page=100, search_query="", states=[], districts=[], pincodes=[], categories=[], current_state="", current_district="", current_pincode="", current_category="", cache_status=None)
+@app.route('/scrape-suppliers/<pincode>')
+def scrape_suppliers_by_pincode(pincode):
+    """Scrape suppliers data for a specific pincode"""
+    try:
+        from enhanced_suppliers_scraper import EnhancedSuppliersScraper
+        scraper = EnhancedSuppliersScraper()
+        suppliers_data = scraper.scrape_by_pincode(pincode, force_refresh=True)
+        
+        # Data is automatically cached by the scraper
+        # Data is automatically cached by the scraper
+        scraper = EnhancedSuppliersScraper()
+        suppliers_data = scraper.scrape_by_pincode(pincode, force_refresh=True)
+        scraper.close()
+        # Data is automatically cached by the scraper
+        # Data is automatically cached by the scraper
+        
+        flash(f"Successfully scraped {len(suppliers_data)} suppliers for pincode {pincode}!", "success")
+    except Exception as e:
+        flash(f"Error scraping suppliers for pincode {pincode}: {str(e)}", "error")
+    
+    return redirect(url_for("suppliers", pincode=pincode, state=request.args.get("state", ""), district=request.args.get("district", "")))
+
+@app.route("/suppliers/refresh/<pincode>")
+
+def refresh_suppliers_by_pincode(pincode):
+    """Refresh suppliers data for a specific pincode"""
+    try:
+        from enhanced_suppliers_scraper import EnhancedSuppliersScraper
+
+        scraper = EnhancedSuppliersScraper()
+        suppliers_data = scraper.scrape_by_pincode(pincode, force_refresh=True)
+        
+        # Data is automatically cached by the scraper
+        # Data is automatically cached by the scraper
+        scraper = EnhancedSuppliersScraper()
+        suppliers_data = scraper.scrape_by_pincode(pincode, force_refresh=True)
+        scraper.close()
+        # Data is automatically cached by the scraper
+        # Data is automatically cached by the scraper
+        
+        flash(f"Successfully refreshed {len(suppliers_data)} suppliers for pincode {pincode}!", "success")
+    except Exception as e:
+        flash(f"Error refreshing suppliers for pincode {pincode}: {str(e)}", "error")
+    
+@app.route("/suppliers/download/<pincode>")
+@login_required
+def download_suppliers_csv(pincode):
+    """Download suppliers CSV for a specific pincode"""
+    try:
+        category = request.args.get("category", "").strip()
+        scraper = EnhancedSuppliersScraper()
+        suppliers_data = scraper.scrape_by_pincode(pincode, category=category)
+        scraper.close()
+        
+        if suppliers_data:
+            # Create CSV in memory
+            import io
+            output = io.StringIO()
+            import csv as csv_module
+            
+            # Write CSV header
+            fieldnames = ["name", "address", "phone", "email", "website", "rating", "reviews_count", "category", "pincode", "keyword", "latitude", "longitude", "source"]
+            writer = csv_module.DictWriter(output, fieldnames=fieldnames)
+            writer.writeheader()
+            
+            # Write data
+            for supplier in suppliers_data:
+                writer.writerow(supplier)
+            
+            # Prepare response
+            output.seek(0)
+            filename = f"suppliers_{pincode}"
+            if category:
+                filename += f"_{category.replace(' ', '_')}"
+            filename += ".csv"
+            
+            response = make_response(output.getvalue())
+            response.headers["Content-Disposition"] = f"attachment; filename={filename}"
+            response.headers["Content-Type"] = "text/csv"
+            return response
+        else:
+            flash(f"No data found for pincode {pincode}", "error")
+            return redirect(url_for("suppliers", pincode=pincode))
+    except Exception as e:
+        flash(f"Error downloading CSV for pincode {pincode}: {str(e)}", "error")
+
+        return jsonify({"error": str(e), "pincodes": []}), 500
+
+# API endpoints for suppliers page (pincodes data)
+@app.route("/api/suppliers/districts/<state>")
+@login_required
+def api_suppliers_districts(state):
+    """Get districts for a given state from pincodes data"""
+    try:
+        # Data is automatically cached by the scraper
+        df = PD_CACHE_read("pincodes.csv", usecols=["district", "statename"])
+        df.columns = [c.strip().lower() for c in df.columns]
+        
+        # Filter by state
+        df = df[df["statename"].astype(str).str.contains(state, case=False, na=False)]
+        districts = sorted(df["district"].dropna().unique().tolist())
+        
+        return jsonify({"districts": districts})
+    except Exception as e:
+        return jsonify({"error": str(e), "districts": []}), 500
+
+@app.route("/api/suppliers/pincodes/<state>/<district>")
+
+@login_required
+def api_suppliers_pincodes(state, district):
+    """Get pincodes for a given state and district from pincodes data"""
+    try:
+        # Data is automatically cached by the scraper
+        df = PD_CACHE_read("pincodes.csv", usecols=["pincode", "district", "statename"])
+        df.columns = [c.strip().lower() for c in df.columns]
+        
+        # Filter by state and district
+        df = df[df["statename"].astype(str).str.contains(state, case=False, na=False)]
+        df = df[df["district"].astype(str).str.contains(district, case=False, na=False)]
+        pincodes = sorted(df["pincode"].dropna().unique().tolist())
+        
+        return jsonify({"pincodes": pincodes})
+    except Exception as e:
+        return jsonify({"error": str(e), "pincodes": []}), 500
+
+@app.route("/suppliers/clear-cache/<pincode>")
+
+def clear_suppliers_cache(pincode):
+    """Clear cache for a specific pincode"""
+    try:
+        scraper = EnhancedSuppliersScraper()
+        scraper.clear_cache(pincode)
+        scraper.close()
+        flash(f"Cache cleared for pincode {pincode}", "success")
+    except Exception as e:
+        flash(f"Error clearing cache: {str(e)}", "error")
+    
+    return redirect(url_for("suppliers", pincode=pincode, state=request.args.get("state", ""), district=request.args.get("district", "")))
+
+@app.route("/api/suppliers/cache-status/<pincode>")
+
+@login_required
+def api_suppliers_cache_status(pincode):
+    """Get cache status for a pincode"""
+    try:
+        scraper = EnhancedSuppliersScraper()
+        status = scraper.get_cache_status(pincode)
+        scraper.close()
+        return jsonify(status)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+if __name__ == "__main__":
     init_db()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)
+

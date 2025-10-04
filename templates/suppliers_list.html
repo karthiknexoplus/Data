@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">G</div>
+            </div>
+            <h1 class="app-title">Data Explorer</h1>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="content-header">
+            <h2><i class="fas fa-truck"></i> {{ category }} Suppliers - Tamil Nadu</h2>
+            <div class="header-actions">
+                <a href="{{ url_for('suppliers') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Categories
+                </a>
+            </div>
+        </div>
+
+        <!-- Suppliers List -->
+        <div class="suppliers-list">
+            {% if suppliers %}
+                {% for supplier in suppliers %}
+                <div class="supplier-card">
+                    <div class="supplier-info">
+                        <h3>{{ supplier[1] }}</h3>
+                        <p class="supplier-address">{{ supplier[3] }}</p>
+                        <div class="supplier-details">
+                            <span class="pincode">{{ supplier[7] }}</span>
+                            <span class="district">{{ supplier[8] }}</span>
+                            <span class="state">{{ supplier[9] }}</span>
+                        </div>
+                    </div>
+                    <div class="supplier-contact">
+                        {% if supplier[4] %}
+                        <p><i class="fas fa-phone"></i> {{ supplier[4] }}</p>
+                        {% endif %}
+                        {% if supplier[5] %}
+                        <p><i class="fas fa-envelope"></i> {{ supplier[5] }}</p>
+                        {% endif %}
+                        {% if supplier[6] %}
+                        <p><i class="fas fa-globe"></i> <a href="http://{{ supplier[6] }}" target="_blank">{{ supplier[6] }}</a></p>
+                        {% endif %}
+                    </div>
+                    <div class="supplier-rating">
+                        <div class="rating">
+                            <span class="stars">★★★★★</span>
+                            <span class="rating-value">{{ supplier[13] or 'N/A' }}</span>
+                        </div>
+                        <p class="reviews">{{ supplier[14] or 0 }} reviews</p>
+                    </div>
+                    <div class="supplier-actions">
+                        <a href="{{ supplier[12] or '#' }}" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-map-marker-alt"></i>
+                            View on Map
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-data">
+                    <i class="fas fa-search"></i>
+                    <h3>No {{ category }} suppliers found</h3>
+                    <p>Try scraping the latest data or check back later.</p>
+                    <a href="{{ url_for('scrape_suppliers') }}" class="btn btn-primary">
+                        <i class="fas fa-sync"></i>
+                        Scrape Data
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+
+<style>
+.suppliers-list {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.supplier-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.supplier-info h3 {
+    margin: 0 0 0.5rem 0;
+    color: #1f2937;
+    font-size: 1.25rem;
+}
+
+.supplier-address {
+    color: #6b7280;
+    margin: 0 0 1rem 0;
+}
+
+.supplier-details {
+    display: flex;
+    gap: 1rem;
+}
+
+.supplier-details span {
+    background: #f3f4f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.supplier-contact p {
+    margin: 0.25rem 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.supplier-contact a {
+    color: #4f46e5;
+    text-decoration: none;
+}
+
+.supplier-rating {
+    text-align: center;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.stars {
+    color: #fbbf24;
+}
+
+.rating-value {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.reviews {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.supplier-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #4f46e5;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #4338ca;
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+.no-data {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6b7280;
+}
+
+.no-data i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: #d1d5db;
+}
+
+.no-data h3 {
+    margin: 0 0 1rem 0;
+    color: #374151;
+}
+
+.no-data p {
+    margin: 0 0 2rem 0;
+}
+</style>
+{% endblock %}

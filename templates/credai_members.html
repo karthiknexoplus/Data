@@ -5,7 +5,7 @@
     <!-- Header Navigation -->
     <header class="main-header">
         <div class="header-left">
-            <a href="{{ url_for('in_data') }}" class="logo-link">
+            <a href="{{ url_for('dashboard') }}" class="logo-link">
             <div class="logo">
                 <div class="logo-icon"></div>
             </div>
@@ -23,106 +23,10 @@
             <div class="menu-icon">⋮</div>
         </div>
     </header>
-        <!-- Navigation Menu -->
-    <nav class="main-nav">
-        <ul class="nav-list">
-            <li class="nav-item">
-                <a href="{{ url_for('in_data') }}">
-                    <i class="fas fa-database"></i>
-                    <span>IN Data</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('bai_members') }}">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>BAI Data</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('colleges') }}">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span>Colleges</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('edu_list_tn') }}">
-                    <i class="fas fa-university"></i>
-                    <span>EDU List TN</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('iia_cbe') }}">
-                    <i class="fas fa-industry"></i>
-                    <span>IIA CBE</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('cozcena') }}">
-                    <i class="fas fa-building"></i>
-                    <span>COZCENA</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('sr_office') }}">
-                    <i class="fas fa-landmark"></i>
-                    <span>SR Office</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('tcea_members') }}">
-                    <i class="fas fa-users"></i>
-                    <span>TCEA Members</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('credai_members') }}">
-                    <i class="fas fa-building"></i>
-                    <span>CREDAI</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('rera_agents') }}">
-                    <i class="fas fa-gavel"></i>
-                    <span>RERA</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('ccmc_contractors') }}">
-                    <i class="fas fa-hard-hat"></i>
-                    <span>CCMC</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" onclick="alert('Eway Data coming soon!')">
-                    <i class="fas fa-truck"></i>
-                    <span>Eway Data</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('cbe_wards') }}">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <span>CBE Ward</span>
-                </a>
-            </li>        </ul>
-    </nav>
-
-
-    <!-- Main Content -->
     <main class="main-content">
         <div class="content-header">
             <div class="header-content">
                 <h2><i class="fas fa-building"></i> CREDAI Coimbatore Members</h2>
-            <li class="nav-item">
-                <a href="{{ url_for('rera_agents') }}">
-                    <i class="fas fa-gavel"></i>
-                    <span>RERA</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('ccmc_contractors') }}">
-                    <i class="fas fa-hard-hat"></i>
-                    <span>CCMC</span>                </a>
-            </li>                <div class="header-actions">
                     <div class="download-buttons">
                         <a href="{{ url_for('download_credai_csv') }}" class="download-btn csv-btn">
                             <i class="fas fa-file-csv"></i>
@@ -150,17 +54,6 @@
             <div class="data-section" style="margin-bottom: 30px;">
                 <h3 style="color: #764ba2; border-bottom: 2px solid #764ba2; padding-bottom: 10px;">
                     <i class="fas fa-building"></i> CREDAI Members ({{ credai_data|length }})
-            <li class="nav-item">
-                <a href="{{ url_for('rera_agents') }}">
-                    <i class="fas fa-gavel"></i>
-                    <span>RERA</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('ccmc_contractors') }}">
-                    <i class="fas fa-hard-hat"></i>
-                    <span>CCMC</span>                </a>
-            </li>                </h3>
                 <div class="simple-table" style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
                         <thead>
