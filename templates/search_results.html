@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-left">
+            <a href="{{ url_for('dashboard') }}" class="logo-link">
+                <div class="logo">
+                    <div class="logo-icon">G</div>
+                </div>
+                <h1 class="app-title">Data Explorer</h1>
+            </a>
+        </div>
+        <div class="header-center">
+            <div class="global-search-container">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="globalSearchInput" placeholder="Search across all modules..." class="global-search-input" value="{{ query }}">
+                    <button id="searchBtn" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="user-avatar">K</div>
+            <div class="menu-icon">⋮</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="search-results-container">
+            <div class="search-header">
+                <h2><i class="fas fa-search"></i> Search Results</h2>
+                <div class="search-query">
+                    <span class="query-label">Searching for:</span>
+                    <span class="query-text">"{{ query }}"</span>
+                </div>
+            </div>
+
+            <div id="searchResults" class="search-results-list">
+                <div class="search-loading">
+                    <i class="fas fa-spinner fa-spin"></i> Searching across all modules...
+                </div>
+            </div>
+
+            <div class="search-footer">
+                <a href="{{ url_for('dashboard') }}" class="back-to-dashboard">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </main>
+</div>
+
+<style>
+.search-results-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.search-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.search-header h2 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 28px;
+}
+
+.search-query {
+    color: #666;
+    font-size: 16px;
+}
+
+.query-label {
+    font-weight: 500;
+}
+
+.query-text {
+    color: #667eea;
+    font-weight: 600;
+    font-style: italic;
+}
+
+.search-results-list {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.search-loading {
+    padding: 40px;
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+}
+
+.search-result-item {
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.search-result-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-right: 20px;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.search-result-content {
+    flex: 1;
+}
+
+.search-result-title {
+    font-weight: 600;
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.search-result-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.search-result-module {
+    font-size: 12px;
+    color: #999;
+    background: #f0f0f0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    font-weight: 500;
+}
+
+.search-footer {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.back-to-dashboard {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.back-to-dashboard:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.back-to-dashboard i {
+    margin-right: 8px;
+}
+
+.no-results {
+    padding: 60px 20px;
+    text-align: center;
+    color: #666;
+}
+
+.no-results i {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #ccc;
+}
+
+.no-results h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.no-results p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.search-suggestions {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.search-suggestions h4 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.suggestion-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.suggestion-tag {
+    padding: 6px 12px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.suggestion-tag:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .search-results-container {
+        padding: 15px;
+    }
+    
+    .search-header h2 {
+        font-size: 24px;
+    }
+    
+    .search-result-item {
+        padding: 15px;
+    }
+    
+    .search-result-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        margin-right: 15px;
+    }
+    
+    .search-result-title {
+        font-size: 16px;
+    }
+    
+    .search-result-subtitle {
+        font-size: 13px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const query = '{{ query }}';
+    const searchResults = document.getElementById('searchResults');
+    
+    if (query) {
+        performSearch(query);
+    } else {
+        showNoResults();
+    }
+    
+    function performSearch(searchQuery) {
+        fetch(`/api/global-search?q=${encodeURIComponent(searchQuery)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.results && data.results.length > 0) {
+                    displaySearchResults(data.results);
+                } else {
+                    showNoResults();
+                }
+            })
+            .catch(error => {
+                console.error('Search error:', error);
+                showNoResults();
+            });
+    }
+    
+    function displaySearchResults(results) {
+        searchResults.innerHTML = '';
+        
+        results.forEach(result => {
+            const resultItem = document.createElement('div');
+            resultItem.className = 'search-result-item';
+            resultItem.innerHTML = `
+                <div class="search-result-icon">
+                    <i class="${result.icon}"></i>
+                </div>
+                <div class="search-result-content">
+                    <div class="search-result-title">${result.title}</div>
+                    <div class="search-result-subtitle">${result.subtitle}</div>
+                    <div class="search-result-module">${result.module}</div>
+                </div>
+            `;
+            
+            resultItem.addEventListener('click', () => {
+                window.location.href = result.url;
+            });
+            
+            searchResults.appendChild(resultItem);
+        });
+    }
+    
+    function showNoResults() {
+        searchResults.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                <h3>No results found</h3>
+                <p>We couldn't find any results for "${query}". Try different keywords or check your spelling.</p>
+                <div class="search-suggestions">
+                    <h4>Search suggestions:</h4>
+                    <div class="suggestion-tags">
+                        <a href="/search?q=contractor" class="suggestion-tag">Contractor</a>
+                        <a href="/search?q=supplier" class="suggestion-tag">Supplier</a>
+                        <a href="/search?q=agent" class="suggestion-tag">Agent</a>
+                        <a href="/search?q=coimbatore" class="suggestion-tag">Coimbatore</a>
+                        <a href="/search?q=chennai" class="suggestion-tag">Chennai</a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+});
+</script>
+{% endblock %}

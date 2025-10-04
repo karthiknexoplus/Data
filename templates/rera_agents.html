@@ -96,9 +96,10 @@
                             <tr style="background: #f8f9fa;">
                                 <th style="padding: 12px; border: 1px solid #ddd; text-align: left; width: 60px;">S.No</th>
                                 <th style="padding: 12px; border: 1px solid #ddd; text-align: left; width: 200px;">Registration Number</th>
-                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Name & Address</th>
+                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left; width: 200px;">Name</th>
+                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Address</th>
                                 <th style="padding: 12px; border: 1px solid #ddd; text-align: left; width: 120px;">Type</th>
-                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left; width: 100px;">Date</th>
+                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left; width: 100px;">Validity</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -106,13 +107,14 @@
                             <tr style="border-bottom: 1px solid #eee;">
                                 <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">{{ ((current_page - 1) * per_page) + loop.index }}</td>
                                 <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; color: #764ba2;">{{ agent.registration_number }}</td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">{{ agent.name_address }}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">{{ agent.name }}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ agent.address }}</td>
                                 <td style="padding: 10px; border: 1px solid #ddd;">
                                     <span style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
                                         {{ agent.type }}
                                     </span>
                                 </td>
-                                <td style="padding: 10px; border: 1px solid #ddd; color: #666;">{{ agent.date }}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd; color: #666;">{{ agent.validity }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>

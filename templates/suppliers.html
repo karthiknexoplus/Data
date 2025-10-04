@@ -41,6 +41,112 @@
             </div>
         </div>
 
+        <!-- Advanced Filters Panel -->
+        <div class="advanced-filters-panel" id="advancedFilters" style="display: none;">
+            <div class="filters-header">
+                <h3><i class="fas fa-filter"></i> Advanced Filters</h3>
+                <button type="button" class="close-filters-btn" onclick="toggleAdvancedFilters()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="filters-grid">
+                <!-- Date Range Filter -->
+                <div class="filter-group">
+                    <label for="dateRange">Registration Date Range</label>
+                    <div class="date-range-inputs">
+                        <input type="date" name="start_date" id="startDate" placeholder="Start Date">
+                        <span class="date-separator">to</span>
+                        <input type="date" name="end_date" id="endDate" placeholder="End Date">
+                    </div>
+                </div>
+
+                <!-- Rating Filter -->
+                <div class="filter-group">
+                    <label for="rating">Minimum Rating</label>
+                    <div class="rating-filter">
+                        <input type="range" name="rating" id="rating" min="1" max="5" value="1" step="0.5">
+                        <div class="rating-display">
+                            <span id="ratingValue">1.0</span>
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price Range Filter -->
+                <div class="filter-group">
+                    <label for="priceRange">Price Range (₹)</label>
+                    <div class="price-range-inputs">
+                        <input type="number" name="min_price" id="minPrice" placeholder="Min Price" min="0">
+                        <span class="price-separator">to</span>
+                        <input type="number" name="max_price" id="maxPrice" placeholder="Max Price" min="0">
+                    </div>
+                </div>
+
+                <!-- Service Type Filter -->
+                <div class="filter-group">
+                    <label for="serviceType">Service Type</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="service_type" value="delivery">
+                            <span class="checkmark"></span>
+                            Delivery Available
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="service_type" value="installation">
+                            <span class="checkmark"></span>
+                            Installation Service
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="service_type" value="warranty">
+                            <span class="checkmark"></span>
+                            Warranty Included
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Location Radius Filter -->
+                <div class="filter-group">
+                    <label for="radius">Search Radius (km)</label>
+                    <div class="radius-filter">
+                        <input type="range" name="radius" id="radius" min="1" max="50" value="10" step="1">
+                        <div class="radius-display">
+                            <span id="radiusValue">10</span> km
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sort Options -->
+                <div class="filter-group">
+                    <label for="sortBy">Sort By</label>
+                    <select name="sort_by" id="sortBy">
+                        <option value="name">Name (A-Z)</option>
+                        <option value="name_desc">Name (Z-A)</option>
+                        <option value="rating">Rating (High to Low)</option>
+                        <option value="price_low">Price (Low to High)</option>
+                        <option value="price_high">Price (High to Low)</option>
+                        <option value="distance">Distance (Nearest First)</option>
+                        <option value="recent">Recently Added</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filters-actions">
+                <button type="button" class="btn btn-secondary" onclick="clearAdvancedFilters()">
+                    <i class="fas fa-eraser"></i> Clear All
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Apply Filters
+                </button>
+            </div>
+        </div>
+
         <!-- Search and Filters -->
         <div class="filters-row">
             <form method="GET" class="search-form" id="searchForm">
@@ -86,6 +192,9 @@
                 </div>
                 <div class="filter-actions">
                     <button type="submit" class="btn primary"><i class="fas fa-search"></i> Search</button>
+                    <button type="button" class="btn secondary" onclick="toggleAdvancedFilters()">
+                        <i class="fas fa-filter"></i> Advanced Filters
+                    </button>
                     <a href="{{ url_for('suppliers') }}" class="btn light">Clear</a>
                 </div>
             </form>
@@ -310,6 +419,7 @@
     margin: 24px;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
 }
 
 .search-form {
@@ -350,6 +460,9 @@
 .filter-actions {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .btn {
@@ -364,6 +477,9 @@
     transition: all 0.2s ease;
     border: none;
     cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: auto;
 }
 
 .btn.primary {
@@ -486,9 +602,330 @@
     opacity: 0.6;
     pointer-events: none;
 }
+
+/* Advanced Filters Styles */
+.advanced-filters-panel {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin: 20px;
+    padding: 0;
+    overflow: hidden;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.filters-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filters-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.close-filters-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-filters-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: rotate(90deg);
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.date-range-inputs, .price-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-range-inputs input, .price-range-inputs input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.date-separator, .price-separator {
+    color: #666;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.rating-filter, .radius-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rating-filter input[type="range"], .radius-filter input[type="range"] {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #ddd;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.rating-filter input[type="range"]::-webkit-slider-thumb, 
+.radius-filter input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.rating-display, .radius-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #333;
+}
+
+.stars {
+    display: flex;
+    gap: 2px;
+}
+
+.stars i {
+    color: #ffc107;
+    font-size: 14px;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    accent-color: #667eea;
+}
+
+.filters-actions {
+    padding: 20px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btn.secondary {
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.btn.secondary:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+/* Mobile Responsiveness for Advanced Filters */
+@media (max-width: 768px) {
+    .advanced-filters-panel {
+        margin: 10px;
+    }
+    
+    .filters-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .filters-header {
+        padding: 15px;
+    }
+    
+    .filters-header h3 {
+        font-size: 16px;
+    }
+    
+    .date-range-inputs, .price-range-inputs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .date-separator, .price-separator {
+        text-align: center;
+    }
+    
+    .filters-actions {
+        flex-direction: column;
+        padding: 15px;
+    }
+    
+    .btn {
+        justify-content: center;
+    }
+    
+    /* Fix filter actions overflow on mobile */
+    .filter-actions {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+    
+    .filter-actions .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra small screens - stack buttons vertically */
+    .filter-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .filter-actions .btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 13px;
+    }
+    
+    /* Shorten button text on very small screens */
+    .btn.secondary {
+        font-size: 12px;
+    }
+    
+    /* Fix main filters row on mobile */
+    .filters-row {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    .search-form {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}
 </style>
 
 <script>
+// Advanced Filters Functionality
+function toggleAdvancedFilters() {
+    const panel = document.getElementById('advancedFilters');
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+    } else {
+        panel.style.display = 'none';
+    }
+}
+
+function clearAdvancedFilters() {
+    // Clear all advanced filter inputs
+    document.getElementById('startDate').value = '';
+    document.getElementById('endDate').value = '';
+    document.getElementById('rating').value = '1';
+    document.getElementById('minPrice').value = '';
+    document.getElementById('maxPrice').value = '';
+    document.getElementById('radius').value = '10';
+    document.getElementById('sortBy').value = 'name';
+    
+    // Clear checkboxes
+    const checkboxes = document.querySelectorAll('input[name="service_type"]');
+    checkboxes.forEach(checkbox => checkbox.checked = false);
+    
+    // Update display values
+    updateRatingDisplay();
+    updateRadiusDisplay();
+}
+
+function updateRatingDisplay() {
+    const rating = document.getElementById('rating').value;
+    const ratingValue = document.getElementById('ratingValue');
+    const stars = document.querySelectorAll('.stars i');
+    
+    ratingValue.textContent = rating;
+    
+    // Update star display
+    stars.forEach((star, index) => {
+        if (index < Math.floor(rating)) {
+            star.className = 'fas fa-star';
+        } else if (index < rating) {
+            star.className = 'fas fa-star-half-alt';
+        } else {
+            star.className = 'far fa-star';
+        }
+    });
+}
+
+function updateRadiusDisplay() {
+    const radius = document.getElementById('radius').value;
+    document.getElementById('radiusValue').textContent = radius;
+}
+
+// Event listeners for advanced filters
+document.addEventListener('DOMContentLoaded', function() {
+    // Rating slider
+    const ratingSlider = document.getElementById('rating');
+    if (ratingSlider) {
+        ratingSlider.addEventListener('input', updateRatingDisplay);
+    }
+    
+    // Radius slider
+    const radiusSlider = document.getElementById('radius');
+    if (radiusSlider) {
+        radiusSlider.addEventListener('input', updateRadiusDisplay);
+    }
+    
+    // Initialize displays
+    updateRatingDisplay();
+    updateRadiusDisplay();
+});
+
 function loadDistricts() {
     const state = document.getElementById('state').value;
     const districtSelect = document.getElementById('district');

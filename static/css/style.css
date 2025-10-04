@@ -8,7 +8,7 @@ body {
     font-family: 'Arial', sans-serif;
     background: #f4f6fb;
     height: 100vh;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 /* Flash Messages */
@@ -330,7 +330,7 @@ body {
 .dashboard-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
     background: #f4f6fb;
 }
 
@@ -473,7 +473,6 @@ body {
 .main-content {
     flex: 1;
     padding: 2rem;
-    overflow-y: auto;
     background: #f4f6fb;
 }
 

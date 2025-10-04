@@ -23,64 +23,191 @@
             <div class="menu-icon">⋮</div>
         </div>
     </header>
+    
     <main class="main-content">
         <div class="content-header">
             <div class="header-content">
                 <h2><i class="fas fa-building"></i> CREDAI Coimbatore Members</h2>
-                    <div class="download-buttons">
-                        <a href="{{ url_for('download_credai_csv') }}" class="download-btn csv-btn">
-                            <i class="fas fa-file-csv"></i>
-                            Download CSV
-                        </a>
-                        <a href="{{ url_for('download_credai_excel') }}" class="download-btn excel-btn">
-                            <i class="fas fa-file-excel"></i>
-                            Download Excel
-                        </a>
-                    </div>
-                    <div class="stats">
-                        <span class="stat-item">
-                            <i class="fas fa-building"></i>
-                            <span id="totalRecords">{{ credai_data|length }}</span> Total Members
-                        </span>
-                    </div>
+                <div class="download-buttons">
+                    <a href="{{ url_for('download_credai_csv') }}" class="download-btn csv-btn">
+                        <i class="fas fa-file-csv"></i>
+                        Download CSV
+                    </a>
+                    <a href="{{ url_for('download_credai_excel') }}" class="download-btn excel-btn">
+                        <i class="fas fa-file-excel"></i>
+                        Download Excel
+                    </a>
+                </div>
+                <div class="stats">
+                    <span class="stat-item">
+                        <i class="fas fa-building"></i>
+                        <span id="totalRecords">{{ credai_data|length }}</span> Total Members
+                    </span>
                 </div>
             </div>
         </div>
 
-        <!-- Simple Data Display -->
-        <div class="data-container" style="padding: 20px; background: white; margin: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <!-- Clean Data Display -->
+        <div style="background: white; padding: 30px; margin: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <h3 style="color: #333; margin-bottom: 25px; font-size: 1.5rem; border-bottom: 3px solid #764ba2; padding-bottom: 10px;">
+                <i class="fas fa-building" style="color: #764ba2; margin-right: 10px;"></i>
+                CREDAI Members List ({{ credai_data|length }} members)
+            </h3>
             
-            <!-- Members Section -->
-            <div class="data-section" style="margin-bottom: 30px;">
-                <h3 style="color: #764ba2; border-bottom: 2px solid #764ba2; padding-bottom: 10px;">
-                    <i class="fas fa-building"></i> CREDAI Members ({{ credai_data|length }})
-                <div class="simple-table" style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+            {% if credai_data %}
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden;">
                         <thead>
-                            <tr style="background: #f8f9fa;">
-                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">S.No</th>
-                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Company Name</th>
-                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Type</th>
-                                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Source</th>
+                            <tr style="background: linear-gradient(135deg, #764ba2, #667eea); color: white;">
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">S.No</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Company Name</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Type</th>
+                                <th style="padding: 15px; text-align: left; font-weight: 600;">Source</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for member in credai_data %}
-                            <tr style="border-bottom: 1px solid #eee;">
-                                <td style="padding: 10px; border: 1px solid #ddd;">{{ loop.index }}</td>
-                                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">{{ member.name }}</td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">{{ member.type }}</td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">
-                                    <a href="{{ member.source_url }}" target="_blank" style="color: #764ba2;">View Source</a>
+                            <tr style="border-bottom: 1px solid #eee; transition: background-color 0.2s;">
+                                <td style="padding: 12px; font-weight: 500; color: #666;">{{ loop.index }}</td>
+                                <td style="padding: 12px; font-weight: 600; color: #333;">{{ member.get('name', 'N/A') }}</td>
+                                <td style="padding: 12px; color: #666;">
+                                    <span style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 12px; font-size: 0.85rem;">
+                                        {{ member.get('type', 'N/A') }}
+                                    </span>
+                                </td>
+                                <td style="padding: 12px;">
+                                    <a href="{{ member.get('source_url', '#') }}" target="_blank" 
+                                       style="color: #764ba2; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 5px;">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        View Source
+                                    </a>
                                 </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-            </div>
-
+            {% else %}
+                <div style="text-align: center; padding: 60px 20px; color: #666;">
+                    <i class="fas fa-building" style="font-size: 64px; color: #ddd; margin-bottom: 20px;"></i>
+                    <h3 style="margin-bottom: 10px; color: #999;">No CREDAI Members Found</h3>
+                    <p style="margin: 0;">Data is being loaded or there was an error loading the members list.</p>
+                </div>
+            {% endif %}
         </div>
     </main>
 </div>
+
+<style>
+/* Additional styles for better display */
+.main-content {
+    background: #f8f9fa !important;
+    min-height: calc(100vh - 120px) !important;
+}
+
+.content-header {
+    background: white;
+    padding: 25px 30px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.header-content h2 {
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.download-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.csv-btn {
+    background: #28a745;
+    color: white;
+}
+
+.csv-btn:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+.excel-btn {
+    background: #007bff;
+    color: white;
+}
+
+.excel-btn:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+.stats {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.stat-item {
+    background: #f8f9fa;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Table hover effects */
+tbody tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .download-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    table {
+        font-size: 0.9rem;
+    }
+    
+    th, td {
+        padding: 10px 8px !important;
+    }
+}
+</style>
 {% endblock %}

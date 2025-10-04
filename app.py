@@ -26,7 +26,164 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-this-in-production'
 
-# Database setup
+# Global Search Routes
+@app.route('/api/global-search')
+def global_search():
+    """Global search across all modules"""
+    try:
+        query = request.args.get('q', '').strip()
+        if not query:
+            return jsonify({'results': [], 'total': 0})
+        
+        results = []
+        query_lower = query.lower()
+        
+        # Search RERA Agents
+        try:
+            rera_data = load_rera_data()
+            for agent in rera_data:
+                if (query_lower in agent.get('name', '').lower() or 
+                    query_lower in agent.get('address', '').lower() or 
+                    query_lower in agent.get('registration_number', '').lower()):
+                    results.append({
+                        'module': 'RERA Agents',
+                        'title': agent.get('name', 'N/A'),
+                        'subtitle': agent.get('address', 'N/A'),
+                        'url': url_for('rera_agents'),
+                        'icon': 'fas fa-gavel',
+                        'type': 'Agent'
+                    })
+        except Exception as e:
+            print(f"Error searching RERA: {str(e)}")
+        
+        # Search BAI Members
+        try:
+            bai_data = load_bai_data()
+            for member in bai_data:
+                if query_lower in member.get('company_name', '').lower():
+                    results.append({
+                        'module': 'BAI Members',
+                        'title': member.get('company_name', 'N/A'),
+                        'subtitle': member.get('contact_person', 'N/A'),
+                        'url': url_for('bai_members'),
+                        'icon': 'fas fa-building',
+                        'type': 'Company'
+                    })
+        except Exception as e:
+            print(f"Error searching BAI: {str(e)}")
+        
+        # Search Suppliers
+        try:
+            suppliers_data = load_suppliers_data()
+            for supplier in suppliers_data:
+                if (query_lower in supplier.get('name', '').lower() or 
+                    query_lower in supplier.get('category', '').lower()):
+                    results.append({
+                        'module': 'Suppliers',
+                        'title': supplier.get('name', 'N/A'),
+                        'subtitle': supplier.get('category', 'N/A'),
+                        'url': url_for('suppliers'),
+                        'icon': 'fas fa-truck',
+                        'type': 'Supplier'
+                    })
+        except Exception as e:
+            print(f"Error searching Suppliers: {str(e)}")
+        
+        # Search CCMC Contractors
+        try:
+            ccmc_data = load_ccmc_data()
+            for contractor in ccmc_data:
+                if query_lower in contractor.get('contractor_name', '').lower():
+                    results.append({
+                        'module': 'CCMC Contractors',
+                        'title': contractor.get('contractor_name', 'N/A'),
+                        'subtitle': contractor.get('work_type', 'N/A'),
+                        'url': url_for('ccmc_contractors'),
+                        'icon': 'fas fa-hard-hat',
+                        'type': 'Contractor'
+                    })
+        except Exception as e:
+            print(f"Error searching CCMC: {str(e)}")
+        
+        # Search Pincodes
+        try:
+            pincodes_data = load_pincodes_data()
+            for pincode in pincodes_data:
+                if (query_lower in str(pincode.get('pincode', '')).lower() or 
+                    query_lower in pincode.get('area', '').lower() or 
+                    query_lower in pincode.get('city', '').lower()):
+                    results.append({
+                        'module': 'Pincodes',
+                        'title': f"{pincode.get('area', 'N/A')} - {pincode.get('pincode', 'N/A')}",
+                        'subtitle': f"{pincode.get('city', 'N/A')}, {pincode.get('state', 'N/A')}",
+                        'url': url_for('pincodes'),
+                        'icon': 'fas fa-map-marker-alt',
+                        'type': 'Location'
+                    })
+        except Exception as e:
+            print(f"Error searching Pincodes: {str(e)}")
+        
+        # Limit results to prevent overwhelming response
+        results = results[:50]
+        
+        return jsonify({
+            'results': results,
+            'total': len(results),
+            'query': query
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e), 'results': [], 'total': 0})
+
+@app.route('/search')
+def search_page():
+    """Search results page"""
+    query = request.args.get('q', '').strip()
+    return render_template('search_results.html', query=query, username=session.get('username'))
+
+# Helper functions for data loading
+def load_bai_data():
+    """Load BAI members data"""
+    try:
+        if os.path.exists('bai_coimbatore_refined.csv'):
+            df = _pd.read_csv('bai_coimbatore_refined.csv')
+            return df.to_dict('records')
+        return []
+    except Exception as e:
+        print(f"Error loading BAI data: {str(e)}")
+        return []
+
+def load_suppliers_data():
+    """Load suppliers data"""
+    try:
+        # This would need to be implemented based on your suppliers data structure
+        return []
+    except Exception as e:
+        print(f"Error loading suppliers data: {str(e)}")
+        return []
+
+def load_ccmc_data():
+    """Load CCMC contractors data"""
+    try:
+        if os.path.exists('ccmc_contractors.csv'):
+            df = _pd.read_csv('ccmc_contractors.csv')
+            return df.to_dict('records')
+        return []
+    except Exception as e:
+        print(f"Error loading CCMC data: {str(e)}")
+        return []
+
+def load_pincodes_data():
+    """Load pincodes data"""
+    try:
+        if os.path.exists('pincodes.csv'):
+            df = _pd.read_csv('pincodes.csv')
+            return df.to_dict('records')
+        return []
+    except Exception as e:
+        print(f"Error loading pincodes data: {str(e)}")
+        return []
+
 def init_db():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -1485,6 +1642,7 @@ def load_credai_data():
         if os.path.exists('credai_members.json'):
             with open('credai_members.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
+                # The JSON structure has data.members array
                 return data.get('data', {}).get('members', [])
         else:
             # If no JSON file exists, return empty list
@@ -1546,18 +1704,18 @@ def download_rera_csv():
         writer = csv.writer(output)
         
         # Write header
-        writer.writerow(['S.No', 'Registration Number', 'Name & Address', 'Type', 'Date', 'Source URL', 'Scraped At'])
+        writer.writerow(['S.No', 'Registration Number', 'Name', 'Address', 'Type', 'Validity', 'Renewal'])
         
         # Write data
         for i, agent in enumerate(rera_data, 1):
             writer.writerow([
                 i,
                 agent.get('registration_number', ''),
-                agent.get('name_address', ''),
+                agent.get('name', ''),
+                agent.get('address', ''),
                 agent.get('type', ''),
-                agent.get('date', ''),
-                agent.get('source_url', ''),
-                agent.get('scraped_at', '')
+                agent.get('validity', ''),
+                agent.get('renewal', '')
             ])
         
         # Create response
@@ -1583,11 +1741,11 @@ def download_rera_excel():
             df_data.append({
                 'S.No': i,
                 'Registration Number': agent.get('registration_number', ''),
-                'Name & Address': agent.get('name_address', ''),
+                'Name': agent.get('name', ''),
+                'Address': agent.get('address', ''),
                 'Type': agent.get('type', ''),
-                'Date': agent.get('date', ''),
-                'Source URL': agent.get('source_url', ''),
-                'Scraped At': agent.get('scraped_at', '')
+                'Validity': agent.get('validity', ''),
+                'Renewal': agent.get('renewal', '')
             })
         
         df = pd.DataFrame(df_data)
@@ -1609,7 +1767,13 @@ def download_rera_excel():
 def load_rera_data():
     """Load RERA agents data from JSON file"""
     try:
-        if os.path.exists('rera_agents.json'):
+        # Try to load improved data first
+        if os.path.exists('rera_agents_improved.json'):
+            with open('rera_agents_improved.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data
+        # Fallback to old data structure
+        elif os.path.exists('rera_agents.json'):
             with open('rera_agents.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 return data.get('data', {}).get('agents', [])
@@ -1617,6 +1781,7 @@ def load_rera_data():
             return []
     except Exception as e:
         print(f"Error loading RERA data: {str(e)}")
+        return []
 
 # CCMC Contractors Routes
 @app.route('/ccmc-contractors')
