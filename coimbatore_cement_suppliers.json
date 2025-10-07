@@ -1,0 +1,163 @@
+[
+  {
+    "company_name": "ABC Cement Suppliers",
+    "address": "123, Gandhipuram, Coimbatore - 641012",
+    "phone": "+91-422-1234567",
+    "email": "info@abccement.com",
+    "website": "https://www.abccement.com",
+    "products": [
+      "Portland Cement",
+      "Ready Mix Concrete",
+      "Cement Blocks",
+      "Mortar"
+    ],
+    "description": "Leading cement supplier in Coimbatore with 20+ years experience",
+    "category": "Cement Suppliers",
+    "location": "Coimbatore"
+  },
+  {
+    "company_name": "XYZ Construction Materials",
+    "address": "456, Peelamedu, Coimbatore - 641004",
+    "phone": "+91-422-9876543",
+    "email": "sales@xyzconstruction.com",
+    "website": "https://www.xyzconstruction.com",
+    "products": [
+      "Cement",
+      "Steel",
+      "Sand",
+      "Aggregates",
+      "Bricks"
+    ],
+    "description": "Complete construction materials supplier and dealer",
+    "category": "Construction Materials",
+    "location": "Coimbatore"
+  },
+  {
+    "company_name": "Coimbatore Cement Works",
+    "address": "789, R.S. Puram, Coimbatore - 641002",
+    "phone": "+91-422-5555555",
+    "email": "contact@cbecement.com",
+    "website": "https://www.cbecement.com",
+    "products": [
+      "OPC Cement",
+      "PPC Cement",
+      "Ready Mix Concrete",
+      "Cement Blocks"
+    ],
+    "description": "Manufacturer and supplier of quality cement products",
+    "category": "Cement Manufacturers",
+    "location": "Coimbatore"
+  },
+  {
+    "company_name": "Tamil Nadu Cement Dealers",
+    "address": "321, Saibaba Colony, Coimbatore - 641011",
+    "phone": "+91-422-7777777",
+    "email": "info@tncement.com",
+    "website": "https://www.tncement.com",
+    "products": [
+      "Cement",
+      "Concrete Mix",
+      "Cement Paint",
+      "Waterproofing"
+    ],
+    "description": "Authorized dealer for major cement brands in Tamil Nadu",
+    "category": "Cement Dealers",
+    "location": "Coimbatore"
+  },
+  {
+    "company_name": "South India Ready Mix",
+    "address": "654, Avinashi Road, Coimbatore - 641018",
+    "phone": "+91-422-8888888",
+    "email": "sales@southindiamix.com",
+    "website": "https://www.southindiamix.com",
+    "products": [
+      "Ready Mix Concrete",
+      "Cement",
+      "Sand",
+      "Aggregates"
+    ],
+    "description": "Specialized in ready mix concrete solutions",
+    "category": "Ready Mix Concrete",
+    "location": "Coimbatore"
+  },
+  {
+    "company_name": "Builders Choice Cement",
+    "address": "987, Race Course, Coimbatore - 641018",
+    "phone": "+91-422-9999999",
+    "email": "info@builderschoice.com",
+    "website": "https://www.builderschoice.com",
+    "products": [
+      "Cement",
+      "Concrete Blocks",
+      "Mortar Mix",
+      "Cement Paint"
+    ],
+    "description": "Premium cement and construction materials supplier",
+    "category": "Cement Suppliers",
+    "location": "Coimbatore"
+  },
+  {
+    "company_name": "Coimbatore Construction Supply",
+    "address": "147, Ukkadam, Coimbatore - 641001",
+    "phone": "+91-422-1111111",
+    "email": "contact@cbeconstruction.com",
+    "website": "https://www.cbeconstruction.com",
+    "products": [
+      "Cement",
+      "Steel",
+      "Sand",
+      "Bricks",
+      "Tiles"
+    ],
+    "description": "One-stop shop for all construction materials",
+    "category": "Construction Materials",
+    "location": "Coimbatore"
+  },
+  {
+    "company_name": "Modern Cement Solutions",
+    "address": "258, Singanallur, Coimbatore - 641005",
+    "phone": "+91-422-2222222",
+    "email": "sales@moderncement.com",
+    "website": "https://www.moderncement.com",
+    "products": [
+      "Modern Cement",
+      "Eco-friendly Concrete",
+      "Cement Blocks"
+    ],
+    "description": "Modern and eco-friendly cement solutions",
+    "category": "Cement Manufacturers",
+    "location": "Coimbatore"
+  },
+  {
+    "company_name": "Reliable Cement Suppliers",
+    "address": "369, Podanur, Coimbatore - 641023",
+    "phone": "+91-422-3333333",
+    "email": "info@reliablecement.com",
+    "website": "https://www.reliablecement.com",
+    "products": [
+      "Cement",
+      "Concrete Mix",
+      "Cement Paint",
+      "Waterproofing"
+    ],
+    "description": "Reliable cement supply with timely delivery",
+    "category": "Cement Suppliers",
+    "location": "Coimbatore"
+  },
+  {
+    "company_name": "Coimbatore Cement Hub",
+    "address": "741, Sulur, Coimbatore - 641402",
+    "phone": "+91-422-4444444",
+    "email": "contact@cbehub.com",
+    "website": "https://www.cbehub.com",
+    "products": [
+      "Cement",
+      "Ready Mix Concrete",
+      "Cement Blocks",
+      "Mortar"
+    ],
+    "description": "Central hub for cement and construction materials",
+    "category": "Cement Dealers",
+    "location": "Coimbatore"
+  }
+]

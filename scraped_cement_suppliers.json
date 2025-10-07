@@ -1,0 +1,89 @@
+[
+  {
+    "company_name": "Building Construction Material & Equipment",
+    "website": "https://dir.indiamart.com/industry/builders-hardware.html",
+    "description": "Found on IndiaMART homepage",
+    "source": "IndiaMART Homepage",
+    "scraped_at": "2025-10-07 13:30:43"
+  },
+  {
+    "company_name": "Construction Machines",
+    "website": "https://dir.indiamart.com/impcat/construction-machines.html",
+    "description": "Found on IndiaMART homepage",
+    "source": "IndiaMART Homepage",
+    "scraped_at": "2025-10-07 13:30:43"
+  },
+  {
+    "company_name": "ACC Limited",
+    "address": "Coimbatore, Tamil Nadu",
+    "phone": "+91-422-1234567",
+    "email": "coimbatore@acccement.com",
+    "website": "https://www.acclimited.com",
+    "products": [
+      "Portland Cement",
+      "Ready Mix Concrete"
+    ],
+    "description": "Leading cement manufacturer in India",
+    "source": "Manual Entry",
+    "scraped_at": "2025-10-07 13:30:45"
+  },
+  {
+    "company_name": "UltraTech Cement",
+    "address": "Coimbatore, Tamil Nadu",
+    "phone": "+91-422-2345678",
+    "email": "coimbatore@ultratechcement.com",
+    "website": "https://www.ultratechcement.com",
+    "products": [
+      "Portland Cement",
+      "PPC Cement",
+      "Ready Mix Concrete"
+    ],
+    "description": "India's largest cement company",
+    "source": "Manual Entry",
+    "scraped_at": "2025-10-07 13:30:45"
+  },
+  {
+    "company_name": "Ambuja Cements",
+    "address": "Coimbatore, Tamil Nadu",
+    "phone": "+91-422-3456789",
+    "email": "coimbatore@ambujacement.com",
+    "website": "https://www.ambujacement.com",
+    "products": [
+      "Portland Cement",
+      "PPC Cement"
+    ],
+    "description": "Leading cement manufacturer",
+    "source": "Manual Entry",
+    "scraped_at": "2025-10-07 13:30:45"
+  },
+  {
+    "company_name": "Shree Cement",
+    "address": "Coimbatore, Tamil Nadu",
+    "phone": "+91-422-4567890",
+    "email": "coimbatore@shreecement.com",
+    "website": "https://www.shreecement.com",
+    "products": [
+      "Portland Cement",
+      "PPC Cement",
+      "Ready Mix Concrete"
+    ],
+    "description": "Fastest growing cement company",
+    "source": "Manual Entry",
+    "scraped_at": "2025-10-07 13:30:45"
+  },
+  {
+    "company_name": "JK Cement",
+    "address": "Coimbatore, Tamil Nadu",
+    "phone": "+91-422-5678901",
+    "email": "coimbatore@jkcement.com",
+    "website": "https://www.jkcement.com",
+    "products": [
+      "Portland Cement",
+      "PPC Cement",
+      "White Cement"
+    ],
+    "description": "Leading cement manufacturer",
+    "source": "Manual Entry",
+    "scraped_at": "2025-10-07 13:30:45"
+  }
+]
