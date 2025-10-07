@@ -217,147 +217,581 @@
 </div>
 
 <style>
-/* Search form styles */
-.search-form {
+/* Mobile-First Responsive Design for Coimbatore Wards Page */
+
+/* Header Actions - Mobile Optimized */
+.header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.download-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-height: 48px;
+}
+
+.csv-btn {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.csv-btn:hover {
+    background: #218838;
+    border-color: #1e7e34;
+    transform: translateY(-1px);
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 8px 12px;
+    background: #f8f9ff;
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-item i {
+    color: #764ba2;
+    font-size: 14px;
+}
+
+/* Search Form - Mobile Optimized */
+.form-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+}
+
+.form-section h3 {
+    color: #2d3436;
+    font-size: 18px;
+    margin: 0 0 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-form {
+    margin-bottom: 0;
 }
 
 .search-row {
     display: flex;
+    flex-direction: column;
     gap: 12px;
-    align-items: end;
 }
 
 .search-group {
-    flex: 1;
-}
-
-.search-group:last-child {
-    flex: 0 0 auto;
+    width: 100%;
 }
 
 .search-input {
     width: 100%;
-    padding: 10px 14px;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    font-size: 14px;
-    background: white;
-    transition: border-color 0.2s;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    font-size: 15px;
+    background: #fafafa;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    appearance: none;
 }
 
 .search-input:focus {
     outline: none;
     border-color: #764ba2;
-    box-shadow: 0 0 0 2px rgba(118, 75, 162, 0.1);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+    transform: scale(1.02);
 }
 
 .search-btn {
     background: #764ba2;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
+    padding: 14px 24px;
+    border-radius: 10px;
     cursor: pointer;
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 15px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+    width: 100%;
+    min-height: 50px;
 }
 
 .search-btn:hover {
     background: #4b2e83;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(118, 75, 162, 0.4);
 }
 
 .clear-btn {
     background: #6c757d;
     color: white;
     border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
+    padding: 14px 20px;
+    border-radius: 10px;
     cursor: pointer;
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 15px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    width: 100%;
+    min-height: 50px;
 }
 
 .clear-btn:hover {
     background: #5a6268;
     color: white;
     text-decoration: none;
+    transform: translateY(-1px);
 }
 
 .results-summary {
     background: #e3f2fd;
     border: 1px solid #bbdefb;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 12px 16px;
-    margin: 16px 0;
+    margin: 15px 0;
     color: #1976d2;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
 }
 
 .results-summary i {
-    margin-right: 8px;
-}
-
-.clear-filters-btn:hover {
-    background: #e0e0e0;
+    margin-right: 6px;
     color: #764ba2;
 }
 
-/* Clickable direction styles */
-.clickable-direction:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(118, 75, 162, 0.2);
-    border-left-color: #4b2e83;
+/* Pagination Controls - Mobile Optimized */
+.pagination-controls {
+    padding: 15px !important;
+    background: white !important;
+    margin: 0 15px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
 }
 
-.clickable-direction:hover h5 {
-    color: #4b2e83;
+.pagination-controls > div {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    align-items: center !important;
 }
 
-.clickable-direction:hover .fas.fa-map-marked-alt {
+.pagination-controls span {
+    color: #666 !important;
+    font-size: 13px !important;
+    text-align: center !important;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+}
+
+.page-btn {
+    padding: 10px 14px !important;
+    margin: 0 !important;
+    background: #764ba2 !important;
+    color: white !important;
+    text-decoration: none !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 44px !important;
+}
+
+.page-btn:hover {
+    background: #5a4a8a !important;
+    transform: translateY(-1px) !important;
+}
+
+.page-btn.current {
+    background: #4b2e83 !important;
+    font-weight: 700 !important;
+}
+
+/* Data Container - Mobile Optimized */
+.data-container {
+    padding: 15px !important;
+    background: white !important;
+    margin: 15px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+}
+
+.data-section h3 {
+    color: #764ba2 !important;
+    border-bottom: 2px solid #764ba2 !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 15px !important;
+    font-size: 16px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Ward Cards - Mobile Optimized */
+.ward-card {
+    border: 1px solid #e1e5e9 !important;
+    border-radius: 12px !important;
+    margin-bottom: 15px !important;
+    padding: 15px !important;
+    background: #f8f9fa !important;
+}
+
+.ward-header {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    margin-bottom: 15px !important;
+    align-items: flex-start !important;
+}
+
+.ward-header h4 {
+    color: #764ba2 !important;
+    margin: 0 !important;
+    font-size: 1.1em !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ward-number {
+    background: #764ba2 !important;
+    color: white !important;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    font-size: 0.85em !important;
+    font-weight: 600;
+}
+
+.ward-directions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+}
+
+.direction-section {
+    background: white !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    border-left: 4px solid #764ba2 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    min-height: 48px !important;
+}
+
+.direction-section h5 {
     color: #4b2e83 !important;
-    transform: scale(1.1);
+    margin: 0 0 8px 0 !important;
+    text-transform: uppercase !important;
+    font-size: 0.85em !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
 }
 
-/* Map modal styles */
+.direction-section p {
+    margin: 4px 0 !important;
+    font-size: 0.85em !important;
+    line-height: 1.4 !important;
+    color: #555 !important;
+}
+
+/* Map Modal - Mobile Optimized */
 .map-modal {
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px) !important;
+    padding: 10px !important;
 }
 
 .map-modal-content {
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    background: white !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    max-width: 1000px !important;
+    height: 95% !important;
+    margin: 0 auto !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+}
+
+.map-modal-header {
+    padding: 15px !important;
+    border-bottom: 1px solid #e1e5e9 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.map-modal-header h3 {
+    margin: 0 !important;
+    color: #764ba2 !important;
+    font-size: 1.1em !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.map-modal-body {
+    height: calc(100% - 70px) !important;
+    padding: 15px !important;
+    overflow-y: auto !important;
+}
+
+#mapContainer {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    background: #f5f5f5 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+#googleMapsLink {
+    background: #764ba2 !important;
+    color: white !important;
+    padding: 14px 24px !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 1em !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    min-height: 48px !important;
 }
 
 #googleMapsLink:hover {
-    background: #4b2e83;
-    transform: translateY(-2px);
+    background: #4b2e83 !important;
+    transform: translateY(-2px) !important;
 }
 
-button:hover {
-    background: #5a6268 !important;
-    transform: translateY(-2px);
+/* Responsive breakpoints */
+@media (min-width: 640px) {
+    .header-actions {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .download-buttons {
+        flex: 0 0 auto;
+    }
+    
+    .stats {
+        flex: 0 0 auto;
+    }
+    
+    .search-row {
+        flex-direction: row;
+        align-items: end;
+    }
+    
+    .search-group {
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .search-group:last-child {
+        flex: 0 0 auto;
+    }
+    
+    .search-btn,
+    .clear-btn {
+        width: auto;
+    }
+    
+    .pagination-controls > div {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+    }
+    
+    .pagination-controls span {
+        text-align: left !important;
+    }
+    
+    .ward-header {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+    
+    .ward-directions {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
+    .download-btn {
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+    
+    .data-section h3 {
+        font-size: 18px !important;
+    }
+    
+    .page-btn {
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+    }
+    
+    .ward-directions {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .header-actions {
+        gap: 2rem;
+    }
+    
+    .stats {
+        gap: 1rem;
+    }
+    
     .map-modal {
-        padding: 10px;
+        padding: 20px !important;
     }
     
     .map-modal-content {
-        height: 95%;
+        height: 80% !important;
     }
     
     .map-modal-header h3 {
-        font-size: 1.1em;
+        font-size: 1.3em !important;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .download-btn,
+    .search-btn,
+    .clear-btn,
+    .page-btn,
+    .direction-section {
+        min-height: 48px;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        touch-action: manipulation;
+    }
+    
+    .download-btn:active,
+    .search-btn:active,
+    .clear-btn:active,
+    .page-btn:active,
+    .direction-section:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .download-btn,
+    .search-btn,
+    .clear-btn,
+    .page-btn {
+        border-width: 3px;
+    }
+    
+    .search-input:focus {
+        box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.3);
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .download-btn,
+    .search-btn,
+    .clear-btn,
+    .page-btn,
+    .direction-section {
+        transition: none;
+    }
+    
+    .download-btn:hover,
+    .search-btn:hover,
+    .clear-btn:hover,
+    .page-btn:hover,
+    .direction-section:hover {
+        transform: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .header-actions,
+    .form-section,
+    .pagination-controls,
+    .map-modal {
+        display: none !important;
+    }
+    
+    .data-container {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
     }
 }
 </style>

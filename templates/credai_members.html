@@ -99,114 +99,334 @@
 </div>
 
 <style>
-/* Additional styles for better display */
+/* Mobile-First Responsive Design for CREDAI Page */
+
+/* Main content - Mobile Optimized */
 .main-content {
     background: #f8f9fa !important;
     min-height: calc(100vh - 120px) !important;
 }
 
+/* Content header - Mobile Optimized */
 .content-header {
     background: white;
-    padding: 25px 30px;
-    margin-bottom: 20px;
+    padding: 20px;
+    margin-bottom: 15px;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
 .header-content {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .header-content h2 {
     color: #333;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 600;
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    text-align: center;
 }
 
+/* Download buttons - Mobile Optimized */
 .download-buttons {
     display: flex;
-    gap: 12px;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .download-btn {
-    padding: 10px 20px;
+    flex: 1;
+    min-width: 140px;
+    padding: 12px 16px;
     border-radius: 8px;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    min-height: 48px;
+    border: 2px solid transparent;
 }
 
 .csv-btn {
     background: #28a745;
     color: white;
+    border-color: #28a745;
 }
 
 .csv-btn:hover {
     background: #218838;
+    border-color: #1e7e34;
     transform: translateY(-1px);
 }
 
 .excel-btn {
     background: #007bff;
     color: white;
+    border-color: #007bff;
 }
 
 .excel-btn:hover {
     background: #0056b3;
+    border-color: #004085;
     transform: translateY(-1px);
 }
 
+/* Stats - Mobile Optimized */
 .stats {
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
 }
 
 .stat-item {
-    background: #f8f9fa;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
+    background: #f8f9ff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
     color: #666;
     display: flex;
     align-items: center;
+    gap: 6px;
+    border: 1px solid #e1e5e9;
+    font-weight: 500;
+}
+
+.stat-item i {
+    color: #764ba2;
+    font-size: 14px;
+}
+
+/* Data container - Mobile Optimized */
+.data-container {
+    background: white !important;
+    padding: 20px !important;
+    margin: 15px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+}
+
+.data-container h3 {
+    color: #333 !important;
+    margin-bottom: 20px !important;
+    font-size: 1.3rem !important;
+    border-bottom: 3px solid #764ba2 !important;
+    padding-bottom: 8px !important;
+    display: flex;
+    align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
-/* Table hover effects */
-tbody tr:hover {
-    background-color: #f8f9fa !important;
+/* Table - Mobile Optimized */
+.data-container table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-size: 13px;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+.data-container thead tr {
+    background: linear-gradient(135deg, #764ba2, #667eea) !important;
+    color: white !important;
+}
+
+.data-container th {
+    padding: 12px 8px !important;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    border: none;
+    white-space: nowrap;
+}
+
+.data-container td {
+    padding: 12px 8px !important;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 12px;
+    color: #333;
+    vertical-align: middle;
+}
+
+.data-container tbody tr:hover {
+    background-color: #f8f9ff !important;
+}
+
+/* Empty state - Mobile Optimized */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #fafafa;
+    border: 2px dashed #ddd;
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: #764ba2;
+    opacity: 0.5;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.empty-state p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Responsive breakpoints */
+@media (min-width: 640px) {
     .header-content {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .header-content h2 {
+        text-align: left;
+        font-size: 1.6rem;
     }
     
     .download-buttons {
-        width: 100%;
-        justify-content: center;
+        flex: 0 0 auto;
+        gap: 12px;
     }
     
-    table {
-        font-size: 0.9rem;
+    .download-btn {
+        flex: 0 0 auto;
+        min-width: 160px;
+        font-size: 14px;
     }
     
-    th, td {
-        padding: 10px 8px !important;
+    .stats {
+        flex: 0 0 auto;
+        gap: 15px;
+    }
+}
+
+@media (min-width: 768px) {
+    .content-header {
+        padding: 25px 30px;
+    }
+    
+    .header-content h2 {
+        font-size: 1.8rem;
+    }
+    
+    .download-btn {
+        padding: 10px 20px;
+        font-size: 15px;
+    }
+    
+    .data-container {
+        padding: 30px !important;
+    }
+    
+    .data-container h3 {
+        font-size: 1.5rem !important;
+    }
+    
+    .data-container table {
+        font-size: 14px;
+    }
+    
+    .data-container th,
+    .data-container td {
+        padding: 15px 12px !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .header-content {
+        gap: 20px;
+    }
+    
+    .download-buttons {
+        gap: 15px;
+    }
+    
+    .stats {
+        gap: 20px;
+    }
+    
+    .data-container table {
+        font-size: 15px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .download-btn {
+        min-height: 48px;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        touch-action: manipulation;
+    }
+    
+    .download-btn:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    .data-container tbody tr {
+        min-height: 48px;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .download-btn {
+        border-width: 3px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .download-btn {
+        transition: none;
+    }
+    
+    .download-btn:hover {
+        transform: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .download-buttons,
+    .stats {
+        display: none !important;
+    }
+    
+    .data-container {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+    
+    .data-container thead tr {
+        background: #f0f0f0 !important;
+        color: #000 !important;
     }
 }
 </style>

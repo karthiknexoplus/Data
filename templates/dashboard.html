@@ -417,28 +417,32 @@
 
 @media (max-width: 600px) {
     .dashboard-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-        padding: 14px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 10px;
     }
     
     .dashboard-card {
-        min-height: 120px;
-        padding: 16px 12px;
+        min-height: 80px;
+        padding: 10px 8px;
     }
     
     .card-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+        margin-bottom: 6px;
     }
     
     .card-title {
-        font-size: 13px;
+        font-size: 11px;
+        margin-bottom: 3px;
+        line-height: 1.2;
     }
     
     .card-description {
-        font-size: 10px;
+        font-size: 9px;
+        line-height: 1.2;
     }
 }
 
@@ -682,29 +686,32 @@
     }
     
     .dashboard-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        padding: 15px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        padding: 12px;
     }
     
     .dashboard-card {
-        min-height: 100px;
-        padding: 15px 12px;
+        min-height: 90px;
+        padding: 12px 8px;
     }
     
     .card-icon {
-        width: 35px;
-        height: 35px;
-        font-size: 16px;
+        width: 32px;
+        height: 32px;
+        font-size: 15px;
+        margin-bottom: 6px;
     }
     
     .card-title {
-        font-size: 13px;
-        margin-bottom: 4px;
+        font-size: 12px;
+        margin-bottom: 3px;
+        line-height: 1.2;
     }
     
     .card-description {
-        font-size: 10px;
+        font-size: 9px;
+        line-height: 1.2;
     }
     
     .user-info {
@@ -724,28 +731,32 @@
 
 @media (max-width: 480px) {
     .dashboard-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-        padding: 10px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        padding: 8px;
     }
     
     .dashboard-card {
-        min-height: 80px;
-        padding: 12px 10px;
+        min-height: 70px;
+        padding: 8px 6px;
     }
     
     .card-icon {
-        width: 30px;
-        height: 30px;
-        font-size: 14px;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        margin-bottom: 4px;
     }
     
     .card-title {
-        font-size: 12px;
+        font-size: 10px;
+        margin-bottom: 2px;
+        line-height: 1.1;
     }
     
     .card-description {
-        font-size: 9px;
+        font-size: 8px;
+        line-height: 1.1;
     }
     
     .main-header {
@@ -763,6 +774,38 @@
     
     .search-btn {
         padding: 10px 15px;
+    }
+}
+
+/* Extra small screens - 4 column ultra-compact layout */
+@media (max-width: 360px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        padding: 6px;
+    }
+    
+    .dashboard-card {
+        min-height: 65px;
+        padding: 6px 4px;
+    }
+    
+    .card-icon {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        margin-bottom: 3px;
+    }
+    
+    .card-title {
+        font-size: 9px;
+        margin-bottom: 1px;
+        line-height: 1.1;
+    }
+    
+    .card-description {
+        font-size: 7px;
+        line-height: 1.1;
     }
 }
 
@@ -808,14 +851,30 @@
     }
     
     .dashboard-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        padding: 10px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        padding: 8px;
     }
     
     .dashboard-card {
-        min-height: 90px;
-        padding: 10px 8px;
+        min-height: 75px;
+        padding: 8px 6px;
+    }
+    
+    .card-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+    
+    .card-title {
+        font-size: 10px;
+        margin-bottom: 2px;
+    }
+    
+    .card-description {
+        font-size: 8px;
     }
 }
 

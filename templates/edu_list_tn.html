@@ -31,7 +31,7 @@
         <!-- Filter Section -->
         <div class="form-section">
             <h3><i class="fas fa-filter"></i> Filter Options</h3>
-            <div class="form-row">
+            <div class="filter-form">
                 <div class="form-group">
                     <label><i class="fas fa-map-marker-alt"></i> District</label>
                     <select id="districtFilter" class="form-select">
@@ -50,16 +50,14 @@
                         <option value="Other">Other</option>
                     </select>
                 </div>
-            </div>
-            <div class="form-row">
                 <div class="form-group">
                     <label><i class="fas fa-map"></i> Region</label>
                     <select id="regionFilter" class="form-select">
                         <option value="">All Regions</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <button id="clearFilters" class="fetch-btn" style="width: auto; margin-top: 0;">
+                <div class="form-group form-group-full">
+                    <button id="clearFilters" class="fetch-btn">
                         <i class="fas fa-times"></i>
                         Clear Filters
                     </button>
@@ -70,27 +68,31 @@
         <!-- Action Buttons -->
         <div class="header-actions">
             <div class="download-buttons">
-                <a href="{{ url_for('refresh_dce_data') }}" class="download-btn" style="background: #ff9800; color: white;">
+                <a href="{{ url_for('refresh_dce_data') }}" class="download-btn refresh-btn">
                     <i class="fas fa-sync-alt"></i>
-                    Refresh Data
+                    <span class="btn-text">Refresh Data</span>
                 </a>
                 <a href="{{ url_for('download_dce_csv') }}" class="download-btn csv-btn">
                     <i class="fas fa-file-csv"></i>
-                    Download CSV
+                    <span class="btn-text">Download CSV</span>
                 </a>
                 <a href="{{ url_for('download_dce_excel') }}" class="download-btn excel-btn">
                     <i class="fas fa-file-excel"></i>
-                    Download Excel
+                    <span class="btn-text">Download Excel</span>
                 </a>
             </div>
             <div class="stats">
                 <div class="stat-item">
                     <i class="fas fa-university"></i>
-                    <span id="totalCount">{{ edu_data|length }} Colleges</span>
+                    <span>{{ total_records }} Colleges</span>
                 </div>
                 <div class="stat-item">
                     <i class="fas fa-eye"></i>
-                    <span id="filteredCount">{{ edu_data|length }} Showing</span>
+                    <span>{{ edu_data|length }} Showing</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Page {{ current_page }} of {{ total_pages }}</span>
                 </div>
             </div>
         </div>
@@ -164,6 +166,78 @@
                     <p>No education data available for Tamil Nadu. Please run the DCE scraper to fetch data.</p>
                 </div>
                 {% endif %}
+                
+                <!-- Pagination -->
+                {% if total_pages > 1 %}
+                <div class="pagination-container">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <!-- Previous Page -->
+                            {% if current_page > 1 %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('edu_list_tn', page=current_page-1, per_page=per_page, search=search_query, district=current_district, region=current_region, type=current_type) }}">
+                                    <i class="fas fa-chevron-left"></i>
+                                    Previous
+                                </a>
+                            </li>
+                            {% endif %}
+
+                            <!-- Page Numbers -->
+                            {% set start_page = [1, current_page - 2]|max %}
+                            {% set end_page = [total_pages, current_page + 2]|min %}
+                            
+                            {% if start_page > 1 %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('edu_list_tn', page=1, per_page=per_page, search=search_query, district=current_district, region=current_region, type=current_type) }}">1</a>
+                            </li>
+                            {% if start_page > 2 %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                            {% endif %}
+
+                            {% for page_num in range(start_page, end_page + 1) %}
+                            <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('edu_list_tn', page=page_num, per_page=per_page, search=search_query, district=current_district, region=current_region, type=current_type) }}">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                            {% endfor %}
+
+                            {% if end_page < total_pages %}
+                            {% if end_page < total_pages - 1 %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('edu_list_tn', page=total_pages, per_page=per_page, search=search_query, district=current_district, region=current_region, type=current_type) }}">
+                                    {{ total_pages }}
+                                </a>
+                            </li>
+                            {% endif %}
+
+                            <!-- Next Page -->
+                            {% if current_page < total_pages %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('edu_list_tn', page=current_page+1, per_page=per_page, search=search_query, district=current_district, region=current_region, type=current_type) }}">
+                                    Next
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    
+                    <!-- Items per page selector -->
+                    <div class="per-page-selector">
+                        <label for="perPageSelect">Items per page:</label>
+                        <select id="perPageSelect" class="form-select" onchange="changePerPage(this.value)">
+                            <option value="25" {% if per_page == 25 %}selected{% endif %}>25</option>
+                            <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+                            <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+                            <option value="200" {% if per_page == 200 %}selected{% endif %}>200</option>
+                        </select>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </main>
@@ -181,72 +255,622 @@ document.addEventListener('DOMContentLoaded', function() {
     const typeFilter = document.getElementById('typeFilter');
     const regionFilter = document.getElementById('regionFilter');
     const clearFilters = document.getElementById('clearFilters');
-    const tableRows = document.querySelectorAll('#collegesTable tbody tr');
-    const totalCount = document.getElementById('totalCount');
-    const filteredCount = document.getElementById('filteredCount');
     
-    // Populate filter options
-    const districts = [...new Set(Array.from(tableRows).map(row => row.dataset.district).filter(Boolean))].sort();
-    const regions = [...new Set(Array.from(tableRows).map(row => row.dataset.region).filter(Boolean))].sort();
+    // Populate filter options from server data
+    {% for district in districts %}
+    const districtOption = document.createElement('option');
+    districtOption.value = '{{ district }}';
+    districtOption.textContent = '{{ district }}';
+    {% if district == current_district %}districtOption.selected = true;{% endif %}
+    districtFilter.appendChild(districtOption);
+    {% endfor %}
     
-    districts.forEach(district => {
-        const option = document.createElement('option');
-        option.value = district;
-        option.textContent = district;
-        districtFilter.appendChild(option);
-    });
+    {% for region in regions %}
+    const regionOption = document.createElement('option');
+    regionOption.value = '{{ region }}';
+    regionOption.textContent = '{{ region }}';
+    {% if region == current_region %}regionOption.selected = true;{% endif %}
+    regionFilter.appendChild(regionOption);
+    {% endfor %}
     
-    regions.forEach(region => {
-        const option = document.createElement('option');
-        option.value = region;
-        option.textContent = region;
-        regionFilter.appendChild(option);
-    });
+    {% for college_type in college_types %}
+    const typeOption = document.createElement('option');
+    typeOption.value = '{{ college_type }}';
+    typeOption.textContent = '{{ college_type }}';
+    {% if college_type == current_type %}typeOption.selected = true;{% endif %}
+    typeFilter.appendChild(typeOption);
+    {% endfor %}
     
-    function filterTable() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedDistrict = districtFilter.value;
-        const selectedType = typeFilter.value;
-        const selectedRegion = regionFilter.value;
+    // Set search input value
+    {% if search_query %}
+    searchInput.value = '{{ search_query }}';
+    {% endif %}
+    
+    function applyFilters() {
+        const params = new URLSearchParams();
         
-        let visibleCount = 0;
+        if (searchInput.value.trim()) {
+            params.set('search', searchInput.value.trim());
+        }
+        if (districtFilter.value) {
+            params.set('district', districtFilter.value);
+        }
+        if (regionFilter.value) {
+            params.set('region', regionFilter.value);
+        }
+        if (typeFilter.value) {
+            params.set('type', typeFilter.value);
+        }
         
-        tableRows.forEach(row => {
-            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-            const district = row.dataset.district;
-            const type = row.dataset.type;
-            const region = row.dataset.region;
-            
-            const matchesSearch = name.includes(searchTerm);
-            const matchesDistrict = !selectedDistrict || district === selectedDistrict;
-            const matchesType = !selectedType || type === selectedType;
-            const matchesRegion = !selectedRegion || region === selectedRegion;
-            
-            const isVisible = matchesSearch && matchesDistrict && matchesType && matchesRegion;
-            row.style.display = isVisible ? '' : 'none';
-            
-            if (isVisible) visibleCount++;
-        });
-        
-        filteredCount.textContent = `${visibleCount} Showing`;
+        // Redirect to filtered page
+        window.location.href = '{{ url_for("edu_list_tn") }}?' + params.toString();
     }
     
     // Event listeners
-    searchInput.addEventListener('input', filterTable);
-    districtFilter.addEventListener('change', filterTable);
-    typeFilter.addEventListener('change', filterTable);
-    regionFilter.addEventListener('change', filterTable);
-    
-    clearFilters.addEventListener('click', function() {
-        searchInput.value = '';
-        districtFilter.value = '';
-        typeFilter.value = '';
-        regionFilter.value = '';
-        filterTable();
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            applyFilters();
+        }
     });
     
-    // Initial filter
-    filterTable();
+    districtFilter.addEventListener('change', applyFilters);
+    typeFilter.addEventListener('change', applyFilters);
+    regionFilter.addEventListener('change', applyFilters);
+    
+    clearFilters.addEventListener('click', function() {
+        window.location.href = '{{ url_for("edu_list_tn") }}';
+    });
 });
+
+function changePerPage(value) {
+    const params = new URLSearchParams(window.location.search);
+    params.set('per_page', value);
+    params.set('page', '1'); // Reset to first page
+    window.location.href = '{{ url_for("edu_list_tn") }}?' + params.toString();
+}
 </script>
+
+<style>
+/* Mobile-First Responsive Design for Education List Page */
+
+/* Base mobile styles */
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group-full {
+    margin-top: 1rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group label i {
+    color: #764ba2;
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    font-size: 15px;
+    background: #fafafa;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23764ba2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #764ba2;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+    transform: scale(1.02);
+}
+
+.fetch-btn {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+    width: 100%;
+    min-height: 50px;
+}
+
+.fetch-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(118, 75, 162, 0.4);
+}
+
+.fetch-btn i {
+    font-size: 16px;
+}
+
+/* Header actions mobile optimization */
+.header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.download-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-height: 48px;
+}
+
+.refresh-btn {
+    background: #ff9800;
+    color: white;
+    border-color: #ff9800;
+}
+
+.refresh-btn:hover {
+    background: #f57c00;
+    border-color: #ef6c00;
+    transform: translateY(-1px);
+}
+
+.csv-btn {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.csv-btn:hover {
+    background: #218838;
+    border-color: #1e7e34;
+    transform: translateY(-1px);
+}
+
+.excel-btn {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.excel-btn:hover {
+    background: #0056b3;
+    border-color: #004085;
+    transform: translateY(-1px);
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 8px 12px;
+    background: #f8f9ff;
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-item i {
+    color: #764ba2;
+    font-size: 14px;
+}
+
+/* Table mobile optimization */
+.table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e1e5e9;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nrlm-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    background: white;
+    min-width: 800px;
+}
+
+.nrlm-table th {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    color: white;
+    padding: 10px 6px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    border: none;
+    white-space: nowrap;
+}
+
+.nrlm-table th i {
+    margin-right: 4px;
+    font-size: 12px;
+}
+
+.nrlm-table td {
+    padding: 10px 6px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 12px;
+    color: #333;
+    vertical-align: middle;
+}
+
+.nrlm-table tbody tr:hover {
+    background: #f8f9ff;
+}
+
+.shg-name {
+    background: #e8f4fd;
+    color: #1976d2;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.member-code {
+    background: #f3e5f5;
+    color: #7b1fa2;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: monospace;
+    display: inline-block;
+}
+
+/* Search box mobile optimization */
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    color: #999;
+    font-size: 14px;
+    z-index: 2;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 12px 10px 35px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #764ba2;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+}
+
+/* Pagination mobile optimization */
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 20px;
+    padding: 20px 0;
+    border-top: 1px solid #e2e8f0;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.page-item {
+    margin: 0;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    background: white;
+    color: #3498db;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    min-height: 44px;
+    justify-content: center;
+}
+
+.page-link:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.page-item.active .page-link {
+    background: #3498db;
+    border-color: #3498db;
+    color: white;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    background: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+.per-page-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.per-page-selector label {
+    font-size: 13px;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.per-page-selector .form-select {
+    padding: 6px 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 13px;
+    background-color: white;
+    color: #4a5568;
+    min-width: 80px;
+}
+
+.per-page-selector .form-select:focus {
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+}
+
+/* Empty state mobile optimization */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #fafafa;
+    border: 2px dashed #ddd;
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: #764ba2;
+    opacity: 0.5;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.empty-state p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Responsive breakpoints */
+@media (min-width: 640px) {
+    .filter-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .form-group-full {
+        grid-column: 1 / -1;
+    }
+    
+    .header-actions {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .download-buttons {
+        flex: 0 0 auto;
+    }
+    
+    .stats {
+        flex: 0 0 auto;
+    }
+}
+
+@media (min-width: 768px) {
+    .filter-form {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+    
+    .form-group-full {
+        grid-column: 1 / -1;
+    }
+    
+    .download-btn {
+        padding: 14px 20px;
+        font-size: 13px;
+    }
+    
+    .nrlm-table {
+        font-size: 13px;
+        min-width: 600px !important;
+    }
+    
+    .nrlm-table th,
+    .nrlm-table td {
+        padding: 12px 8px;
+    }
+    
+    .pagination-container {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+@media (min-width: 1024px) {
+    .header-actions {
+        gap: 2rem;
+    }
+    
+    .stats {
+        gap: 1rem;
+    }
+    
+    .nrlm-table {
+        font-size: 14px;
+    }
+    
+    .nrlm-table th,
+    .nrlm-table td {
+        padding: 14px 12px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .download-btn,
+    .page-link,
+    .fetch-btn {
+        min-height: 48px;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        touch-action: manipulation;
+    }
+    
+    .download-btn:active,
+    .page-link:active,
+    .fetch-btn:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    .nrlm-table tbody tr {
+        min-height: 48px;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .download-btn,
+    .page-link,
+    .fetch-btn {
+        border-width: 3px;
+    }
+    
+    .search-box input:focus,
+    .form-select:focus {
+        box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.3);
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .download-btn,
+    .page-link,
+    .fetch-btn {
+        transition: none;
+    }
+    
+    .download-btn:hover,
+    .fetch-btn:hover {
+        transform: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .header-actions,
+    .pagination-container,
+    .form-section {
+        display: none !important;
+    }
+    
+    .table-section {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .nrlm-table th {
+        background: #f0f0f0 !important;
+        color: #000 !important;
+    }
+}
+</style>
 {% endblock %}

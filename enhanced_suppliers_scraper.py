@@ -6,9 +6,19 @@ class EnhancedSuppliersScraper:
     def __init__(self):
         self.selenium_scraper = ImprovedGoogleMapsScraper()
         
-    def scrape_by_pincode(self, pincode, force_refresh=False, category=None):
+    def scrape_by_pincode(self, pincode, force_refresh=False, category=None, state=None, district=None):
         """Scrape suppliers for a specific pincode without caching"""
         print(f"Scraping suppliers for pincode {pincode}")
+        
+        # Determine location for search
+        if state and district:
+            location = f"{district}, {state}"
+        elif state:
+            location = state
+        else:
+            location = "Coimbatore"  # Fallback to Coimbatore if no location provided
+        
+        print(f"Using location: {location}")
         
         # Always scrape fresh data - no caching
         print(f"Scraping fresh data for pincode {pincode}...")
@@ -16,10 +26,10 @@ class EnhancedSuppliersScraper:
             if category:
                 # Scrape only specific category
                 print(f"Scraping only {category} category...")
-                suppliers = self.selenium_scraper.scrape_category(pincode, "Coimbatore", category, self._get_category_keywords(category))
+                suppliers = self.selenium_scraper.scrape_category(pincode, location, category, self._get_category_keywords(category))
             else:
                 # Scrape all categories
-                suppliers = self.selenium_scraper.scrape_all_categories(pincode, "Coimbatore")
+                suppliers = self.selenium_scraper.scrape_all_categories(pincode, location)
             
             # Remove duplicates based on name
             unique_suppliers = []

@@ -150,4 +150,340 @@
         </div>
     </main>
 </div>
+
+<style>
+/* Mobile-First Responsive Design for RERA Agents Page */
+
+/* Header Actions - Mobile Optimized */
+.header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.download-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-height: 48px;
+}
+
+.csv-btn {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.csv-btn:hover {
+    background: #218838;
+    border-color: #1e7e34;
+    transform: translateY(-1px);
+}
+
+.excel-btn {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.excel-btn:hover {
+    background: #0056b3;
+    border-color: #004085;
+    transform: translateY(-1px);
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 8px 12px;
+    background: #f8f9ff;
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-item i {
+    color: #764ba2;
+    font-size: 14px;
+}
+
+/* Pagination Controls - Mobile Optimized */
+.pagination-controls {
+    padding: 15px !important;
+    background: white !important;
+    margin: 0 15px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+}
+
+.pagination-controls > div {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    align-items: center !important;
+}
+
+.pagination-controls span {
+    color: #666 !important;
+    font-size: 13px !important;
+    text-align: center !important;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+}
+
+.page-btn {
+    padding: 10px 14px !important;
+    margin: 0 !important;
+    background: #764ba2 !important;
+    color: white !important;
+    text-decoration: none !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 44px !important;
+}
+
+.page-btn:hover {
+    background: #5a4a8a !important;
+    transform: translateY(-1px) !important;
+}
+
+.page-btn.current {
+    background: #4b2e83 !important;
+    font-weight: 700 !important;
+}
+
+/* Data Container - Mobile Optimized */
+.data-container {
+    padding: 15px !important;
+    background: white !important;
+    margin: 15px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+}
+
+.data-section h3 {
+    color: #764ba2 !important;
+    border-bottom: 2px solid #764ba2 !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 15px !important;
+    font-size: 16px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Table - Mobile Optimized */
+.simple-table {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.simple-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    background: white;
+    min-width: 800px !important;
+}
+
+.simple-table th {
+    background: linear-gradient(135deg, #764ba2, #667eea) !important;
+    color: white !important;
+    padding: 10px 6px !important;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    border: none !important;
+    white-space: nowrap;
+}
+
+.simple-table td {
+    padding: 10px 6px !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+    font-size: 12px;
+    color: #333;
+    vertical-align: middle;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+}
+
+.simple-table tbody tr:hover {
+    background: #f8f9ff !important;
+}
+
+/* Responsive breakpoints */
+@media (min-width: 640px) {
+    .header-actions {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .download-buttons {
+        flex: 0 0 auto;
+    }
+    
+    .stats {
+        flex: 0 0 auto;
+    }
+    
+    .pagination-controls > div {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+    }
+    
+    .pagination-controls span {
+        text-align: left !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .download-btn {
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+    
+    .simple-table table {
+        font-size: 13px;
+        min-width: 800px !important;
+    }
+    
+    .simple-table th,
+    .simple-table td {
+        padding: 12px 8px !important;
+    }
+    
+    .data-section h3 {
+        font-size: 18px !important;
+    }
+    
+    .page-btn {
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .header-actions {
+        gap: 2rem;
+    }
+    
+    .stats {
+        gap: 1rem;
+    }
+    
+    .simple-table table {
+        font-size: 14px;
+        min-width: 800px !important;
+    }
+    
+    .simple-table th,
+    .simple-table td {
+        padding: 15px 12px !important;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .download-btn,
+    .page-btn {
+        min-height: 48px;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        touch-action: manipulation;
+    }
+    
+    .download-btn:active,
+    .page-btn:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    .simple-table tbody tr {
+        min-height: 48px;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .download-btn,
+    .page-btn {
+        border-width: 3px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .download-btn,
+    .page-btn {
+        transition: none;
+    }
+    
+    .download-btn:hover,
+    .page-btn:hover {
+        transform: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .header-actions,
+    .pagination-controls {
+        display: none !important;
+    }
+    
+    .data-container {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+    
+    .simple-table th {
+        background: #f0f0f0 !important;
+        color: #000 !important;
+    }
+}
+</style>
 {% endblock %}

@@ -97,14 +97,14 @@
                         {% for contractor in ccmc_data %}
                         <tr>
                             <td style="font-weight: 600; color: #2d3748;">
-                                {{ contractor.name or '' }}
+                                {{ contractor.Name or '' }}
                             </td>
                             <td style="color: #4a5568; font-size: 14px;">
-                                {{ contractor.address or '' }}
+                                {{ contractor.Address or '' }}
                             </td>
                             <td style="color: #718096; font-size: 14px;">
-                                {% if contractor.phone and contractor.phone.strip() %}
-                                    {{ contractor.phone }}
+                                {% if contractor.Phone and contractor.Phone.strip() %}
+                                    {{ contractor.Phone }}
                                 {% else %}
                                     <span style="color: #a0aec0;">-</span>
                                 {% endif %}
@@ -119,13 +119,183 @@
 </div>
 
 <style>
+/* Mobile-First Responsive Design for CCMC Contractors Page */
+
+/* Header Actions - Mobile Optimized */
+.header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.download-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-height: 48px;
+}
+
+.csv-btn {
+    background: #48bb78;
+    color: white;
+    border-color: #48bb78;
+}
+
+.csv-btn:hover {
+    background: #38a169;
+    border-color: #2f855a;
+    transform: translateY(-1px);
+}
+
+.excel-btn {
+    background: #4299e1;
+    color: white;
+    border-color: #4299e1;
+}
+
+.excel-btn:hover {
+    background: #3182ce;
+    border-color: #2c5282;
+    transform: translateY(-1px);
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 8px 12px;
+    background: #f8f9ff;
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-item i {
+    color: #667eea;
+    font-size: 14px;
+}
+
+/* Content Header - Mobile Optimized */
+.content-header {
+    background: white;
+    padding: 20px;
+    margin: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.header-content h2 {
+    margin: 0 0 15px 0;
+    color: #2d3748;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+}
+
+/* Pagination Controls - Mobile Optimized */
+.pagination-controls {
+    padding: 15px !important;
+    background: white !important;
+    margin: 0 15px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+}
+
+.pagination-controls > div {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    align-items: center !important;
+}
+
+.pagination-controls span {
+    color: #666 !important;
+    font-size: 13px !important;
+    text-align: center !important;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+}
+
+.page-btn {
+    padding: 10px 14px !important;
+    margin: 0 !important;
+    background: #764ba2 !important;
+    color: white !important;
+    text-decoration: none !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 44px !important;
+}
+
+.page-btn:hover {
+    background: #5a4a8a !important;
+    transform: translateY(-1px) !important;
+}
+
+.page-btn.current {
+    background: #4a5568 !important;
+    font-weight: 700 !important;
+}
+
+/* Table Section - Mobile Optimized */
+.table-section {
+    margin: 15px;
+}
+
+.table-container {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    background: white;
+}
+
 .data-table {
     width: 100%;
     border-collapse: collapse;
     background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    font-size: 13px;
+    min-width: 600px !important;
 }
 
 .data-table thead {
@@ -134,18 +304,20 @@
 }
 
 .data-table th {
-    padding: 16px 20px;
+    padding: 12px 8px;
     text-align: left;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
 .data-table td {
-    padding: 16px 20px;
+    padding: 12px 8px;
     border-bottom: 1px solid #e2e8f0;
     vertical-align: top;
+    font-size: 12px;
 }
 
 .data-table tbody tr:hover {
@@ -156,85 +328,140 @@
     border-bottom: none;
 }
 
-.table-container {
-    margin: 20px;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+/* Responsive breakpoints */
+@media (min-width: 640px) {
+    .header-actions {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .download-buttons {
+        flex: 0 0 auto;
+    }
+    
+    .stats {
+        flex: 0 0 auto;
+    }
+    
+    .header-content h2 {
+        text-align: left;
+        font-size: 1.8rem;
+    }
+    
+    .pagination-controls > div {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+    }
+    
+    .pagination-controls span {
+        text-align: left !important;
+    }
 }
 
-.content-header {
-    background: white;
-    padding: 24px;
-    margin: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+@media (min-width: 768px) {
+    .content-header {
+        padding: 24px;
+        margin: 20px;
+    }
+    
+    .header-content h2 {
+        font-size: 24px;
+    }
+    
+    .download-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+    
+    .data-table {
+        font-size: 14px;
+        min-width: 600px !important;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 16px 20px;
+    }
+    
+    .page-btn {
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+    }
 }
 
-.header-content h2 {
-    margin: 0 0 16px 0;
-    color: #2d3748;
-    font-size: 24px;
-    font-weight: 700;
+@media (min-width: 1024px) {
+    .header-actions {
+        gap: 2rem;
+    }
+    
+    .stats {
+        gap: 1rem;
+    }
+    
+    .data-table {
+        font-size: 15px;
+        min-width: 600px !important;
+    }
 }
 
-.download-buttons {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 16px;
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .download-btn,
+    .page-btn {
+        min-height: 48px;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        touch-action: manipulation;
+    }
+    
+    .download-btn:active,
+    .page-btn:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    .data-table tbody tr {
+        min-height: 48px;
+    }
 }
 
-.download-btn {
-    padding: 10px 20px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .download-btn,
+    .page-btn {
+        border-width: 3px;
+    }
 }
 
-.csv-btn {
-    background: #48bb78;
-    color: white;
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .download-btn,
+    .page-btn {
+        transition: none;
+    }
+    
+    .download-btn:hover,
+    .page-btn:hover {
+        transform: none;
+    }
 }
 
-.csv-btn:hover {
-    background: #38a169;
-    transform: translateY(-1px);
-}
-
-.excel-btn {
-    background: #4299e1;
-    color: white;
-}
-
-.excel-btn:hover {
-    background: #3182ce;
-    transform: translateY(-1px);
-}
-
-.stats {
-    display: flex;
-    gap: 20px;
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: #f7fafc;
-    border-radius: 6px;
-    color: #4a5568;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.stat-item i {
-    color: #667eea;
+/* Print styles */
+@media print {
+    .header-actions,
+    .pagination-controls {
+        display: none !important;
+    }
+    
+    .table-container {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+    
+    .data-table thead {
+        background: #f0f0f0 !important;
+        color: #000 !important;
+    }
 }
 </style>
 {% endblock %}

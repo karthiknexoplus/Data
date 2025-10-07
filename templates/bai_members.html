@@ -26,147 +26,80 @@
 
     <main class="main-content">
         <div class="content-header">
-            <div class="header-left">
-                <h2 class="page-title">
-                    <i class="fas fa-building"></i>
-                    BAI Members - Coimbatore
-                </h2>
-                <p class="page-subtitle">Builders Association of India - Coimbatore Chapter</p>
-            </div>
-            <div class="header-actions">
-                <a href="{{ url_for('download_bai_csv', search=search_query) }}" class="btn btn-download">
-                    <i class="fas fa-download"></i>
-                    Download CSV
+            <h2><i class="fas fa-building"></i> BAI Members - Coimbatore</h2>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="header-actions">
+            <div class="download-buttons">
+                <a href="{{ url_for('download_bai_csv', search=search_query) }}" class="download-btn csv-btn">
+                    <i class="fas fa-file-csv"></i>
+                    <span class="btn-text">Download CSV</span>
                 </a>
-                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                <a href="{{ url_for('dashboard') }}" class="download-btn back-btn">
                     <i class="fas fa-arrow-left"></i>
-                    Back to Dashboard
+                    <span class="btn-text">Back to Dashboard</span>
                 </a>
             </div>
-        </div>
-
-        <!-- Search and Filter Section -->
-        <div class="search-section">
-            <div class="search-card">
-                <form method="GET" class="search-form">
-                    <div class="search-input-group">
-                        <div class="search-field">
-                            <i class="fas fa-search search-icon"></i>
-                            <input type="text" class="search-input" name="search" 
-                                   value="{{ search_query }}" 
-                                   placeholder="Search by company name, contact person, or address...">
-                        </div>
-                        <div class="search-options">
-                            <select name="per_page" class="form-select">
-                                <option value="25" {% if per_page == 25 %}selected{% endif %}>25 per page</option>
-                                <option value="50" {% if per_page == 50 %}selected{% endif %}>50 per page</option>
-                                <option value="100" {% if per_page == 100 %}selected{% endif %}>100 per page</option>
-                            </select>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-search"></i>
-                                Search
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Results Summary -->
-        <div class="results-summary">
-            <div class="summary-card">
-                <div class="summary-icon">
+            <div class="stats">
+                <div class="stat-item">
                     <i class="fas fa-building"></i>
+                    <span>{{ total_records }} BAI Members</span>
                 </div>
-                <div class="summary-content">
-                    <h3>{{ bai_data|length }} of {{ total_records }} BAI Members</h3>
-                    {% if search_query %}
-                        <p>Matching "{{ search_query }}"</p>
-                    {% else %}
-                        <p>Builders Association of India - Coimbatore Chapter</p>
-                    {% endif %}
+                <div class="stat-item">
+                    <i class="fas fa-eye"></i>
+                    <span>{{ bai_data|length }} Showing</span>
                 </div>
             </div>
         </div>
 
-        <!-- Data Table -->
-        <div class="data-section">
-            {% if bai_data %}
-                <div class="data-card">
-                    <div class="table-container">
-                        <table class="data-table">
+        <!-- BAI Members List -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3><i class="fas fa-list"></i> BAI Members List</h3>
+                <div class="table-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search companies...">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                        <table class="nrlm-table" id="baiTable">
                             <thead>
                                 <tr>
-                                    <th>S.No</th>
-                                    <th>Company Name</th>
-                                    <th>Contact Person</th>
-                                    <th>Address</th>
-                                    <th>Phone</th>
-                                    <th>Email</th>
-                                    <th>Actions</th>
+                                    <th><i class="fas fa-hashtag"></i> S.No</th>
+                                    <th><i class="fas fa-building"></i> Company Name</th>
+                                    <th><i class="fas fa-map-marker-alt"></i> Address</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for member in bai_data %}
                                 <tr>
-                                    <td class="serial-number">{{ loop.index + (current_page - 1) * per_page }}</td>
-                                    <td class="company-name">
-                                        <div class="company-info">
-                                            <strong>{{ member.company_name or 'N/A' }}</strong>
-                                        </div>
+                                    <td>{{ loop.index + (current_page - 1) * per_page }}</td>
+                                    <td>
+                                        <strong>{{ member.company_name or 'N/A' }}</strong>
                                     </td>
-                                    <td class="contact-person">
-                                        {{ member.contact_person or 'N/A' }}
-                                    </td>
-                                    <td class="address">
+                                    <td>
                                         <div class="address-text" title="{{ member.address or 'N/A' }}">
                                             {{ member.address or 'N/A' }}
-                                        </div>
-                                    </td>
-                                    <td class="phone">
-                                        {% if member.phone %}
-                                            <a href="tel:{{ member.phone }}" class="contact-link">
-                                                <i class="fas fa-phone"></i>
-                                                {{ member.phone }}
-                                            </a>
-                                        {% else %}
-                                            <span class="no-data">N/A</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="email">
-                                        {% if member.email %}
-                                            <a href="mailto:{{ member.email }}" class="contact-link">
-                                                <i class="fas fa-envelope"></i>
-                                                {{ member.email }}
-                                            </a>
-                                        {% else %}
-                                            <span class="no-data">N/A</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="actions">
-                                        <div class="action-buttons">
-                                            {% if member.phone %}
-                                            <a href="tel:{{ member.phone }}" class="action-btn phone-btn" title="Call">
-                                                <i class="fas fa-phone"></i>
-                                            </a>
-                                            {% endif %}
-                                            {% if member.email %}
-                                            <a href="mailto:{{ member.email }}" class="action-btn email-btn" title="Email">
-                                                <i class="fas fa-envelope"></i>
-                                            </a>
-                                            {% endif %}
-                                            {% if member.source_url %}
-                                            <a href="{{ member.source_url }}" target="_blank" class="action-btn link-btn" title="View Source">
-                                                <i class="fas fa-external-link-alt"></i>
-                                            </a>
-                                            {% endif %}
                                         </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
+                        
+                        {% if not bai_data %}
+                        <div class="empty-state">
+                            <i class="fas fa-building"></i>
+                            <h3>No BAI Members Found</h3>
+                            <p>No BAI members found for the current search criteria.</p>
+                        </div>
+                        {% endif %}
                     </div>
+                </div>
 
                     <!-- Pagination -->
                     {% if total_pages > 1 %}
@@ -230,23 +163,6 @@
                     {% endif %}
                 </div>
 
-            {% else %}
-                <div class="empty-state">
-                    <div class="empty-icon">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <h3>No BAI Members Found</h3>
-                    {% if search_query %}
-                        <p>No members match your search criteria "{{ search_query }}"</p>
-                        <a href="{{ url_for('bai_members') }}" class="btn btn-primary">
-                            <i class="fas fa-times"></i>
-                            Clear Search
-                        </a>
-                    {% else %}
-                        <p>No BAI members data available at the moment.</p>
-                    {% endif %}
-                </div>
-            {% endif %}
         </div>
 
         <!-- Data Source Info -->
@@ -263,6 +179,402 @@
 </div>
 
 <style>
+/* Mobile-First Responsive Design for BAI Members Page */
+
+/* Base mobile styles */
+.header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+}
+
+.download-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-height: 48px;
+}
+
+.csv-btn {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.csv-btn:hover {
+    background: #218838;
+    border-color: #1e7e34;
+    transform: translateY(-1px);
+}
+
+.back-btn {
+    background: #6c757d;
+    color: white;
+    border-color: #6c757d;
+}
+
+.back-btn:hover {
+    background: #5a6268;
+    border-color: #495057;
+    transform: translateY(-1px);
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 8px 12px;
+    background: #f8f9ff;
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-item i {
+    color: #764ba2;
+    font-size: 14px;
+}
+
+/* Table mobile optimization */
+.table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e1e5e9;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nrlm-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: white;
+    min-width: 600px;
+}
+
+.nrlm-table th {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    color: white;
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    border: none;
+    white-space: nowrap;
+}
+
+.nrlm-table th i {
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+.nrlm-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+    color: #333;
+    vertical-align: middle;
+}
+
+.nrlm-table tbody tr:hover {
+    background: #f8f9ff;
+}
+
+.address-text {
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-word;
+    color: #7f8c8d;
+    font-size: 12px;
+    line-height: 1.4;
+    max-height: none;
+    display: block;
+}
+
+/* Search box mobile optimization */
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    color: #999;
+    font-size: 14px;
+    z-index: 2;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 12px 10px 35px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #764ba2;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+}
+
+/* Pagination mobile optimization */
+.pagination-section {
+    padding: 1rem;
+    border-top: 1px solid #ecf0f1;
+    background: #f8f9fa;
+}
+
+.pagination-nav {
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.page-item {
+    margin: 0;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    background: white;
+    color: #3498db;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    min-height: 44px;
+    justify-content: center;
+}
+
+.page-link:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.page-item.active .page-link {
+    background: #3498db;
+    border-color: #3498db;
+    color: white;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    background: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+/* Empty state mobile optimization */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #fafafa;
+    border: 2px dashed #ddd;
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: #764ba2;
+    opacity: 0.5;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.empty-state p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Data source mobile optimization */
+.data-source {
+    margin-top: 1.5rem;
+}
+
+.source-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #7f8c8d;
+    font-size: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    flex-wrap: wrap;
+}
+
+.source-info a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.source-info a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive breakpoints */
+@media (min-width: 640px) {
+    .header-actions {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .download-buttons {
+        flex: 0 0 auto;
+    }
+    
+    .stats {
+        flex: 0 0 auto;
+    }
+}
+
+@media (min-width: 768px) {
+    .download-btn {
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+    
+    .nrlm-table {
+        font-size: 14px;
+        min-width: 600px !important;
+    }
+    
+    .nrlm-table th,
+    .nrlm-table td {
+        padding: 14px 12px;
+    }
+    
+    .address-text {
+        font-size: 13px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .header-actions {
+        gap: 2rem;
+    }
+    
+    .stats {
+        gap: 1rem;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .download-btn,
+    .page-link {
+        min-height: 48px;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        touch-action: manipulation;
+    }
+    
+    .download-btn:active,
+    .page-link:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    .nrlm-table tbody tr {
+        min-height: 48px;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .download-btn,
+    .page-link {
+        border-width: 3px;
+    }
+    
+    .search-box input:focus {
+        box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.3);
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .download-btn,
+    .page-link {
+        transition: none;
+    }
+    
+    .download-btn:hover {
+        transform: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .header-actions,
+    .pagination-section,
+    .data-source {
+        display: none !important;
+    }
+    
+    .table-section {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .nrlm-table th {
+        background: #f0f0f0 !important;
+        color: #000 !important;
+    }
+}
+
 /* BAI Page Specific Styles */
 .page-title {
     color: #2c3e50;

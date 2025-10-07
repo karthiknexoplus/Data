@@ -594,7 +594,6 @@ def login():
         if user and user[1] == hash_password(password):
             session['user_id'] = user[0]
             session['username'] = username
-            flash('Login successful!', 'success')
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid username or password', 'error')
@@ -1014,17 +1013,87 @@ def load_cbe_ward_data():
         return []
 @app.route('/edu-list-tn')
 def edu_list_tn():
+    # Get pagination parameters
+    page = int(request.args.get('page', 1))
+    per_page = int(request.args.get('per_page', 50))  # Default 50 items per page
+    search = request.args.get('search', '').strip()
+    district_filter = request.args.get('district', '').strip()
+    region_filter = request.args.get('region', '').strip()
+    type_filter = request.args.get('type', '').strip()
+    
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
-    cursor.execute('''
+    
+    # Build the WHERE clause for filtering
+    where_conditions = []
+    params = []
+    
+    if search:
+        where_conditions.append("(name LIKE ? OR district LIKE ? OR region LIKE ? OR college_type LIKE ? OR category LIKE ?)")
+        search_param = f"%{search}%"
+        params.extend([search_param, search_param, search_param, search_param, search_param])
+    
+    if district_filter:
+        where_conditions.append("district = ?")
+        params.append(district_filter)
+    
+    if region_filter:
+        where_conditions.append("region = ?")
+        params.append(region_filter)
+    
+    if type_filter:
+        where_conditions.append("college_type = ?")
+        params.append(type_filter)
+    
+    where_clause = ""
+    if where_conditions:
+        where_clause = "WHERE " + " AND ".join(where_conditions)
+    
+    # Get total count for pagination
+    count_query = f"SELECT COUNT(*) FROM dce_colleges {where_clause}"
+    cursor.execute(count_query, params)
+    total_records = cursor.fetchone()[0]
+    total_pages = (total_records + per_page - 1) // per_page
+    
+    # Calculate offset for pagination
+    offset = (page - 1) * per_page
+    
+    # Get paginated data
+    query = f'''
         SELECT s_no, name, district, region, college_type, category, contact, website, established, affiliation
         FROM dce_colleges 
+        {where_clause}
         ORDER BY district, name
-    ''')
+        LIMIT ? OFFSET ?
+    '''
+    cursor.execute(query, params + [per_page, offset])
     edu_data = cursor.fetchall()
+    
+    # Get unique values for filter dropdowns
+    cursor.execute("SELECT DISTINCT district FROM dce_colleges WHERE district IS NOT NULL ORDER BY district")
+    districts = [row[0] for row in cursor.fetchall()]
+    
+    cursor.execute("SELECT DISTINCT region FROM dce_colleges WHERE region IS NOT NULL ORDER BY region")
+    regions = [row[0] for row in cursor.fetchall()]
+    
+    cursor.execute("SELECT DISTINCT college_type FROM dce_colleges WHERE college_type IS NOT NULL ORDER BY college_type")
+    college_types = [row[0] for row in cursor.fetchall()]
+    
     conn.close()
     
-    return render_template('edu_list_tn.html', edu_data=edu_data)
+    return render_template('edu_list_tn.html', 
+                         edu_data=edu_data,
+                         current_page=page,
+                         total_pages=total_pages,
+                         total_records=total_records,
+                         per_page=per_page,
+                         search_query=search,
+                         districts=districts,
+                         regions=regions,
+                         college_types=college_types,
+                         current_district=district_filter,
+                         current_region=region_filter,
+                         current_type=type_filter)
 
 @app.route('/refresh-dce-data')
 def refresh_dce_data():
@@ -1795,9 +1864,14 @@ def ccmc_contractors():
         # Load CCMC contractors data
         ccmc_data = load_ccmc_data()
         
-        # Filter out records where contractor name starts with numeric
+        # Filter out records where contractor name is purely numeric or starts with numeric
         import re
-        ccmc_data = [contractor for contractor in ccmc_data if contractor.get("name") and not re.match(r"^d", contractor["name"].strip())]
+        ccmc_data = [contractor for contractor in ccmc_data 
+                     if contractor.get("Name") and 
+                     isinstance(contractor["Name"], str) and
+                     contractor["Name"].strip() and 
+                     not re.match(r"^\d+$", contractor["Name"].strip()) and
+                     not re.match(r"^\d", contractor["Name"].strip())]
         
         # Calculate pagination
         total_records = len(ccmc_data)
@@ -1832,9 +1906,14 @@ def download_ccmc_csv():
     try:
         ccmc_data = load_ccmc_data()
         
-        # Filter out records where contractor name starts with numeric
+        # Filter out records where contractor name is purely numeric or starts with numeric
         import re
-        ccmc_data = [contractor for contractor in ccmc_data if contractor.get("name") and not re.match(r"^d", contractor["name"].strip())]
+        ccmc_data = [contractor for contractor in ccmc_data 
+                     if contractor.get("Name") and 
+                     isinstance(contractor["Name"], str) and
+                     contractor["Name"].strip() and 
+                     not re.match(r"^\d+$", contractor["Name"].strip()) and
+                     not re.match(r"^\d", contractor["Name"].strip())]
         
         # Create CSV response
         output = io.StringIO()
@@ -1872,21 +1951,26 @@ def download_ccmc_excel():
     try:
         ccmc_data = load_ccmc_data()
         
-        # Filter out records where contractor name starts with numeric
+        # Filter out records where contractor name is purely numeric or starts with numeric
         import re
-        ccmc_data = [contractor for contractor in ccmc_data if contractor.get("name") and not re.match(r"^d", contractor["name"].strip())]
+        ccmc_data = [contractor for contractor in ccmc_data 
+                     if contractor.get("Name") and 
+                     isinstance(contractor["Name"], str) and
+                     contractor["Name"].strip() and 
+                     not re.match(r"^\d+$", contractor["Name"].strip()) and
+                     not re.match(r"^\d", contractor["Name"].strip())]
         
         # Create DataFrame
         df_data = []
         for i, contractor in enumerate(ccmc_data, 1):
             df_data.append({
                 'S.No': i,
-                'Name': contractor.get('name', ''),
-                'Class': contractor.get('class', ''),
-                'Address': contractor.get('address', ''),
-                'Phone': contractor.get('phone', ''),
-                'Source': contractor.get('source', ''),
-                'Extracted At': contractor.get('extracted_at', '')
+                'Name': contractor.get('Name', ''),
+                'Class': contractor.get('Class', ''),
+                'Address': contractor.get('Address', ''),
+                'Phone': contractor.get('Phone', ''),
+                'Source': contractor.get('Source', ''),
+                'Extracted At': contractor.get('Extracted At', '')
             })
         
         df = pd.DataFrame(df_data)
@@ -1911,13 +1995,25 @@ def load_ccmc_data():
         if os.path.exists('ccmc_contractors.json'):
             with open('ccmc_contractors.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                return data.get('data', {}).get('contractors', [])
+                contractors = data.get('data', {}).get('contractors', [])
+                # Convert lowercase field names to uppercase to match CSV structure
+                converted_contractors = []
+                for contractor in contractors:
+                    converted_contractor = {
+                        'S.No': contractor.get('serial_no', ''),
+                        'Name': contractor.get('name', ''),
+                        'Class': contractor.get('class', ''),
+                        'Address': contractor.get('address', ''),
+                        'Phone': contractor.get('phone', ''),
+                        'Source': contractor.get('source', ''),
+                        'Extracted At': contractor.get('extracted_at', '')
+                    }
+                    converted_contractors.append(converted_contractor)
+                return converted_contractors
         else:
             return []
     except Exception as e:
         print(f"Error loading CCMC data: {str(e)}")
-        return []
-
         return []
 
 def load_sub_reg_data():
@@ -2397,6 +2493,36 @@ def pincodes():
         flash(f'Error loading pincodes: {str(e)}', 'error')
         return render_template('pincodes.html', pincodes=[], username=session.get('username'), current_page=1, total_pages=1, total_records=0, per_page=50, search_query='', states=[], districts=[], current_state='', current_district='')
 
+@app.route('/pincode-offices/<pincode>')
+def pincode_offices(pincode):
+    """Mobile-friendly page to show all offices for a specific pincode"""
+    try:
+        # Get all offices for this pincode from CSV
+        df = PD_CACHE_read('pincodes.csv', usecols=['officename','pincode','officetype','delivery','district','statename'])
+        df.columns = [c.strip().lower() for c in df.columns]
+        
+        # Filter for the specific pincode
+        offices_df = df[df['pincode'].astype(str) == str(pincode)]
+        
+        if offices_df.empty:
+            return render_template('pincode_offices.html',
+                                 pincode=pincode,
+                                 offices=[],
+                                 username=session.get('username'))
+        
+        # Convert to list of dictionaries
+        offices = offices_df.to_dict('records')
+        
+        return render_template('pincode_offices.html',
+                             pincode=pincode,
+                             offices=offices,
+                             username=session.get('username'))
+    except Exception as e:
+        flash(f'Error loading offices for pincode {pincode}: {str(e)}', 'error')
+        return render_template('pincode_offices.html',
+                             pincode=pincode,
+                             offices=[],
+                             username=session.get('username'))
 
 # Cached PIN polygon API (first hit online, then offline)
 from flask import send_file
@@ -2530,7 +2656,7 @@ def suppliers():
         if pincode:
             # Always scrape fresh data
             scraper = EnhancedSuppliersScraper()
-            suppliers_data = scraper.scrape_by_pincode(pincode, category=category)
+            suppliers_data = scraper.scrape_by_pincode(pincode, category=category, state=state, district=district)
             scraper.close()
             
             if suppliers_data:
@@ -2575,16 +2701,13 @@ def scrape_suppliers_by_pincode(pincode):
     """Scrape suppliers data for a specific pincode"""
     try:
         from enhanced_suppliers_scraper import EnhancedSuppliersScraper
-        scraper = EnhancedSuppliersScraper()
-        suppliers_data = scraper.scrape_by_pincode(pincode, force_refresh=True)
+        state = request.args.get("state", "").strip()
+        district = request.args.get("district", "").strip()
+        category = request.args.get("category", "").strip()
         
-        # Data is automatically cached by the scraper
-        # Data is automatically cached by the scraper
         scraper = EnhancedSuppliersScraper()
-        suppliers_data = scraper.scrape_by_pincode(pincode, force_refresh=True)
+        suppliers_data = scraper.scrape_by_pincode(pincode, force_refresh=True, category=category, state=state, district=district)
         scraper.close()
-        # Data is automatically cached by the scraper
-        # Data is automatically cached by the scraper
         
         flash(f"Successfully scraped {len(suppliers_data)} suppliers for pincode {pincode}!", "success")
     except Exception as e:
@@ -2593,22 +2716,17 @@ def scrape_suppliers_by_pincode(pincode):
     return redirect(url_for("suppliers", pincode=pincode, state=request.args.get("state", ""), district=request.args.get("district", "")))
 
 @app.route("/suppliers/refresh/<pincode>")
-
 def refresh_suppliers_by_pincode(pincode):
     """Refresh suppliers data for a specific pincode"""
     try:
         from enhanced_suppliers_scraper import EnhancedSuppliersScraper
+        state = request.args.get("state", "").strip()
+        district = request.args.get("district", "").strip()
+        category = request.args.get("category", "").strip()
 
         scraper = EnhancedSuppliersScraper()
-        suppliers_data = scraper.scrape_by_pincode(pincode, force_refresh=True)
-        
-        # Data is automatically cached by the scraper
-        # Data is automatically cached by the scraper
-        scraper = EnhancedSuppliersScraper()
-        suppliers_data = scraper.scrape_by_pincode(pincode, force_refresh=True)
+        suppliers_data = scraper.scrape_by_pincode(pincode, force_refresh=True, category=category, state=state, district=district)
         scraper.close()
-        # Data is automatically cached by the scraper
-        # Data is automatically cached by the scraper
         
         flash(f"Successfully refreshed {len(suppliers_data)} suppliers for pincode {pincode}!", "success")
     except Exception as e:
@@ -2620,8 +2738,11 @@ def download_suppliers_csv(pincode):
     """Download suppliers CSV for a specific pincode"""
     try:
         category = request.args.get("category", "").strip()
+        state = request.args.get("state", "").strip()
+        district = request.args.get("district", "").strip()
+        
         scraper = EnhancedSuppliersScraper()
-        suppliers_data = scraper.scrape_by_pincode(pincode, category=category)
+        suppliers_data = scraper.scrape_by_pincode(pincode, category=category, state=state, district=district)
         scraper.close()
         
         if suppliers_data:
